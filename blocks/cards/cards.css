@@ -36,6 +36,7 @@
   line-height: 0;
 }
 
+
 .cards > ul > li img {
   width: 100%;
 
@@ -43,4 +44,14 @@
      width. 4 / 3 made a 397px card 298px tall and the card 676px against 456. */
   height: 200px;
   object-fit: cover;
+}
+
+.cards > ul > li.cards-card-icon img {
+  /* An icon sits at its natural size on live: 105 and 106px on how-it-works,
+     27x36 on checked-baggage. The 200px height is for a photograph. */
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  margin-inline: auto;
+  display: block;
 }
