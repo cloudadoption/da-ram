@@ -54,7 +54,7 @@
   /* heading sizes. live reads 32 / 28 / 24 / 20 / 16 down the levels, each at a
      1.2 line height, and does not change at a breakpoint. */
   --heading-font-size-xxl: 32px;
-  --heading-font-size-xl: 28px;
+  --heading-font-size-xl: 32px;
   --heading-font-size-l: 28px;
   --heading-font-size-m: 24px;
   --heading-font-size-s: 20px;
