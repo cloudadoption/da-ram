@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import markNavGroups from '../blocks/header/nav-groups.js';
@@ -55,5 +56,36 @@ describe('markNavGroups', () => {
 
   it('handles an absent list', () => {
     assert.equal(markNavGroups(null), 0);
+  });
+});
+
+// Live's header carries the brand mark, not the words. The migrated header
+// showed the text "Royal Air Maroc". The SVG is 65x48 up to 700px wide and
+// 108x80 from 768, measured at 375, 480, 576, 600, 700, 768, 992, 1200 and 1440.
+// It is served from the live origin, as the fonts already are, until cutover.
+describe('the header brand mark', () => {
+  const styles = readFileSync(new URL('../blocks/header/header.css', import.meta.url), 'utf8');
+  const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const brand = /\.nav-brand a:any-link \{[\s\S]*?\n\}/.exec(declarations);
+
+  it('shows the logo the live theme serves', () => {
+    assert.ok(brand, 'expected a rule for the brand link');
+    assert.match(brand[0], /url\('https:\/\/www\.royalairmaroc\.com\/o\/ram-airways-theme\/2025\/assets\/images\/logo_ram\.svg'\)/);
+  });
+
+  it('takes the measured 65x48 below the breakpoint', () => {
+    assert.match(brand[0], /width:\s*65px/);
+    assert.match(brand[0], /height:\s*48px/);
+  });
+
+  it('grows to the measured 108x80 at 768', () => {
+    const wide = /@media \(width >= 768px\)[\s\S]*?\n\}\n\}/.exec(declarations);
+    assert.ok(wide, 'expected a 768px block');
+    assert.match(wide[0], /width:\s*108px/);
+    assert.match(wide[0], /height:\s*80px/);
+  });
+
+  it('keeps the words for a screen reader rather than dropping them', () => {
+    assert.match(brand[0], /(text-indent|font-size:\s*0|overflow:\s*hidden)/);
   });
 });
