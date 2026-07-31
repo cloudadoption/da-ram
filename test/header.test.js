@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { markNavGroups } from '../blocks/header/nav-groups.js';
+import markNavGroups from '../blocks/header/nav-groups.js';
 
 // A list item stands in for an li. `sub` is its nested list, if it has one.
 const item = (sub = null) => {
