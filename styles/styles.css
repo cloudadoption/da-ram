@@ -68,6 +68,11 @@
      the viewport rather than a fixed inset. */
   --content-width: 90%;
   --content-max-width: 1240px;
+
+  /* The cap does not arrive by 90% reaching 1240, which would need a 1378px
+     viewport. Live switches at exactly 1280: the column reads 1053px at 1200,
+     1089px at 1240 and 1107px at 1260, then 1240px at 1280 and above. */
+  --content-cap-breakpoint: 1280px;
 }
 
 /* fallback fonts */
@@ -334,6 +339,12 @@ main > .section > div {
   width: var(--content-width);
   max-width: var(--content-max-width);
   margin: auto;
+}
+
+@media (width >= 1280px) {
+  main > .section > div {
+    width: var(--content-max-width);
+  }
 }
 
 main > .section:first-of-type {
