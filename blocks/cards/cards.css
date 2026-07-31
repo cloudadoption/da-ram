@@ -36,24 +36,19 @@
   line-height: 0;
 }
 
-
 .cards > ul > li img {
-  width: 100%;
+  /* The default is the icon, at its own size: live renders those 105 and 106px
+     on how-it-works and 27x36 on checked-baggage, in a card about 110px tall. */
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
-  /* Live is 200px tall at 768, 992, 1200 and 1440 alike, whatever the card
-     width. 4 / 3 made a 397px card 298px tall and the card 676px against 456. */
+.cards > ul > li.cards-card-photo img {
+  /* A photograph fills the card and is 200px tall on live at 768, 992, 1200 and
+     1440 alike, whatever the card width. */
+  width: 100%;
   height: 200px;
   object-fit: cover;
 }
 
-.cards > ul > li.cards-card-icon img {
-  /* An icon sits at its natural size on live: 105 and 106px on how-it-works,
-     27x36 on checked-baggage. The 200px height is for a photograph.
-
-     Only the fit changes. The class lands when the image loads, after the first
-     paint, so resizing the box here moved the layout under the reader: 0.1432 of
-     a 0.1591 CLS on checked-baggage, against 0.0088 on a page with no cards.
-     object-fit is a paint property and scale-down leaves an image smaller than
-     its box alone. */
-  object-fit: scale-down;
-}

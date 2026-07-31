@@ -11,12 +11,18 @@ export const ICON_MAX_WIDTH = 200;
 export const isIconImage = (naturalWidth) => Number(naturalWidth) > 0
   && Number(naturalWidth) <= ICON_MAX_WIDTH;
 
+// The default is the icon, so the photo is what gets marked. Reserving the
+// photo's 200px band for every card left an icon floating in it, where live's
+// icon cards are compact, about 110px tall around a 27x36 image. It is also the
+// smaller shift: a photo goes 236px to 200px where an icon went 200px to 105px.
+export const isPhotoImage = (naturalWidth) => Number(naturalWidth) > ICON_MAX_WIDTH;
+
 export const markIconCards = (list) => {
   list.querySelectorAll('img').forEach((img) => {
     const mark = () => {
-      if (!isIconImage(img.naturalWidth)) return;
+      if (!isPhotoImage(img.naturalWidth)) return;
       const item = img.closest('li');
-      if (item) item.classList.add('cards-card-icon');
+      if (item) item.classList.add('cards-card-photo');
     };
     if (img.complete) mark();
     else img.addEventListener('load', mark, { once: true });

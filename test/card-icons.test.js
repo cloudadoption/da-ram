@@ -55,36 +55,36 @@ const image = (naturalWidth, complete = true) => {
 const listOf = (images) => ({ querySelectorAll: () => images });
 
 describe('markIconCards', () => {
-  it('marks the card of a small image', () => {
-    const img = image(105);
-    markIconCards(listOf([img]));
-    assert.ok(img.li.classList.contains('cards-card-icon'));
-  });
-
-  it('leaves the card of a photograph unmarked', () => {
+  it('marks the card of a photograph', () => {
     const img = image(1647);
     markIconCards(listOf([img]));
-    assert.ok(!img.li.classList.contains('cards-card-icon'));
+    assert.ok(img.li.classList.contains('cards-card-photo'));
+  });
+
+  it('leaves the card of an icon unmarked, because that is the default', () => {
+    const img = image(105);
+    markIconCards(listOf([img]));
+    assert.ok(!img.li.classList.contains('cards-card-photo'));
   });
 
   it('waits for an image that has not loaded yet', () => {
-    const img = image(105, false);
+    const img = image(1647, false);
     markIconCards(listOf([img]));
-    assert.ok(!img.li.classList.contains('cards-card-icon'));
+    assert.ok(!img.li.classList.contains('cards-card-photo'));
     img.fire('load');
-    assert.ok(img.li.classList.contains('cards-card-icon'));
+    assert.ok(img.li.classList.contains('cards-card-photo'));
   });
 
   it('marks each card independently', () => {
     const icon = image(106);
     const photo = image(1200);
     markIconCards(listOf([icon, photo]));
-    assert.ok(icon.li.classList.contains('cards-card-icon'));
-    assert.ok(!photo.li.classList.contains('cards-card-icon'));
+    assert.ok(!icon.li.classList.contains('cards-card-photo'));
+    assert.ok(photo.li.classList.contains('cards-card-photo'));
   });
 
   it('is unbothered by an image outside a list item', () => {
-    const img = image(105);
+    const img = image(1647);
     img.closest = () => null;
     assert.doesNotThrow(() => markIconCards(listOf([img])));
   });

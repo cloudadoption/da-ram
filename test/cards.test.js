@@ -47,7 +47,7 @@ describe('the cards grid', () => {
 // wider mobile card reaches at 200px. The boilerplate forced 4/3, which at a
 // 397px card is 298px tall and made the card 676px against live's 456px.
 describe('the card image', () => {
-  const rule = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
+  const rule = /\.cards > ul > li\.cards-card-photo img \{[\s\S]*?\n\}/.exec(declarations)[0];
 
   it('is the measured 200px tall', () => {
     assert.match(rule, /height:\s*200px/);
@@ -66,15 +66,16 @@ describe('the card image', () => {
 // Sizing the card from it moved the layout under the reader: 0.1432 of a 0.1591
 // CLS on checked-baggage, against 0.0088 on a page with no cards. object-fit is
 // a paint property, so switching it moves nothing.
-describe('the icon card does not move the layout', () => {
-  const rule = /\.cards > ul > li\.cards-card-icon img \{[\s\S]*?\n\}/.exec(declarations)[0];
+describe('the icon card is the default, so nothing moves for it', () => {
+  const base = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
 
-  it('changes only how the image is fitted, not the box', () => {
-    assert.match(rule, /object-fit:\s*scale-down/);
+  it('lets an icon keep its own size with no class at all', () => {
+    assert.match(base, /height:\s*auto/);
+    assert.match(base, /max-width:\s*100%/);
+    assert.doesNotMatch(base, /[^-]width:\s*100%/);
   });
 
-  it('leaves the height alone, so the card keeps the size it was given', () => {
-    assert.doesNotMatch(rule, /height:/);
-    assert.doesNotMatch(rule, /width:/);
+  it('has no icon class left to add', () => {
+    assert.doesNotMatch(declarations, /cards-card-icon/);
   });
 });
