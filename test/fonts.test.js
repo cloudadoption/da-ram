@@ -34,7 +34,8 @@ describe('brand fonts', () => {
   // would change which glyphs the brand font draws on the Arabic, Russian and
   // Turkish estates.
   it('sets no unicode-range, matching the live theme', () => {
-    assert.doesNotMatch(fonts, /unicode-range/);
+    // The property, not the word: the file explains itself in a comment.
+    assert.doesNotMatch(fonts, /^\s*unicode-range:/m);
   });
 
   it('keeps font-display swap on every face, as the live theme does', () => {

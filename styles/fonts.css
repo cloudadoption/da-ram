@@ -1,36 +1,108 @@
 /* stylelint-disable max-line-length */
+
+/*
+ * The brand fonts are served from the live origin until the migration cuts over.
+ *
+ * ram-primary-font is Museo Sans and ram-secondary-font is Museo, both
+ * commercial exljbris typefaces, so hosting a copy here needs a licence covering
+ * this host. That answer is not in yet, and royalairmaroc.com answers
+ * access-control-allow-origin: * on the font files, so a cross-origin face
+ * loads. Verified on a migrated page: the face loads, document.fonts.check
+ * passes, and the rendered width of a paragraph moves from 706.47px to 672.14px.
+ *
+ * At cutover these move to this host and the licence question lands then.
+ *
+ * The live theme sets no unicode-range on any face, so Museo Sans is offered for
+ * every script and the browser falls back per glyph. A Latin-only range, which
+ * the boilerplate shipped, would change which glyphs the brand font draws on the
+ * Arabic, Russian and Turkish estates.
+ */
+
 @font-face {
-  font-family: roboto-condensed;
+  font-family: ram-primary-font;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 100;
   font-display: swap;
-  src: url('../fonts/roboto-condensed-bold.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_100-webfont.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: roboto;
+  font-family: ram-primary-font;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 300;
   font-display: swap;
-  src: url('../fonts/roboto-bold.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_300-webfont.woff2') format('woff2');
 }
 
+/* The live theme maps 400 and 500 to the same file. */
 @font-face {
-  font-family: roboto;
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('../fonts/roboto-medium.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: roboto;
+  font-family: ram-primary-font;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../fonts/roboto-regular.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_500-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-primary-font;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_500-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-primary-font;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_700-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-primary-font;
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_900-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-secondary-font;
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museo100-regular-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-secondary-font;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museo300-regular-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-secondary-font;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museo500-regular-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-secondary-font;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museo700-regular-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: ram-secondary-font;
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museo900-regular-webfont.woff2') format('woff2');
 }
