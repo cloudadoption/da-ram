@@ -124,7 +124,9 @@ h4,
 h5,
 h6 {
   margin-top: 0.8em;
-  margin-bottom: 0.25em;
+
+  /* The gap under a heading measures 15 to 24px across four live pages. */
+  margin-bottom: 20px;
   font-family: var(--heading-font-family);
   font-weight: 500;
   line-height: 1.2;
@@ -144,8 +146,17 @@ ol,
 ul,
 pre,
 blockquote {
-  margin-top: 0.8em;
-  margin-bottom: 0.25em;
+  /* Live leaves no top margin: 0px on 61 of 64 paragraphs across six pages,
+     against 12.8px on all 109 migrated ones. Its bottom margin is not one value,
+     4px on 53% and 0px on 33%, so this keeps the plurality. */
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+ul,
+ol {
+  /* Live indents 20px where it indents at all. The browser default is 40. */
+  padding-inline-start: 20px;
 }
 
 code,
