@@ -180,11 +180,15 @@ describe('body copy weight', () => {
 // under a heading is 15 to 24px across 14 samples on four pages. The migrated
 // pages read 13px for both.
 describe('the vertical rhythm', () => {
-  it('gives a paragraph run the measured 8px', () => {
+  // The top margin is the well-evidenced half: 0px on 61 of 64 live paragraphs
+  // across six pages, and 12.8px on all 109 migrated ones with no exception. The
+  // bottom is not a single value on live, 4px on 53% and 0px on 33%, so it keeps
+  // the 4px plurality rather than chasing a per-page number.
+  it('leaves no top margin on a block, as live does', () => {
     const rule = /\np,\ndl,\nol,\nul,\npre,\nblockquote\s*\{[\s\S]*?\n\}/.exec(styles);
     assert.ok(rule, 'expected the block-element margin rule');
     assert.match(rule[0], /margin-top:\s*0;/);
-    assert.match(rule[0], /margin-bottom:\s*8px;/);
+    assert.match(rule[0], /margin-bottom:\s*4px;/);
   });
 
   it('gives a heading the measured 20px below it', () => {

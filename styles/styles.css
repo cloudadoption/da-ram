@@ -146,10 +146,11 @@ ol,
 ul,
 pre,
 blockquote {
-  /* Live leaves no top margin on a block and the run between two paragraphs
-     measures 8px. Adjacent margins collapse, so the bottom alone sets the run. */
+  /* Live leaves no top margin: 0px on 61 of 64 paragraphs across six pages,
+     against 12.8px on all 109 migrated ones. Its bottom margin is not one value,
+     4px on 53% and 0px on 33%, so this keeps the plurality. */
   margin-top: 0;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 ul,
