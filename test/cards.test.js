@@ -61,3 +61,20 @@ describe('the card image', () => {
     assert.match(rule, /object-fit:\s*cover/);
   });
 });
+
+// The icon class lands when the image loads, which is after the first paint.
+// Sizing the card from it moved the layout under the reader: 0.1432 of a 0.1591
+// CLS on checked-baggage, against 0.0088 on a page with no cards. object-fit is
+// a paint property, so switching it moves nothing.
+describe('the icon card does not move the layout', () => {
+  const rule = /\.cards > ul > li\.cards-card-icon img \{[\s\S]*?\n\}/.exec(declarations)[0];
+
+  it('changes only how the image is fitted, not the box', () => {
+    assert.match(rule, /object-fit:\s*scale-down/);
+  });
+
+  it('leaves the height alone, so the card keeps the size it was given', () => {
+    assert.doesNotMatch(rule, /height:/);
+    assert.doesNotMatch(rule, /width:/);
+  });
+});
