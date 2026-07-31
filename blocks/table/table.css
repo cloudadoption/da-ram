@@ -9,12 +9,18 @@
   padding: 8px 12px;
   text-align: start;
   vertical-align: top;
-  border-block-end: 1px solid var(--dark-color);
+
+  /* Live's row rule is #dee2e6, much lighter than the body colour. */
+  border-block-end: 1px solid #dee2e6;
 }
 
 .table thead th {
-  font-weight: 700;
-  background-color: var(--light-color);
+  /* Live's table head is the client's own positive-background token, #a22032,
+     with white text at weight 400. Measured on checked-baggage in English and
+     German. The boilerplate drew grey with dark bold text. */
+  background-color: var(--ram-background-positive-color);
+  color: #fff;
+  font-weight: 400;
   border-block-end-width: 2px;
 }
 
