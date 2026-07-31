@@ -223,7 +223,7 @@ describe('the page title component', () => {
   });
 
   it('rises to the measured 40px above 992px', () => {
-    const wide = /@media\s*\(width\s*>=\s*992px\)\s*\{[\s\S]*?\n\}\n\}/.exec(styles);
+    const wide = /@media\s*\(width\s*>=\s*992px\)\s*\{[\s\S]*?\n\s*\}\n\}/.exec(styles);
     assert.ok(wide, 'expected a 992px breakpoint block');
     assert.match(wide[0], /font-size:\s*40px/);
     assert.match(wide[0], /line-height:\s*44px/);
