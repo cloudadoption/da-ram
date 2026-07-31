@@ -61,6 +61,18 @@
 
   /* nav height */
   --nav-height: 64px;
+
+  /* The content column, measured twice over: a 22-point viewport sweep of the
+     live container, and the rendered width of a body paragraph, which reads
+     1240px at both 1280 and 1440. Below the cap the live container takes 90% of
+     the viewport rather than a fixed inset. */
+  --content-width: 90%;
+  --content-max-width: 1240px;
+
+  /* The cap does not arrive by 90% reaching 1240, which would need a 1378px
+     viewport. Live switches at exactly 1280: the column reads 1053px at 1200,
+     1089px at 1240 and 1107px at 1260, then 1240px at 1280 and above. */
+  --content-cap-breakpoint: 1280px;
 }
 
 /* fallback fonts */
@@ -324,20 +336,33 @@ main > .section {
 }
 
 main > .section > div {
-  max-width: 1200px;
+  /* content-box would add the inset to the 90% rather than take it out, which
+     leaves the column 27px too wide. */
+  box-sizing: border-box;
+  width: var(--content-width);
+  max-width: var(--content-max-width);
   margin: auto;
-  padding: 0 24px;
+
+  /* The live column is 27px narrower than 90% of the viewport, at 375 and at 768
+     alike: 311 against 338, and 664 against 691. A constant difference at two
+     widths is a fixed inset. Logical, so it mirrors under rtl. */
+  padding-inline: 13.5px;
+}
+
+@media (width >= 1280px) {
+  main > .section > div {
+    width: var(--content-max-width);
+
+    /* No inset above the breakpoint: the live column matches the cap exactly. */
+    padding-inline: 0;
+  }
 }
 
 main > .section:first-of-type {
   margin-top: 0;
 }
 
-@media (width >= 900px) {
-  main > .section > div {
-    padding: 0 32px;
-  }
-}
+
 
 /* section metadata */
 main .section.light,
