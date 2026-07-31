@@ -73,3 +73,14 @@ describe('the inner inset', () => {
     assert.match(query[0], /padding-inline:\s*0/);
   });
 });
+
+// The padding widened the column instead of insetting it. The boilerplate sets
+// box-sizing on buttons only, so the container is content-box: width 90% plus
+// 13.5px each side makes the box 365px at a 375px viewport and leaves the
+// paragraph at 338. border-box takes the inset out of the 90%.
+describe('the container box model', () => {
+  it('sets border-box on the section container', () => {
+    const section = /main > \.section > div \{[^}]*\}/.exec(styles);
+    assert.match(section[0], /box-sizing:\s*border-box/);
+  });
+});
