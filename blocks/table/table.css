@@ -1,0 +1,38 @@
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--body-font-size-s);
+}
+
+.table th,
+.table td {
+  padding: 8px 12px;
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--dark-color);
+}
+
+.table thead th {
+  font-weight: 700;
+  background-color: var(--light-color);
+  border-block-end-width: 2px;
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-block-end: 0;
+}
+
+/* A table wider than its column can be scrolled rather than squeezed, and the
+   scroll starts at the reading edge in either direction. */
+.table {
+  overflow-x: auto;
+}
+
+@media (width >= 600px) {
+  .table th,
+  .table td {
+    padding: 12px 16px;
+    font-size: var(--body-font-size-m);
+  }
+}
