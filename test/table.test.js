@@ -78,3 +78,19 @@ describe('the table head', () => {
     assert.doesNotMatch(cell, /var\(--dark-color\)/);
   });
 });
+
+// Live's cell padding is 8px 12px 8px 15px at 375, 900 and 1440 alike, so the
+// boilerplate's 600px step from 8px 12px to 12px 16px has nothing behind it.
+describe('the table cell padding', () => {
+  const styles = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
+  const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('takes the measured padding', () => {
+    const cell = /\.table th,\n\.table td \{[\s\S]*?\n\}/.exec(declarations)[0];
+    assert.match(cell, /padding:\s*8px 12px 8px 15px/);
+  });
+
+  it('does not step at 600px, because live does not', () => {
+    assert.doesNotMatch(declarations, /@media \(width >= 600px\)/);
+  });
+});
