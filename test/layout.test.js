@@ -234,3 +234,34 @@ describe('the page title component', () => {
     assert.match(heading, /font-weight:\s*500/);
   });
 });
+
+// The colour of the first content heading on an untitled page is authored per
+// page, not set by live's theme. Rendering all 515 untitled pages at 1440 gives
+// #b02736 on 245, the default on 97, #212529 on 79, white on 54, black on 35 and
+// #c2002f on 3, so a single rule cannot do it. 362 documents carry a `theme`
+// metadata value, which the boilerplate turns into a body class.
+describe('the authored heading colour', () => {
+  const colourOf = (name) => {
+    const rule = new RegExp(`body\\.${name}\\s+main\\s+h1\\s*\\{[^}]*\\}`).exec(styles);
+    return rule && /color:\s*([^;]+);/.exec(rule[0])[1].trim();
+  };
+
+  it('carries the brand red that 245 pages use', () => {
+    assert.equal(colourOf('heading-brand'), '#b02736');
+  });
+
+  it('carries the slate the legacy pages use', () => {
+    assert.equal(colourOf('heading-slate'), '#212529');
+  });
+
+  it('carries plain black and the second red', () => {
+    assert.equal(colourOf('heading-black'), '#000');
+    assert.equal(colourOf('heading-crimson'), '#c2002f');
+  });
+
+  // Live reads white on a dark banner the migration has not reproduced, so a
+  // white rule would put white text on a white page.
+  it('has no white rule, which would make 54 headings invisible', () => {
+    assert.doesNotMatch(styles, /body\.heading-(white|inverse)/);
+  });
+});
