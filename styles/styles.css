@@ -11,13 +11,35 @@
  */
 
 :root {
+  /* The client's own tokens, taken from the live theme at
+     /o/ram-airways-theme/2025/css/styles.css. Decision 0023 says to use their
+     names where they define them, so these are the source and the boilerplate
+     names below are mapped onto them. Each value here is agreed by a computed
+     style read of a live page and by the client's own declaration. */
+  --ram-brand-primary-color: #c20831;
+  --ram-brand-primary-dark-color: #8d2b61;
+  --ram-brand-primary-light-color: #c87c88;
+  --ram-text-dark-color: #1a1717;
+  --ram-text-default-color: #7b7a78;
+  --ram-text-light-color: #999;
+  --ram-text-secondary-color: #595855;
+  --ram-text-primary-color: #c20831;
+  --ram-text-inverse-color: #fff;
+  --ram-background-default-color: #fff;
+  --ram-background-alternative-color: #f7f7f7;
+  --ram-background-inverse-color: #1a1717;
+
   /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+  --background-color: var(--ram-background-default-color);
+  --light-color: var(--ram-background-alternative-color);
+  --dark-color: var(--ram-text-secondary-color);
+  --text-color: var(--ram-text-dark-color);
+  --link-color: var(--ram-text-primary-color);
+
+  /* The client declares no hover token. This is their dark brand variant, taken
+     from the name rather than measured, because a hover state cannot be read
+     from a headless computed style. */
+  --link-hover-color: var(--ram-brand-primary-dark-color);
 
   /* fonts */
   --body-font-family: ram-primary-font, ram-primary-font-fallback, sans-serif;
