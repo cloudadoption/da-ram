@@ -96,7 +96,7 @@ body {
   color: var(--text-color);
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 body.appear {
@@ -159,6 +159,12 @@ pre {
   background-color: var(--light-color);
   overflow-x: auto;
   white-space: pre;
+}
+
+p,
+li {
+  font-weight: 300;
+  line-height: 1.4;
 }
 
 main > div {

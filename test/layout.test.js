@@ -100,9 +100,11 @@ describe('the type scale', () => {
     assert.equal(sizeOf('body-font-size-m'), '16px');
   });
 
-  it('sets the body line height to the measured 1.4', () => {
-    const body = /\nbody\s*\{[\s\S]*?\n\}/.exec(styles)[0];
-    assert.match(body, /line-height:\s*1\.4\b/);
+  // The copy line height moved onto `p, li`, where live authors it. See the body
+  // copy weight tests for the pair.
+  it('sets the copy line height to the measured 1.4', () => {
+    const rule = /\np,\s*li\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(rule, /line-height:\s*1\.4\b/);
   });
 
   it('sets the page title to the measured 32px', () => {
