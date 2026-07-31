@@ -46,11 +46,13 @@ const markIn = (container) => {
   return groups.length;
 };
 
-// The footer block moves the fragment's section divs into a wrapper, so the
-// headings sit one level below the element it hands over. Marking only the
-// wrapper's own children found nothing and the footer shipped expanded.
-export const markFooterGroups = (root) => {
+// The real tree is footer > .footer.block > wrapper > .section >
+// .default-content-wrapper > h2, so a fixed depth is the wrong thing to code
+// against: marking the wrapper's own children found nothing and the footer
+// shipped expanded. This walks the subtree instead.
+export const markFooterGroups = (root, depth = 6) => {
+  if (!root || depth < 0) return 0;
   const nested = [...(root.children || [])]
-    .reduce((total, child) => total + markIn(child), 0);
+    .reduce((total, child) => total + markFooterGroups(child, depth - 1), 0);
   return markIn(root) + nested;
 };
