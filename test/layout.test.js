@@ -100,9 +100,11 @@ describe('the type scale', () => {
     assert.equal(sizeOf('body-font-size-m'), '16px');
   });
 
-  it('sets the body line height to the measured 1.4', () => {
-    const body = /\nbody\s*\{[\s\S]*?\n\}/.exec(styles)[0];
-    assert.match(body, /line-height:\s*1\.4\b/);
+  // The copy line height moved onto `p, li`, where live authors it. See the body
+  // copy weight tests for the pair.
+  it('sets the copy line height to the measured 1.4', () => {
+    const rule = /\np,\s*li\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(rule, /line-height:\s*1\.4\b/);
   });
 
   it('sets the page title to the measured 32px', () => {
@@ -152,5 +154,22 @@ describe('the table block', () => {
   it('sets table text to the measured body size', () => {
     assert.match(table, /font-size:\s*var\(--body-font-size-m\)/);
     assert.doesNotMatch(table, /font-size:\s*var\(--body-font-size-s\)/);
+  });
+});
+
+// Live body copy is weight 300 at a 1.4 line height: 18 of 38 modal-paragraph
+// readings across the survey pages, and every reading but four is 300. The body
+// element itself computes 24px leading, which is 1.5, so the two differ.
+describe('body copy weight', () => {
+  it('sets paragraphs and list items to the measured 300', () => {
+    const rule = /\np,\s*li\s*\{[\s\S]*?\n\}/.exec(styles);
+    assert.ok(rule, 'expected a p, li rule');
+    assert.match(rule[0], /font-weight:\s*300\b/);
+    assert.match(rule[0], /line-height:\s*1\.4\b/);
+  });
+
+  it('leaves the body element at the measured 1.5', () => {
+    const body = /\nbody\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(body, /line-height:\s*1\.5\b/);
   });
 });
