@@ -136,3 +136,14 @@ describe('the type scale', () => {
     assert.doesNotMatch(wide[0], /--(body|heading)-font-size-/);
   });
 });
+
+// Live table cells read 16px on checked-baggage at 375 and 1440, the same as its
+// body copy. The block inherited the boilerplate's 14px.
+describe('the table block', () => {
+  const table = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
+
+  it('sets table text to the measured body size', () => {
+    assert.match(table, /font-size:\s*var\(--body-font-size-m\)/);
+    assert.doesNotMatch(table, /font-size:\s*var\(--body-font-size-s\)/);
+  });
+});
