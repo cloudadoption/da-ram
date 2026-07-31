@@ -38,6 +38,9 @@
 
 .cards > ul > li img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+
+  /* Live is 200px tall at 768, 992, 1200 and 1440 alike, whatever the card
+     width. 4 / 3 made a 397px card 298px tall and the card 676px against 456. */
+  height: 200px;
   object-fit: cover;
 }
