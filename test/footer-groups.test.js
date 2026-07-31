@@ -44,6 +44,7 @@ const element = (tag, text = '') => {
     tagName: tag,
     textContent: text,
     children: [],
+    style: { display: '' },
     classList: { add: (c) => classes.add(c), contains: (c) => classes.has(c) },
     setAttribute: (k, v) => { attrs[k] = String(v); },
     getAttribute: (k) => attrs[k] ?? null,
@@ -154,5 +155,41 @@ describe('markFooterGroups on the shape the block actually passes', () => {
     markFooterGroups(wrapper);
     assert.equal(h.attrs.role, 'button');
     assert.equal(markFooterGroups(wrapper), 0);
+  });
+});
+
+// The block's CSS arrives after the footer markup, so a group collapsed by a
+// class alone paints open and then shuts: CLS went from 0 to 0.232 on mobile.
+// Setting the display inline needs no stylesheet, so the first paint is already
+// closed.
+describe('the group is closed before anything is painted', () => {
+  const withChildren = (tag, kids) => {
+    const el = element(tag);
+    el.children = kids;
+    return el;
+  };
+
+  it('hides the list without waiting for a stylesheet', () => {
+    const h = element('H2', 'About us');
+    const ul = element('UL');
+    markFooterGroups(withChildren('DIV', [h, ul]));
+    assert.equal(ul.style.display, 'none');
+  });
+
+  it('hands the display back to the stylesheet when the group opens', () => {
+    const h = element('H2', 'About us');
+    const ul = element('UL');
+    markFooterGroups(withChildren('DIV', [h, ul]));
+    h.fire('click');
+    assert.equal(ul.style.display, '');
+  });
+
+  it('hides it again on the second click', () => {
+    const h = element('H2', 'About us');
+    const ul = element('UL');
+    markFooterGroups(withChildren('DIV', [h, ul]));
+    h.fire('click');
+    h.fire('click');
+    assert.equal(ul.style.display, 'none');
   });
 });
