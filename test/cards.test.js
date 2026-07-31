@@ -47,7 +47,6 @@ describe('the cards grid', () => {
 // wider mobile card reaches at 200px. The boilerplate forced 4/3, which at a
 // 397px card is 298px tall and made the card 676px against live's 456px.
 describe('the card image', () => {
-  const declarations = cards.replace(/\/\*[\s\S]*?\*\//g, '');
   const rule = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
 
   it('is the measured 200px tall', () => {
