@@ -67,7 +67,6 @@ describe('the card image', () => {
 // CLS on checked-baggage, against 0.0088 on a page with no cards. object-fit is
 // a paint property, so switching it moves nothing.
 describe('the icon card does not move the layout', () => {
-  const declarations = cards.replace(/\/\*[\s\S]*?\*\//g, '');
   const rule = /\.cards > ul > li\.cards-card-icon img \{[\s\S]*?\n\}/.exec(declarations)[0];
 
   it('changes only how the image is fitted, not the box', () => {
