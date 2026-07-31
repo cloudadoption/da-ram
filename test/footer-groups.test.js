@@ -100,3 +100,47 @@ describe('markFooterGroups', () => {
     assert.ok(!p.classList.contains('footer-group-title'));
   });
 });
+
+// The footer block moves the fragment's section divs into a wrapper, so the
+// headings sit one level below the element the block hands over. Marking only
+// the wrapper's own children found nothing and the footer shipped expanded.
+describe('markFooterGroups on the shape the block actually passes', () => {
+  const withChildren = (tag, kids) => {
+    const el = element(tag);
+    el.children = kids;
+    return el;
+  };
+
+  it('marks a group nested in a section div', () => {
+    const h = element('H2', 'About us');
+    const ul = element('UL');
+    const section = withChildren('DIV', [h, ul]);
+    const wrapper = withChildren('DIV', [section]);
+    assert.equal(markFooterGroups(wrapper), 1);
+    assert.ok(h.classList.contains('footer-group-title'));
+  });
+
+  it('marks groups across several sections', () => {
+    const pairs = [['A', 'B'], ['C', 'D']].map(() => {
+      const h = element('H2', 'x');
+      return { h, section: withChildren('DIV', [h, element('UL')]) };
+    });
+    const wrapper = withChildren('DIV', pairs.map((p) => p.section));
+    assert.equal(markFooterGroups(wrapper), 2);
+  });
+
+  it('still marks a group that is a direct child', () => {
+    const h = element('H2', 'About us');
+    const wrapper = withChildren('DIV', [h, element('UL')]);
+    assert.equal(markFooterGroups(wrapper), 1);
+  });
+
+  it('does not mark the same heading twice when it nests', () => {
+    const h = element('H2', 'About us');
+    const section = withChildren('DIV', [h, element('UL')]);
+    const wrapper = withChildren('DIV', [section]);
+    markFooterGroups(wrapper);
+    assert.equal(h.attrs.role, 'button');
+    assert.equal(markFooterGroups(wrapper), 0);
+  });
+});
