@@ -20,9 +20,9 @@ export const footerGroups = (children) => {
   return groups;
 };
 
-export const markFooterGroups = (footer) => {
-  const children = [...footer.children];
-  const groups = footerGroups(children);
+const markIn = (container) => {
+  const children = [...(container.children || [])];
+  const groups = footerGroups(children).filter(([titleAt]) => !children[titleAt].getAttribute('aria-expanded'));
   groups.forEach(([titleAt, listAt]) => {
     const title = children[titleAt];
     const list = children[listAt];
@@ -44,4 +44,13 @@ export const markFooterGroups = (footer) => {
     });
   });
   return groups.length;
+};
+
+// The footer block moves the fragment's section divs into a wrapper, so the
+// headings sit one level below the element it hands over. Marking only the
+// wrapper's own children found nothing and the footer shipped expanded.
+export const markFooterGroups = (root) => {
+  const nested = [...(root.children || [])]
+    .reduce((total, child) => total + markIn(child), 0);
+  return markIn(root) + nested;
 };
