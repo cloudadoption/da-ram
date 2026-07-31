@@ -6,7 +6,7 @@
 
 .table th,
 .table td {
-  padding: 8px 12px;
+  padding: 8px 12px 8px 15px;
   text-align: start;
   vertical-align: top;
 
@@ -35,10 +35,3 @@
   overflow-x: auto;
 }
 
-@media (width >= 600px) {
-  .table th,
-  .table td {
-    padding: 12px 16px;
-    font-size: var(--body-font-size-m);
-  }
-}
