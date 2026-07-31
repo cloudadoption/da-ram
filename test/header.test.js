@@ -79,10 +79,11 @@ describe('the header brand mark', () => {
   });
 
   it('grows to the measured 108x80 at 768', () => {
-    const wide = /@media \(width >= 768px\)[\s\S]*?\n\}\n\}/.exec(declarations);
-    assert.ok(wide, 'expected a 768px block');
-    assert.match(wide[0], /width:\s*108px/);
-    assert.match(wide[0], /height:\s*80px/);
+    const blocks = declarations.match(/@media \(width >= 768px\) \{[\s\S]*?\n\s*\}\n\}/g) || [];
+    const wide = blocks.find((b) => b.includes('.nav-brand'));
+    assert.ok(wide, 'expected a 768px block for the brand');
+    assert.match(wide, /width:\s*108px/);
+    assert.match(wide, /height:\s*80px/);
   });
 
   it('keeps the words for a screen reader rather than dropping them', () => {
