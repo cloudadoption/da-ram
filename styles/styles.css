@@ -339,11 +339,19 @@ main > .section > div {
   width: var(--content-width);
   max-width: var(--content-max-width);
   margin: auto;
+
+  /* The live column is 27px narrower than 90% of the viewport, at 375 and at 768
+     alike: 311 against 338, and 664 against 691. A constant difference at two
+     widths is a fixed inset. Logical, so it mirrors under rtl. */
+  padding-inline: 13.5px;
 }
 
 @media (width >= 1280px) {
   main > .section > div {
     width: var(--content-max-width);
+
+    /* No inset above the breakpoint: the live column matches the cap exactly. */
+    padding-inline: 0;
   }
 }
 
