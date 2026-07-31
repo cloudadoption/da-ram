@@ -48,10 +48,12 @@
 
 .cards > ul > li.cards-card-icon img {
   /* An icon sits at its natural size on live: 105 and 106px on how-it-works,
-     27x36 on checked-baggage. The 200px height is for a photograph. */
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  margin-inline: auto;
-  display: block;
+     27x36 on checked-baggage. The 200px height is for a photograph.
+
+     Only the fit changes. The class lands when the image loads, after the first
+     paint, so resizing the box here moved the layout under the reader: 0.1432 of
+     a 0.1591 CLS on checked-baggage, against 0.0088 on a page with no cards.
+     object-fit is a paint property and scale-down leaves an image smaller than
+     its box alone. */
+  object-fit: scale-down;
 }
