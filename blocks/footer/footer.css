@@ -1,16 +1,72 @@
+/* Live's footer is a dark bar 280px tall showing 36 of its 114 links: the three
+   link lists sit behind their headings and open on a click. The boilerplate's
+   light bar showed all 71 and ran to 1,513px, which is 1,233px added to the
+   bottom of every page in the estate. */
 footer {
-  background-color: var(--light-color);
-  font-size: var(--body-font-size-xs);
+  background-color: var(--ram-text-dark-color);
+  color: #fff;
+  font-size: var(--body-font-size-m);
 }
 
 footer .footer > div {
   margin: auto;
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   padding: 40px 24px 24px;
 }
 
 footer .footer p {
   margin: 0;
+}
+
+footer .footer a:any-link {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer .footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-group-title {
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid rgb(255 255 255 / 20%);
+  font-size: var(--body-font-size-m);
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.footer-group-title::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-inline-start: 0.5em;
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+  transform: rotate(45deg) translateY(-0.15em);
+}
+
+.footer-group-title[aria-expanded="true"]::after {
+  transform: rotate(-135deg) translateY(-0.15em);
+}
+
+.footer-group-list {
+  /* The block sets the display inline, so the group is closed before the first
+     paint. This rule only shapes the open state. */
+  margin: 0;
+  padding: 8px 0 16px;
+  list-style: none;
+}
+
+.footer-group-title[aria-expanded="true"] + .footer-group-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+}
+
+.footer-group-list li {
+  font-size: var(--body-font-size-s);
 }
 
 @media (width >= 900px) {
