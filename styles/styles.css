@@ -421,3 +421,40 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+
+/* A run of standalone images. The transform emits each as its own paragraph and
+   they stacked full width: four of them on how-it-works rendered 1240x738 each
+   against live's 394px. Live lays them across, three at a time in a 1240px
+   column, which is the ladder the cards use. */
+.image-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.image-row p {
+  margin: 0;
+}
+
+.image-row img {
+  width: 100%;
+  height: auto;
+}
+
+@media (width >= 992px) {
+  .image-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 1280px) {
+  .image-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* A pair reads as a pair at any width rather than leaving a gap. */
+  .image-row-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
