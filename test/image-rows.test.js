@@ -40,14 +40,30 @@ describe('imageRuns', () => {
   });
 });
 
-// A stub standing in for the pieces of the DOM the wrapper touches.
+// A stub standing in for the pieces of the DOM the wrapper touches. Appending a
+// node moves it, as the real DOM does: without that the paragraphs would sit in
+// both the wrapper and the row and the tests would pass on a fiction.
+const detach = (node) => {
+  if (!node.parent) return;
+  const at = node.parent.children.indexOf(node);
+  if (at >= 0) node.parent.children.splice(at, 1);
+};
+
 const element = (tag) => {
   const node = {
     tag,
     children: [],
     className: '',
-    append(...kids) { node.children.push(...kids); kids.forEach((k) => { k.parent = node; }); },
+    parent: null,
+    append(...kids) {
+      kids.forEach((kid) => {
+        detach(kid);
+        node.children.push(kid);
+        kid.parent = node;
+      });
+    },
     insertBefore(fresh, before) {
+      detach(fresh);
       const at = node.children.indexOf(before);
       node.children.splice(at < 0 ? node.children.length : at, 0, fresh);
       fresh.parent = node;
@@ -58,7 +74,11 @@ const element = (tag) => {
 
 const wrapperWith = (kinds) => {
   const wrapper = element('div');
-  kinds.forEach((kind) => wrapper.append({ ...element('p'), kind }));
+  kinds.forEach((kind) => {
+    const child = element('p');
+    child.kind = kind;
+    wrapper.append(child);
+  });
   return wrapper;
 };
 
@@ -71,7 +91,7 @@ describe('wrapImageRuns', () => {
     const wrapper = wrapperWith(['t', 'i', 'i', 't']);
     wrapImageRuns(wrapper, documentStub, imageKind);
     assert.equal(wrapper.children.length, 3);
-    assert.equal(wrapper.children[1].className, 'image-row');
+    assert.match(wrapper.children[1].className, /\bimage-row\b/);
     assert.equal(wrapper.children[1].children.length, 2);
   });
 
@@ -92,7 +112,7 @@ describe('wrapImageRuns', () => {
   it('wraps two runs separately', () => {
     const wrapper = wrapperWith(['i', 'i', 't', 'i', 'i']);
     wrapImageRuns(wrapper, documentStub, imageKind);
-    const rows = wrapper.children.filter((c) => c.className === 'image-row');
+    const rows = wrapper.children.filter((c) => /\bimage-row\b/.test(c.className));
     assert.equal(rows.length, 2);
   });
 
