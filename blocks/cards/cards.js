@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { markIconCards } from './card-icons.js';
 
 export default function decorate(block) {
   /* change to ul, li */
@@ -13,5 +14,6 @@ export default function decorate(block) {
     ul.append(li);
   });
   ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
+  markIconCards(ul);
   block.replaceChildren(ul);
 }
