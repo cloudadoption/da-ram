@@ -3,12 +3,28 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
+
+  /* Live steps 1, 2, 3 across at 992 and 1280, measured on preparing-your-trip
+     at seven widths and confirmed on checked-baggage in three languages. The
+     1280 is where the content column caps too. auto-fill gave four. */
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 
+@media (width >= 992px) {
+  .cards > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 1280px) {
+  .cards > ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .cards > ul > li {
-  border: 1px solid #dadada;
+  /* Live cards read `border: 0px none`. */
   background-color: var(--background-color);
 }
 
