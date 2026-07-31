@@ -31,9 +31,14 @@ const markIn = (container) => {
     title.setAttribute('role', 'button');
     title.setAttribute('tabindex', '0');
     title.setAttribute('aria-expanded', 'false');
+    // The block's CSS arrives after the footer markup, so a group closed by a
+    // class alone paints open and then shuts: CLS went from 0 to 0.232 on
+    // mobile. An inline display needs no stylesheet to be in force.
+    list.style.display = 'none';
     const toggle = () => {
       const open = title.getAttribute('aria-expanded') === 'true';
       title.setAttribute('aria-expanded', open ? 'false' : 'true');
+      list.style.display = open ? 'none' : '';
     };
     title.addEventListener('click', toggle);
     title.addEventListener('keydown', (event) => {
