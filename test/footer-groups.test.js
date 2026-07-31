@@ -135,6 +135,18 @@ describe('markFooterGroups on the shape the block actually passes', () => {
     assert.equal(markFooterGroups(wrapper), 1);
   });
 
+  // The real tree is footer > .footer.block > wrapper > .section >
+  // .default-content-wrapper > h2, so a fixed depth is the wrong shape to code
+  // against. Marking one level down still found nothing and it shipped expanded.
+  it('marks a group three levels down, which is where the block puts it', () => {
+    const h = element('H2', 'About us');
+    const inner = withChildren('DIV', [h, element('UL')]);
+    const section = withChildren('DIV', [inner]);
+    const wrapper = withChildren('DIV', [section]);
+    assert.equal(markFooterGroups(wrapper), 1);
+    assert.ok(h.classList.contains('footer-group-title'));
+  });
+
   it('does not mark the same heading twice when it nests', () => {
     const h = element('H2', 'About us');
     const section = withChildren('DIV', [h, element('UL')]);
