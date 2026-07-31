@@ -336,6 +336,9 @@ main > .section {
 }
 
 main > .section > div {
+  /* content-box would add the inset to the 90% rather than take it out, which
+     leaves the column 27px too wide. */
+  box-sizing: border-box;
   width: var(--content-width);
   max-width: var(--content-max-width);
   margin: auto;
