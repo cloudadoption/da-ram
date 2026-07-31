@@ -134,7 +134,14 @@ h6 {
 }
 
 h1 { font-size: var(--heading-font-size-xxl); }
-h2 { font-size: var(--heading-font-size-xl); }
+
+/* Of 710 later 32px h2s on live, 400 are weight 300 against 303 at 500. The
+   first heading on a page goes the other way, 500 on 59% of 515 pages, and that
+   one is the h1 here. */
+h2 {
+  font-size: var(--heading-font-size-xl);
+  font-weight: 300;
+}
 h3 { font-size: var(--heading-font-size-l); }
 h4 { font-size: var(--heading-font-size-m); }
 h5 { font-size: var(--heading-font-size-s); }
