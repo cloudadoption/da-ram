@@ -124,7 +124,9 @@ h4,
 h5,
 h6 {
   margin-top: 0.8em;
-  margin-bottom: 0.25em;
+
+  /* The gap under a heading measures 15 to 24px across four live pages. */
+  margin-bottom: 20px;
   font-family: var(--heading-font-family);
   font-weight: 500;
   line-height: 1.2;
@@ -144,8 +146,16 @@ ol,
 ul,
 pre,
 blockquote {
-  margin-top: 0.8em;
-  margin-bottom: 0.25em;
+  /* Live leaves no top margin on a block and the run between two paragraphs
+     measures 8px. Adjacent margins collapse, so the bottom alone sets the run. */
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+ul,
+ol {
+  /* Live indents 20px where it indents at all. The browser default is 40. */
+  padding-inline-start: 20px;
 }
 
 code,
