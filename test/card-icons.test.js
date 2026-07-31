@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { ICON_MAX_WIDTH, isIconImage, markIconCards } from '../blocks/cards/card-icons.js';
+import {
+  ICON_MAX_WIDTH, isIconImage, isPhotoImage, markIconCards,
+} from '../blocks/cards/card-icons.js';
 
 // Live's card images come in two shapes. A photo fills the card and is 200px
 // tall: 377x200 on preparing-your-trip. An icon sits at its natural size: 105 and
@@ -53,37 +55,68 @@ const image = (naturalWidth, complete = true) => {
 const listOf = (images) => ({ querySelectorAll: () => images });
 
 describe('markIconCards', () => {
-  it('marks the card of a small image', () => {
-    const img = image(105);
-    markIconCards(listOf([img]));
-    assert.ok(img.li.classList.contains('cards-card-icon'));
-  });
-
-  it('leaves the card of a photograph unmarked', () => {
+  it('marks the card of a photograph', () => {
     const img = image(1647);
     markIconCards(listOf([img]));
-    assert.ok(!img.li.classList.contains('cards-card-icon'));
+    assert.ok(img.li.classList.contains('cards-card-photo'));
+  });
+
+  it('leaves the card of an icon unmarked, because that is the default', () => {
+    const img = image(105);
+    markIconCards(listOf([img]));
+    assert.ok(!img.li.classList.contains('cards-card-photo'));
   });
 
   it('waits for an image that has not loaded yet', () => {
-    const img = image(105, false);
+    const img = image(1647, false);
     markIconCards(listOf([img]));
-    assert.ok(!img.li.classList.contains('cards-card-icon'));
+    assert.ok(!img.li.classList.contains('cards-card-photo'));
     img.fire('load');
-    assert.ok(img.li.classList.contains('cards-card-icon'));
+    assert.ok(img.li.classList.contains('cards-card-photo'));
   });
 
   it('marks each card independently', () => {
     const icon = image(106);
     const photo = image(1200);
     markIconCards(listOf([icon, photo]));
-    assert.ok(icon.li.classList.contains('cards-card-icon'));
-    assert.ok(!photo.li.classList.contains('cards-card-icon'));
+    assert.ok(!icon.li.classList.contains('cards-card-photo'));
+    assert.ok(photo.li.classList.contains('cards-card-photo'));
   });
 
   it('is unbothered by an image outside a list item', () => {
-    const img = image(105);
+    const img = image(1647);
     img.closest = () => null;
     assert.doesNotThrow(() => markIconCards(listOf([img])));
+  });
+});
+
+// Reserving the photo's 200px band for every card left an icon floating in it:
+// live's icon cards are compact, about 110px tall around a 27x36 image. The
+// default is the icon now and the photo is what gets marked, which is both
+// closer to live and a smaller shift: a photo goes 236px to 200px where an icon
+// was going 200px to 105px.
+describe('isPhotoImage', () => {
+  it('calls a 1647px source a photograph', () => {
+    assert.equal(isPhotoImage(1647), true);
+  });
+
+  it('leaves a 105px icon alone', () => {
+    assert.equal(isPhotoImage(105), false);
+  });
+
+  it('takes the same boundary as the icon test, from the other side', () => {
+    assert.equal(isPhotoImage(ICON_MAX_WIDTH), false);
+    assert.equal(isPhotoImage(ICON_MAX_WIDTH + 1), true);
+  });
+
+  it('says no for an image that has not loaded', () => {
+    assert.equal(isPhotoImage(0), false);
+    assert.equal(isPhotoImage(undefined), false);
+  });
+
+  it('is the opposite of isIconImage for anything loaded', () => {
+    [27, 105, 200, 201, 1647].forEach((w) => {
+      assert.notEqual(isIconImage(w), isPhotoImage(w));
+    });
   });
 });
