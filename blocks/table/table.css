@@ -1,7 +1,7 @@
 .table table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--body-font-size-s);
+  font-size: var(--body-font-size-m);
 }
 
 .table th,
