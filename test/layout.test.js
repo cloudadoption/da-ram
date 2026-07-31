@@ -202,3 +202,35 @@ describe('the vertical rhythm', () => {
     assert.match(rule[0], /padding-inline-start:\s*20px/);
   });
 });
+
+// 974 documents carry a title lifted from live's `.page-heading__title`
+// component, flagged with `template: titled` metadata, which the boilerplate
+// turns into a body class. Live styles that component differently from an
+// article's own first heading: 24px/32px weight 400 in the secondary family
+// below 992px, and 40px/44px above. Article headings do not move at all.
+describe('the page title component', () => {
+  const rule = () => /body\.titled\s+main\s+h1\s*\{[\s\S]*?\n\}/.exec(styles);
+
+  it('styles the title in the secondary family', () => {
+    assert.ok(rule(), 'expected a body.titled main h1 rule');
+    assert.match(rule()[0], /font-family:\s*var\(--secondary-font-family\)/);
+  });
+
+  it('takes the measured 24px and weight 400 below the breakpoint', () => {
+    assert.match(rule()[0], /font-size:\s*24px/);
+    assert.match(rule()[0], /font-weight:\s*400/);
+    assert.match(rule()[0], /line-height:\s*32px/);
+  });
+
+  it('rises to the measured 40px above 992px', () => {
+    const wide = /@media\s*\(width\s*>=\s*992px\)\s*\{[\s\S]*?\n\}\n\}/.exec(styles);
+    assert.ok(wide, 'expected a 992px breakpoint block');
+    assert.match(wide[0], /font-size:\s*40px/);
+    assert.match(wide[0], /line-height:\s*44px/);
+  });
+
+  it('leaves an untitled page alone, so the article scale still applies', () => {
+    const heading = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(heading, /font-weight:\s*500/);
+  });
+});
