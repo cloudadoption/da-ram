@@ -109,8 +109,15 @@ describe('the type scale', () => {
     assert.equal(sizeOf('heading-font-size-xxl'), '32px');
   });
 
+  // The transform promotes a live h2 to h1 on some pages and leaves it an h2 on
+  // others, so both levels answer to live's 32px h2. reduced-mobility keeps the
+  // h2 and read 28px against live's 32px until this.
+  it('sets the top two heading levels to live\'s 32px h2', () => {
+    assert.equal(sizeOf('heading-font-size-xxl'), '32px');
+    assert.equal(sizeOf('heading-font-size-xl'), '32px');
+  });
+
   it('sets the section heading to the measured 28px', () => {
-    assert.equal(sizeOf('heading-font-size-xl'), '28px');
     assert.equal(sizeOf('heading-font-size-l'), '28px');
   });
 
