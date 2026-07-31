@@ -84,3 +84,55 @@ describe('the container box model', () => {
     assert.match(section[0], /box-sizing:\s*border-box/);
   });
 });
+
+// The type scale, measured on four live article pages at 375 and 1440 with
+// tools/design/type-survey.mjs in the control plane. Live does not scale its
+// article type at a breakpoint: the same values read at both widths. The
+// boilerplate scale does move at 900px, which is the gap.
+describe('the type scale', () => {
+  const root = /:root\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+  const sizeOf = (name) => {
+    const match = new RegExp(`--${name}:\\s*([^;]+);`).exec(root);
+    return match && match[1].trim();
+  };
+
+  it('sets the body size to the measured 16px', () => {
+    assert.equal(sizeOf('body-font-size-m'), '16px');
+  });
+
+  it('sets the body line height to the measured 1.4', () => {
+    const body = /\nbody\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(body, /line-height:\s*1\.4\b/);
+  });
+
+  it('sets the page title to the measured 32px', () => {
+    assert.equal(sizeOf('heading-font-size-xxl'), '32px');
+  });
+
+  it('sets the section heading to the measured 28px', () => {
+    assert.equal(sizeOf('heading-font-size-xl'), '28px');
+    assert.equal(sizeOf('heading-font-size-l'), '28px');
+  });
+
+  it('sets the remaining heading levels to the measured 24, 20 and 16px', () => {
+    assert.equal(sizeOf('heading-font-size-m'), '24px');
+    assert.equal(sizeOf('heading-font-size-s'), '20px');
+    assert.equal(sizeOf('heading-font-size-xs'), '16px');
+  });
+
+  it('gives headings the measured 1.2 line height', () => {
+    const headings = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(headings, /line-height:\s*1\.2\b/);
+  });
+
+  it('gives headings the measured 500 weight', () => {
+    const headings = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(headings, /font-weight:\s*500\b/);
+  });
+
+  it('does not restate a type size at the 900px breakpoint, because live is flat', () => {
+    const wide = /@media\s*\(width\s*>=\s*900px\)\s*\{[\s\S]*?\n\}\n\}/.exec(styles);
+    if (!wide) return;
+    assert.doesNotMatch(wide[0], /--(body|heading)-font-size-/);
+  });
+});
