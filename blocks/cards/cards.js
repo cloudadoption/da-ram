@@ -13,7 +13,10 @@ export default function decorate(block) {
     });
     ul.append(li);
   });
-  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
+  // Eager, so the image is complete when markIconCards runs and the card is
+  // sized before the first paint. Lazy loading put the class on after layout and
+  // the card resized under the reader: 0.1432 of a 0.1591 CLS on checked-baggage.
+  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, true, [{ width: '750' }])));
   markIconCards(ul);
   block.replaceChildren(ul);
 }
