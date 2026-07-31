@@ -19,9 +19,9 @@ const FONT_ORIGIN = 'https://www.royalairmaroc.com/o/ram-airways-theme/2025/asse
 // rendered width of a paragraph moves from 706.47px to 672.14px.
 describe('brand fonts', () => {
   it('loads every weight from the live origin', () => {
-    for (const weight of ['100', '300', '500', '700']) {
+    ['100', '300', '500', '700'].forEach((weight) => {
       assert.match(fonts, new RegExp(`${FONT_ORIGIN}/museosans_${weight}-webfont\\.woff2`));
-    }
+    });
   });
 
   it('names the family the live theme names, so the token is the client tone', () => {
@@ -41,9 +41,9 @@ describe('brand fonts', () => {
   it('keeps font-display swap on every face, as the live theme does', () => {
     const faces = fonts.match(/@font-face\s*\{[^}]*\}/g) || [];
     assert.ok(faces.length >= 8, `expected the four weights of two families, found ${faces.length}`);
-    for (const face of faces) {
-      if (!face.includes('src: local(')) assert.match(face, /font-display:\s*swap/);
-    }
+    faces
+      .filter((face) => !face.includes('src: local('))
+      .forEach((face) => assert.match(face, /font-display:\s*swap/));
   });
 
   it('drops the roboto faces the boilerplate shipped', () => {
