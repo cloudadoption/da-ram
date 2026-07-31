@@ -52,3 +52,24 @@ describe('the container breakpoint', () => {
     assert.match(styles, /--content-cap-breakpoint:\s*1280px/);
   });
 });
+
+// Below the breakpoint the live column is 27px narrower than 90% of the
+// viewport, at 375 and at 768 alike: 311 against 338, and 664 against 691. A
+// constant difference at two widths is a fixed inset, not a proportional one.
+// Above the breakpoint there is none, since the column matches the cap exactly.
+describe('the inner inset', () => {
+  it('insets the column by the measured 13.5px each side below the breakpoint', () => {
+    const section = /main > \.section > div \{[^}]*\}/.exec(styles);
+    assert.match(section[0], /padding-inline:\s*13\.5px/);
+  });
+
+  it('uses a logical property, so it mirrors under rtl', () => {
+    const section = /main > \.section > div \{[^}]*\}/.exec(styles);
+    assert.doesNotMatch(section[0], /padding-(left|right):/);
+  });
+
+  it('drops the inset above the breakpoint, where the column matches the cap', () => {
+    const query = /@media \(width >= 1280px\) \{[^@]*?\}\s*\}/.exec(styles);
+    assert.match(query[0], /padding-inline:\s*0/);
+  });
+});
