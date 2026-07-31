@@ -265,3 +265,26 @@ describe('the authored heading colour', () => {
     assert.doesNotMatch(styles, /body\.heading-(white|inverse)/);
   });
 });
+
+// Across 515 untitled live pages the first content heading is weight 500 on 59%
+// and the headings under it are lighter: of 710 later 32px h2s, 400 are weight
+// 300 and 303 are 500. The migrated document's h1 is live's first heading, so it
+// keeps 500 and h2 takes the 300.
+describe('the heading weights', () => {
+  const headings = () => /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+
+  it('keeps the 500 the first heading measures', () => {
+    assert.match(headings(), /font-weight:\s*500/);
+  });
+
+  it('lightens h2 to the measured 300', () => {
+    const rule = /\nh2\s*\{[\s\S]*?\n\}/.exec(styles);
+    assert.ok(rule, 'expected an h2 rule');
+    assert.match(rule[0], /font-weight:\s*300/);
+  });
+
+  it('leaves h3 and h4 at 500, which is what they measure', () => {
+    assert.doesNotMatch(styles, /\nh3\s*\{[^}]*font-weight/);
+    assert.doesNotMatch(styles, /\nh4\s*\{[^}]*font-weight/);
+  });
+});
