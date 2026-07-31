@@ -36,3 +36,19 @@ describe('content column', () => {
     assert.doesNotMatch(section[0], /padding:\s*0 24px/);
   });
 });
+
+// The cap does not arrive by 90% reaching 1240, which would need a 1378px
+// viewport. Live switches at exactly 1280: the column reads 1053px at 1200,
+// 1089px at 1240 and 1107px at 1260, then jumps to 1240px at 1280 and holds
+// there at 1320 and 1440.
+describe('the container breakpoint', () => {
+  it('fixes the column at the cap from 1280 up', () => {
+    const query = /@media \(width >= 1280px\) \{[^@]*?\}\s*\}/.exec(styles);
+    assert.ok(query, 'expected a 1280px media query');
+    assert.match(query[0], /width:\s*var\(--content-max-width\)/);
+  });
+
+  it('names the breakpoint as a token', () => {
+    assert.match(styles, /--content-cap-breakpoint:\s*1280px/);
+  });
+});
