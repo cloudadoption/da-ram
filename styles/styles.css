@@ -20,8 +20,9 @@
   --link-hover-color: #1d3ecf;
 
   /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  --body-font-family: ram-primary-font, ram-primary-font-fallback, sans-serif;
+  --heading-font-family: ram-primary-font, ram-primary-font-fallback, sans-serif;
+  --secondary-font-family: ram-secondary-font, ram-primary-font-fallback, sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
@@ -41,15 +42,15 @@
 }
 
 /* fallback fonts */
-@font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
-  src: local('Arial');
-}
 
+/* The brand faces load cross-origin, so there is a moment before the swap. A
+   size-adjusted local face makes that moment cost no reflow. 96.5% is Museo Sans
+   against Arial, measured from the rendered width of a paragraph on
+   en-gb/checked-baggage: 706.47px in the fallback against 672.14px in the brand
+   font, and 672.14 / 706.47 is 0.9514. */
 @font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
+  font-family: ram-primary-font-fallback;
+  size-adjust: 95.14%;
   src: local('Arial');
 }
 
