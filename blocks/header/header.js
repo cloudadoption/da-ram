@@ -1,4 +1,5 @@
 import { getMetadata } from '../../scripts/aem.js';
+import markNavGroups from './nav-groups.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates mobile/tablet width
@@ -139,6 +140,7 @@ export default async function decorate(block) {
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
+    markNavGroups(navSections.querySelector(':scope .default-content-wrapper > ul'));
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
       if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
       navSection.addEventListener('click', () => {

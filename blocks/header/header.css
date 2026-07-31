@@ -185,6 +185,19 @@ header nav .nav-sections ul > li > ul > li {
   font-weight: 400;
 }
 
+/* RAM's navigation is three levels: top item, group heading, link. 14 group headings
+   organise 80 links under 5 top items, so the middle level is a heading rather than a
+   link and the level below it is the link. */
+header nav .nav-sections .nav-group {
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+header nav .nav-sections .nav-group > ul {
+  padding-inline-start: 12px;
+  font-weight: 400;
+}
+
 @media (width >= 900px) {
   header nav .nav-sections {
     display: block;
@@ -247,6 +260,22 @@ header nav .nav-sections ul > li > ul > li {
     padding: 16px;
     background-color: var(--light-color);
     white-space: initial;
+  }
+
+  /* A panel holding group headings needs the room for them, and the groups sit
+     side by side rather than in one tall column. */
+  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul:has(.nav-group) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    width: max-content;
+    max-width: min(80vw, 720px);
+  }
+
+  header nav .nav-sections .nav-group {
+    flex: 0 1 auto;
+    min-width: 160px;
+    margin-top: 0;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li > ul::before {
