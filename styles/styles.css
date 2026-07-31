@@ -140,6 +140,24 @@ h4 { font-size: var(--heading-font-size-m); }
 h5 { font-size: var(--heading-font-size-s); }
 h6 { font-size: var(--heading-font-size-xs); }
 
+/* A page whose title was lifted from live's page-heading component. Live styles
+   that heading in the secondary family and moves it at 992px, where an article's
+   own headings do not move at all. `template: titled` metadata on 974 documents
+   becomes the body class. */
+body.titled main h1 {
+  font-family: var(--secondary-font-family);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 32px;
+}
+
+@media (width >= 992px) {
+  body.titled main h1 {
+    font-size: 40px;
+    line-height: 44px;
+  }
+}
+
 p,
 dl,
 ol,
