@@ -173,3 +173,28 @@ describe('body copy weight', () => {
     assert.match(body, /line-height:\s*1\.5\b/);
   });
 });
+
+// The vertical rhythm, measured as the gap a reader sees rather than the
+// declared margin, because adjacent margins collapse. On live article pages the
+// run between two paragraphs is 8px (22 samples on reduced-mobility) and the gap
+// under a heading is 15 to 24px across 14 samples on four pages. The migrated
+// pages read 13px for both.
+describe('the vertical rhythm', () => {
+  it('gives a paragraph run the measured 8px', () => {
+    const rule = /\np,\ndl,\nol,\nul,\npre,\nblockquote\s*\{[\s\S]*?\n\}/.exec(styles);
+    assert.ok(rule, 'expected the block-element margin rule');
+    assert.match(rule[0], /margin-top:\s*0;/);
+    assert.match(rule[0], /margin-bottom:\s*8px;/);
+  });
+
+  it('gives a heading the measured 20px below it', () => {
+    const headings = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(headings, /margin-bottom:\s*20px;/);
+  });
+
+  it('indents a list by the measured 20px, not the browser default 40', () => {
+    const rule = /\nul,\nol\s*\{[\s\S]*?\n\}/.exec(styles);
+    assert.ok(rule, 'expected a list rule');
+    assert.match(rule[0], /padding-inline-start:\s*20px/);
+  });
+});
