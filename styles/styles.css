@@ -140,6 +140,30 @@ h4 { font-size: var(--heading-font-size-m); }
 h5 { font-size: var(--heading-font-size-s); }
 h6 { font-size: var(--heading-font-size-xs); }
 
+/* The first content heading on a page with no title component takes its colour
+   from an inline style live's authors wrote, not from the theme. Over 515 such
+   pages: #b02736 on 245, the default on 97, #212529 on 79, black on 35 and
+   #c2002f on 3. `theme` metadata on 362 documents becomes the body class.
+
+   White is missing on purpose. 54 pages read white on a dark banner the
+   migration has not reproduced, and a white rule would put white text on a
+   white page. Those pages need the banner before they need the colour. */
+body.heading-brand main h1 {
+  color: #b02736;
+}
+
+body.heading-slate main h1 {
+  color: #212529;
+}
+
+body.heading-black main h1 {
+  color: #000;
+}
+
+body.heading-crimson main h1 {
+  color: #c2002f;
+}
+
 /* A page whose title was lifted from live's page-heading component. Live styles
    that heading in the secondary family and moves it at 992px, where an article's
    own headings do not move at all. `template: titled` metadata on 974 documents
