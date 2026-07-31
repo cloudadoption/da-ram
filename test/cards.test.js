@@ -41,3 +41,24 @@ describe('the cards grid', () => {
     assert.doesNotMatch(item, /border:\s*1px/);
   });
 });
+
+// Live's card image is 200px tall at 768, 992, 1200 and 1440 alike, whatever the
+// card width, and 157px in a 248px card at 375, which is the same proportion our
+// wider mobile card reaches at 200px. The boilerplate forced 4/3, which at a
+// 397px card is 298px tall and made the card 676px against live's 456px.
+describe('the card image', () => {
+  const declarations = cards.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
+
+  it('is the measured 200px tall', () => {
+    assert.match(rule, /height:\s*200px/);
+  });
+
+  it('does not force an aspect ratio, which fought the height', () => {
+    assert.doesNotMatch(rule, /aspect-ratio/);
+  });
+
+  it('still covers its box', () => {
+    assert.match(rule, /object-fit:\s*cover/);
+  });
+});
