@@ -79,14 +79,64 @@
 
 /* fallback fonts */
 
-/* The brand faces load cross-origin, so there is a moment before the swap. A
-   size-adjusted local face makes that moment cost no reflow. 96.5% is Museo Sans
-   against Arial, measured from the rendered width of a paragraph on
-   en-gb/checked-baggage: 706.47px in the fallback against 672.14px in the brand
-   font, and 672.14 / 706.47 is 0.9514. */
+/* The brand faces load cross-origin, so there is a moment before the swap, and a
+   size-adjusted local face is what stops that moment costing a reflow.
+
+   One ratio does not cover the type scale. The single 95.14% here was measured from
+   a body paragraph and it shrank Arial, where Museo Sans is wider than Arial at
+   every weight. The h1 is 32px at weight 500: it fitted "More comfort for your trip"
+   on one line in the shrunken fallback and needed two in the brand font, so
+   everything below it moved 38px when the swap landed, 32 times the 1.2 heading line
+   height, and 0.0369 of layout shift at mobile 412px.
+
+   Measured in the DOM on /en-gb/add-extra-luggage with a 61-character probe at 32px,
+   each weight force-loaded first and document.fonts.check confirming it resolved. A
+   canvas substitutes silently for a face nothing has asked for, and the substitute
+   measures as a real ratio: that read weight 700 as 0.9176 where it is 1.0062.
+
+   Museo, the secondary family, measures 1.0204, 1.0424, 1.0670, 1.0670, 1.0174 and
+   1.0545 over the same weights. It gets no face here because
+   --secondary-font-family is declared and used nowhere. */
 @font-face {
   font-family: ram-primary-font-fallback;
-  size-adjust: 95.14%;
+  font-weight: 100;
+  size-adjust: 103.73%;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 300;
+  size-adjust: 105.15%;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 400;
+  size-adjust: 106.69%;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 500;
+  size-adjust: 106.69%;
+  src: local('Arial');
+}
+
+/* Arial Bold is the baseline here, not Arial, which is why 700 is nearly 1. */
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 700;
+  size-adjust: 100.62%;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 900;
+  size-adjust: 104.18%;
   src: local('Arial');
 }
 
