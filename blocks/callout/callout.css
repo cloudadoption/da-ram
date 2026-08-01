@@ -31,7 +31,9 @@
    brand red in styles.css, #c20831, and not the rgb(194, 0, 47) the kartenstatus
    box fills with: three reds are in play on live. */
 .callout.accent {
+  /* The family's modal radius is 10px, not the 12px the base carries. */
   border: 4px solid #9a1c3e;
+  border-radius: 10px;
 }
 
 .callout.fill {

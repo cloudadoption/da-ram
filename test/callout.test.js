@@ -39,6 +39,12 @@ describe('the callout block', () => {
     assert.match(accent, /border:\s*4px solid #9a1c3e/);
   });
 
+  // The accent family's modal radius is 10px, not the 12px the base carries. The
+  // branch preview read 12px because the base was not overridden.
+  it('gives the accent variant its own measured radius', () => {
+    assert.match(rule('.callout.accent'), /border-radius:\s*10px/);
+  });
+
   it('fills the fill variant and draws it no border', () => {
     const fill = rule('.callout.fill');
     assert.match(fill, /background-color:\s*#f8f8f8/i);
