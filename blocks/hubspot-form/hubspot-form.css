@@ -1,0 +1,20 @@
+/* The form arrives in an iframe HubSpot sizes itself, and its height is a property
+   of the form rather than of the page: measured on live at 412 and 1440, the three
+   sampled pages render 784, 498 and 642 tall on mobile and 472, 378 and 460 on
+   desktop. So no height is reserved here. A single min-height would be wrong for
+   most of the 20 forms, and live reserves nothing either.
+
+   Width comes from the content column, which is what live does on the 12 pages that
+   have a page heading: bagage-perdu measures 1219 inside the 1240 column. The other
+   9 render full width on live because Liferay wraps them in no container, and that
+   is recorded as a divergence rather than reproduced. */
+
+.hubspot-form {
+  display: block;
+}
+
+.hubspot-form iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
