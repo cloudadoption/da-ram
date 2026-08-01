@@ -206,6 +206,24 @@ describe('markFooterBar', () => {
     markFooterGroups(wrapper);
     assert.equal(markFooterBar(wrapper), 0);
   });
+
+  // A 60-link Destinations column styled as a horizontal bar is a worse
+  // regression than the missing bar was, so the two passes do not depend on
+  // which ran first.
+  it('skips a group list even when markFooterGroups has not run', () => {
+    const wrapper = withChildren('DIV', [element('H2', 'About us'), element('UL')]);
+    assert.equal(markFooterBar(wrapper), 0);
+  });
+
+  it('leaves a list nested inside a list item alone', () => {
+    const inner = element('UL');
+    const item = withChildren('LI', [inner]);
+    const outer = withChildren('UL', [item]);
+    const wrapper = withChildren('DIV', [outer]);
+    markFooterBar(wrapper);
+    assert.ok(outer.classList.contains('footer-bar-list'));
+    assert.ok(!inner.classList.contains('footer-bar-list'));
+  });
 });
 
 // The block's CSS arrives after the footer markup, so a group collapsed by a
