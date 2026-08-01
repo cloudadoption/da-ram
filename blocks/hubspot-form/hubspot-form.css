@@ -1,0 +1,34 @@
+/* The form arrives in an iframe HubSpot sizes itself, and it arrives late, so the
+   footer moves when it does: Lighthouse measured that shift at 0.3159 on
+   /en-gb/bagage-perdu, mobile CLS 0.32 and Performance 71. Live shifts the same way
+   and reserving nothing was faithful to it, and the psi gate measures our page.
+
+   The height belongs to the form rather than to the page. Measured over the 21 on our
+   own preview, they run 177 to 1511px at 320 wide and 177 to 926 at 900, so one value
+   here would be wrong for most of the 20 forms. Each page authors its own two, and
+   the block sets them as custom properties.
+
+   Measured at five widths: the narrowest is the tallest below 900 and 900 is at least
+   as tall as 1440 above it, so two bands cover both without a shift.
+
+   Width comes from the content column, which is what live does on the 12 pages that
+   have a page heading: bagage-perdu measures 1219 inside the 1240 column. The other 9
+   render full width on live because Liferay wraps them in no container, and that is
+   recorded as a divergence rather than reproduced. */
+
+.hubspot-form {
+  display: block;
+  min-height: var(--hubspot-form-height-mobile, 0);
+}
+
+@media (width >= 900px) {
+  .hubspot-form {
+    min-height: var(--hubspot-form-height-desktop, 0);
+  }
+}
+
+.hubspot-form iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
