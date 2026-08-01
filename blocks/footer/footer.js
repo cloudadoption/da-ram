@@ -1,6 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-import { markFooterGroups } from './footer-groups.js';
+import { markFooterBar, markFooterGroups } from './footer-groups.js';
 
 /**
  * loads and decorates the footer
@@ -18,5 +18,6 @@ export default async function decorate(block) {
   while (fragment.firstElementChild) footer.append(fragment.firstElementChild);
 
   markFooterGroups(footer);
+  markFooterBar(footer);
   block.append(footer);
 }

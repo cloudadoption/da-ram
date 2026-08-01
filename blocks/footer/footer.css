@@ -14,8 +14,14 @@ footer .footer > div {
   padding: 40px 24px 24px;
 }
 
+/* The only paragraph in the footer is the market legal notice, because the
+   columns are headings and lists. France states its RCS registration and
+   Portugal links the Livro de Reclamacoes; the other eight carry none. */
 footer .footer p {
   margin: 0;
+  padding-top: 12px;
+  font-size: var(--body-font-size-xs);
+  text-align: center;
 }
 
 footer .footer a:any-link {
@@ -68,6 +74,23 @@ footer .footer a:hover {
 .footer-group-list li {
   font-size: var(--body-font-size-s);
 }
+
+/* Live shows three links below the columns, centred and wrapping, and they do
+   not collapse: the site map, the terms and the partner page. */
+.footer-bar-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+  margin: 0;
+  padding: 16px 0 0;
+  list-style: none;
+}
+
+.footer-bar-list li {
+  font-size: var(--body-font-size-s);
+}
+
 
 @media (width >= 900px) {
   footer .footer > div {

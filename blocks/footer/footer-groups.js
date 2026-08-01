@@ -61,3 +61,25 @@ export const markFooterGroups = (root, depth = 6) => {
     .reduce((total, child) => total + markFooterGroups(child, depth - 1), 0);
   return markIn(root) + nested;
 };
+
+/*
+ * Below the three columns live shows a bar of three links: the site map, the
+ * terms and the partner page. It is always visible, so it reaches the document
+ * as a list with no heading and markFooterGroups passes over it. Run this after
+ * markFooterGroups, which is what claims the group lists.
+ */
+export const markFooterBar = (root, depth = 6) => {
+  if (!root || depth < 0) return 0;
+  // A list inside a list item is a sub-group of a column, not the bar.
+  if (LIST.test(root.tagName) || root.tagName === 'LI') return 0;
+  const children = [...(root.children || [])];
+  const nested = children.reduce((total, child) => total + markFooterBar(child, depth - 1), 0);
+  // Read the heading pairs from the markup rather than from the class
+  // markFooterGroups adds, so neither pass depends on which ran first.
+  const claimed = new Set(footerGroups(children).map(([, listAt]) => children[listAt]));
+  const here = children.filter((child) => LIST.test(child.tagName)
+    && !claimed.has(child)
+    && !child.classList.contains('footer-bar-list'));
+  here.forEach((list) => list.classList.add('footer-bar-list'));
+  return here.length + nested;
+};

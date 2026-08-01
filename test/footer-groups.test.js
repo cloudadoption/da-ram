@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { footerGroups, markFooterGroups } from '../blocks/footer/footer-groups.js';
+import { footerGroups, markFooterBar, markFooterGroups } from '../blocks/footer/footer-groups.js';
 
 // Live's footer is 280px tall and shows 36 of its 114 links: the three link
 // lists sit behind their headings and open on a click. The migrated footer
@@ -155,6 +155,74 @@ describe('markFooterGroups on the shape the block actually passes', () => {
     markFooterGroups(wrapper);
     assert.equal(h.attrs.role, 'button');
     assert.equal(markFooterGroups(wrapper), 0);
+  });
+});
+
+// Below the three collapsible columns live carries a bar of three links, always
+// visible. It reaches the document as a list with no heading over it, so
+// markFooterGroups leaves it alone and it needs a class of its own to be laid
+// out as a row rather than stacked.
+describe('markFooterBar', () => {
+  const withChildren = (tag, kids) => {
+    const el = element(tag);
+    el.children = kids;
+    return el;
+  };
+
+  it('marks a list with no heading over it', () => {
+    const ul = element('UL');
+    const wrapper = withChildren('DIV', [withChildren('DIV', [ul])]);
+    assert.equal(markFooterBar(wrapper), 1);
+    assert.ok(ul.classList.contains('footer-bar-list'));
+  });
+
+  it('leaves a list a heading already claimed alone', () => {
+    const h = element('H2', 'About us');
+    const ul = element('UL');
+    const wrapper = withChildren('DIV', [h, ul]);
+    markFooterGroups(wrapper);
+    assert.equal(markFooterBar(wrapper), 0);
+    assert.ok(!ul.classList.contains('footer-bar-list'));
+  });
+
+  it('marks the bar and skips the three groups in one footer', () => {
+    const groups = [0, 1, 2].map(() => withChildren('DIV', [element('H2', 'x'), element('UL')]));
+    const bar = element('UL');
+    const wrapper = withChildren('DIV', [...groups, withChildren('DIV', [bar])]);
+    markFooterGroups(wrapper);
+    assert.equal(markFooterBar(wrapper), 1);
+    assert.ok(bar.classList.contains('footer-bar-list'));
+  });
+
+  it('does not mark the same list twice', () => {
+    const ul = element('UL');
+    const wrapper = withChildren('DIV', [withChildren('DIV', [ul])]);
+    markFooterBar(wrapper);
+    assert.equal(markFooterBar(wrapper), 0);
+  });
+
+  it('finds no bar in a footer that is groups only', () => {
+    const wrapper = withChildren('DIV', [element('H2', 'A'), element('UL')]);
+    markFooterGroups(wrapper);
+    assert.equal(markFooterBar(wrapper), 0);
+  });
+
+  // A 60-link Destinations column styled as a horizontal bar is a worse
+  // regression than the missing bar was, so the two passes do not depend on
+  // which ran first.
+  it('skips a group list even when markFooterGroups has not run', () => {
+    const wrapper = withChildren('DIV', [element('H2', 'About us'), element('UL')]);
+    assert.equal(markFooterBar(wrapper), 0);
+  });
+
+  it('leaves a list nested inside a list item alone', () => {
+    const inner = element('UL');
+    const item = withChildren('LI', [inner]);
+    const outer = withChildren('UL', [item]);
+    const wrapper = withChildren('DIV', [outer]);
+    markFooterBar(wrapper);
+    assert.ok(outer.classList.contains('footer-bar-list'));
+    assert.ok(!inner.classList.contains('footer-bar-list'));
   });
 });
 
