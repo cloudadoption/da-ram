@@ -6,9 +6,12 @@
 // The three values are authored as block rows and were read off the live markup
 // rather than composed. One portal and one region cover all 21.
 //
-// Live carries two loaders. 10 pages declare the form on a div and let HubSpot's own
-// script find it, 11 call hbspt.forms.create. This uses the declarative one for all
-// 21: the form it renders is the same and one loader is less to keep working.
+// Live carries two loaders and the difference is not cosmetic. 11 pages call
+// hbspt.forms.create from v2.js and 10 declare the form on a div for the newer
+// forms/embed/<portal>.js script to find. Using the newer script for all 21 left
+// the 11 legacy forms as an iframe at visibility:hidden and height 0, measured on
+// the branch preview. v2.js renders both kinds and delegates the newer ones to the
+// same embed app internally, so this loads v2.js for all 21.
 //
 // The embed is third-party JavaScript that collects passenger data, so it belongs
 // behind a consent gate. There is no CMP yet and consent is granted by default for
@@ -17,7 +20,8 @@
 
 // A region is part of the host, so a wrong one is a dead script tag.
 const REGION = /^[a-z]{2}[0-9]$/;
-const PORTAL = /^[0-9]+$/;
+
+let sequence = 0;
 
 const rows = (block) => {
   const config = {};
@@ -36,37 +40,58 @@ export function formConfig(block) {
   return embed;
 }
 
-export function embedScriptUrl(region, portalId) {
-  if (!REGION.test(String(region || '')) || !PORTAL.test(String(portalId || ''))) return null;
-  return `https://js-${region}.hsforms.net/forms/embed/${portalId}.js`;
+export function embedScriptUrl(region) {
+  if (!REGION.test(String(region || ''))) return null;
+  return `https://js-${region}.hsforms.net/forms/embed/v2.js`;
 }
 
-export function renderForm(block, embed, doc = document) {
+export function createOptions(embed, targetId) {
+  return {
+    region: embed.region,
+    portalId: embed.portalId,
+    formId: embed.formId,
+    target: `#${targetId}`,
+  };
+}
+
+export function renderForm(block, embed, doc = document, scope = window) {
   if (!embed) {
     block.replaceChildren();
     return null;
   }
-  const source = embedScriptUrl(embed.region, embed.portalId);
+  const source = embedScriptUrl(embed.region);
   if (!source) {
     block.replaceChildren();
     return null;
   }
 
-  const frame = doc.createElement('div');
-  frame.className = 'hs-form-frame';
-  frame.setAttribute('data-region', embed.region);
-  frame.setAttribute('data-portal-id', embed.portalId);
-  frame.setAttribute('data-form-id', embed.formId);
-  block.replaceChildren(frame);
+  sequence += 1;
+  const target = doc.createElement('div');
+  const id = `hubspot-form-${sequence}`;
+  target.setAttribute('id', id);
+  block.replaceChildren(target);
 
-  // One script serves every form on the page, and it scans for the frames itself.
-  if (!doc.querySelector(`script[src="${source}"]`)) {
-    const script = doc.createElement('script');
-    script.setAttribute('src', source);
-    script.setAttribute('defer', '');
-    doc.head.append(script);
+  const create = () => scope.hbspt.forms.create(createOptions(embed, id));
+  // hbspt arrives with the loader, and decorate runs before it.
+  if (scope.hbspt) create();
+
+  const existing = doc.querySelector(`script[src="${source}"]`);
+  if (existing) {
+    if (!scope.hbspt) {
+      const previous = existing.onload;
+      existing.onload = () => {
+        if (previous) previous();
+        create();
+      };
+    }
+    return target;
   }
-  return frame;
+  const script = doc.createElement('script');
+  script.setAttribute('src', source);
+  script.setAttribute('charset', 'utf-8');
+  if (!scope.hbspt) script.onload = create;
+  doc.head.append(script);
+  return target;
 }
 
 export default function decorate(block) {
