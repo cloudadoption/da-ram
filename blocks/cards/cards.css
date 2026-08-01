@@ -15,10 +15,6 @@
   .cards > ul {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .cards > ul > li img {
-    height: 36px;
-  }
 }
 
 @media (width >= 1280px) {
@@ -52,6 +48,15 @@
   width: auto;
   height: 24px;
   display: block;
+}
+
+/* This block has to follow the rule above rather than join the grid's 992px one
+   near the top: same specificity, so the later declaration wins and a 36px put
+   up there is overridden by the 24px down here. */
+@media (width >= 992px) {
+  .cards > ul > li img {
+    height: 36px;
+  }
 }
 
 .cards > ul > li.cards-card-photo img {

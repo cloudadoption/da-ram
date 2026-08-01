@@ -91,10 +91,16 @@ describe('the icon card is the default, so nothing moves for it', () => {
     assert.doesNotMatch(base, /height:\s*auto/);
   });
 
-  it('goes to live\'s 36px at 992px, where the grid also changes', () => {
-    const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\s*\}\n\}/.exec(declarations);
-    assert.ok(wide, 'expected a 992px block');
-    assert.match(wide[0], /\.cards > ul > li img \{[^}]*height:\s*36px/);
+  // The 36px has to be declared after the 24px, not in the grid's 992px block
+  // near the top: same specificity, so the later declaration wins.
+  it('goes to live\'s 36px at 992px', () => {
+    const blocks = [...declarations.matchAll(/@media \(width >= 992px\) \{[\s\S]*?\n\s*\}\n\}/g)];
+    const withIcon = blocks.filter((b) => /\.cards > ul > li img \{[^}]*height:\s*36px/.test(b[0]));
+    assert.equal(withIcon.length, 1, 'expected one 992px block sizing the icon');
+    assert.ok(
+      declarations.indexOf(withIcon[0][0]) > declarations.search(/^\.cards > ul > li img \{/m),
+      'the 36px must come after the 24px or it is overridden',
+    );
   });
 
   it('has no icon class left to add', () => {
