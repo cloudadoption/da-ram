@@ -53,3 +53,14 @@ export function applyLocale(element, pathname) {
   element.lang = lang;
   element.dir = DIR_BY_LANG[base] || FALLBACK.dir;
 }
+
+/*
+ * The direction of a path, decided without a DOM and without touching anything
+ * else in this module, so head.html can inline it and set `dir` during parse.
+ * scripts.js is a module and runs after the document is parsed, which left the
+ * Arabic estate painting left to right and flipping at readyState complete.
+ */
+export function directionForPath(pathname) {
+  const locale = localeForPath(pathname);
+  return locale ? locale.dir : FALLBACK.dir;
+}
