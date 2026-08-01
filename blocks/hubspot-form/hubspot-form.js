@@ -33,10 +33,24 @@ const rows = (block) => {
   return config;
 };
 
+const pixels = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : null;
+};
+
 export function formConfig(block) {
   const config = rows(block);
   const embed = { region: config.region, portalId: config.portal, formId: config.form };
   if (!embed.region || !embed.portalId || !embed.formId) return null;
+  // The height is measured per page and authored, because the form owns it and the
+  // 21 range from 177 to 1511px. Both bands or neither: reserving one leaves the
+  // shift in place at the other width.
+  const mobile = pixels(config['height-mobile']);
+  const desktop = pixels(config['height-desktop']);
+  if (mobile && desktop) {
+    embed.heightMobile = mobile;
+    embed.heightDesktop = desktop;
+  }
   return embed;
 }
 
@@ -63,6 +77,13 @@ export function renderForm(block, embed, doc = document, scope = window) {
   if (!source) {
     block.replaceChildren();
     return null;
+  }
+
+  // Reserved before the form loads, so the footer does not move when it arrives.
+  // Lighthouse measured that shift at 0.3159 on /en-gb/bagage-perdu.
+  if (embed.heightMobile && embed.heightDesktop) {
+    block.style.setProperty('--hubspot-form-height-mobile', `${embed.heightMobile}px`);
+    block.style.setProperty('--hubspot-form-height-desktop', `${embed.heightDesktop}px`);
   }
 
   sequence += 1;
