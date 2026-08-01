@@ -50,7 +50,6 @@ describe('brand colour tokens', () => {
 // 28px stays the default and 24 and 32 ride in `theme` metadata, which
 // decorateTemplateAndTheme splits on comma so a page can carry a heading colour too.
 describe('the section heading size a page can carry', () => {
-  const styles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
   const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
   it('keeps 28px as the default, which 16 of 30 templates read', () => {
