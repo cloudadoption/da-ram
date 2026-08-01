@@ -67,3 +67,78 @@
   object-fit: cover;
 }
 
+/* Live sizes the card title by what the card holds, and the two components that
+   carry 14 of the 22 templates with a titled card fall on opposite sides of the
+   photo and icon split above. small-card is 24px at weight 700 at all three widths
+   on all 8 of its templates. link-card is 16px at weight 400 and steps to 20px at
+   exactly 1280, on all 6 of its.
+
+   Without this the title takes the document type scale, so its size depends on the
+   heading level the transform found on live: an h4 where live wrapped the title in
+   one, and the h3 fallback where live used a bare div. That is why the icon card
+   already reads 24px and the photo card reads 28px against live's 16.
+
+   A card with no image is deliberately left on the type scale. Over those 11
+   templates the commonest sizes are 16px, 22.4px and 17.6px at 3 templates each, a
+   three-way tie, so a value carried here would be a coin flip. */
+.cards > ul > li :is(h1, h2, h3, h4, h5, h6) {
+  /* A card is padded and gapped rather than spaced by its heading's margin. The
+     20px margin-bottom every heading carries escaped the card body and made the
+     icon card 112px against live's 106. */
+  margin: 0;
+}
+
+.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) :is(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--heading-font-size-m);
+  font-weight: 700;
+}
+
+.cards > ul > li.cards-card-photo :is(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--heading-font-size-xs);
+  font-weight: 400;
+}
+
+@media (width >= 1280px) {
+  .cards > ul > li.cards-card-photo :is(h1, h2, h3, h4, h5, h6) {
+    font-size: var(--heading-font-size-s);
+  }
+}
+
+/* The icon card is 16px of padding around an 8px gap in both bands, measured on
+   baggage-information: 16 + 30 + 16 = 62 below 992 with the icon beside the title,
+   and 16 + 36 + 8 + 30 + 16 = 106 from 992 with it above. Ours read 92 and 104,
+   the 92 because we stacked at both widths, and the icon sat on the card's top
+   edge where live insets it. */
+.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) {
+  padding: 16px;
+}
+
+.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-body {
+  margin: 0;
+}
+
+.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-image {
+  margin-bottom: 8px;
+}
+
+@media (width < 992px) {
+  /* A grid rather than a flex row, because a card can hold a description as well
+     as a title and a row would drag it up beside the icon. The image spans every
+     row of column one, so column two stacks whatever the card carries. */
+  .cards > ul > li:has(.cards-card-image):not(.cards-card-photo) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 8px;
+    align-items: center;
+  }
+
+  .cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-image {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-body {
+    grid-column: 2;
+  }
+}
