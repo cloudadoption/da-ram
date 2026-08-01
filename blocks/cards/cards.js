@@ -17,7 +17,19 @@ export default function decorate(block) {
   // transform wrote. That width is what lets the card know whether it holds an icon
   // or a photo without waiting for the network.
   markStatedCards(ul);
-  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
+  // createOptimizedPicture builds a fresh img from the src and alt alone, so the width
+  // and height the transform wrote are dropped. Without them the card image is 0 wide
+  // until it loads, and a lazy image with no width never intersects the viewport, so it
+  // never loads: 6 of the 21 images on /en-gb/how-it-works stayed invisible.
+  ul.querySelectorAll('picture > img').forEach((img) => {
+    const optimized = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+    const replacement = optimized.querySelector('img');
+    ['width', 'height'].forEach((name) => {
+      const stated = img.getAttribute(name);
+      if (stated && replacement) replacement.setAttribute(name, stated);
+    });
+    img.closest('picture').replaceWith(optimized);
+  });
   markIconCards(ul);
   block.replaceChildren(ul);
 }
