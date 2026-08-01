@@ -33,3 +33,26 @@ export const markIconCards = (list) => {
     else img.addEventListener('load', mark, { once: true });
   });
 };
+
+// The width the transform wrote on the img, if it wrote one. Reading it before the
+// picture is rebuilt is the whole point: naturalWidth needs the network, and the class
+// it decides moves the card when it arrives. The number is the same naturalWidth, so
+// the verdict is unchanged and only its timing moves.
+export const authoredWidth = (img) => {
+  const stated = Number(img?.getAttribute('width'));
+  return Number.isFinite(stated) && stated > 0 ? stated : null;
+};
+
+// Marks what the markup already says, before any image has loaded. An image the
+// reading missed is left to markIconCards and keeps its shift, alone.
+export const markStatedCards = (list) => {
+  let stated = 0;
+  list.querySelectorAll('img').forEach((img) => {
+    const width = authoredWidth(img);
+    const item = img.closest('li');
+    if (width === null || !item) return;
+    item.classList.add(isPhotoImage(width) ? 'cards-card-photo' : 'cards-card-icon');
+    stated += 1;
+  });
+  return stated;
+};

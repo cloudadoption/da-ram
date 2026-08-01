@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { markIconCards } from './card-icons.js';
+import { markIconCards, markStatedCards } from './card-icons.js';
 
 export default function decorate(block) {
   /* change to ul, li */
@@ -13,6 +13,10 @@ export default function decorate(block) {
     });
     ul.append(li);
   });
+  // Before createOptimizedPicture rebuilds the picture and drops the width the
+  // transform wrote. That width is what lets the card know whether it holds an icon
+  // or a photo without waiting for the network.
+  markStatedCards(ul);
   ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
   markIconCards(ul);
   block.replaceChildren(ul);
