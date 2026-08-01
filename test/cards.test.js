@@ -62,17 +62,37 @@ describe('the card image', () => {
   });
 });
 
-// The icon class lands when the image loads, which is after the first paint.
-// Sizing the card from it moved the layout under the reader: 0.1432 of a 0.1591
-// CLS on checked-baggage, against 0.0088 on a page with no cards. object-fit is
-// a paint property, so switching it moves nothing.
+// Live gives the icon a fixed height and lets the width follow: 24px below 992
+// and 36px from 992, measured at 375, 412, 600, 720, 768, 860, 900, 960, 992,
+// 1024, 1200, 1280 and 1440 on checked-baggage. The card is 60px then 110px.
+// height: auto rendered each icon at its natural 59 to 80px and made the card
+// 156px at every width, which is 96px added per card at mobile.
+//
+// A height in the stylesheet also reserves the space, so nothing moves when the
+// image arrives. An earlier attempt sized the card from a class added on load and
+// shifted the layout under the reader: 0.1432 of a 0.1591 CLS on
+// checked-baggage. There is no class here and no JS.
 describe('the icon card is the default, so nothing moves for it', () => {
   const base = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
 
-  it('lets an icon keep its own size with no class at all', () => {
-    assert.match(base, /height:\s*auto/);
+  it('takes live\'s measured 24px height below the breakpoint', () => {
+    assert.match(base, /height:\s*24px/);
+  });
+
+  it('lets the width follow the aspect ratio', () => {
+    assert.match(base, /width:\s*auto/);
     assert.match(base, /max-width:\s*100%/);
     assert.doesNotMatch(base, /[^-]width:\s*100%/);
+  });
+
+  it('reserves the height rather than growing on load', () => {
+    assert.doesNotMatch(base, /height:\s*auto/);
+  });
+
+  it('goes to live\'s 36px at 992px, where the grid also changes', () => {
+    const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\s*\}\n\}/.exec(declarations);
+    assert.ok(wide, 'expected a 992px block');
+    assert.match(wide[0], /\.cards > ul > li img \{[^}]*height:\s*36px/);
   });
 
   it('has no icon class left to add', () => {
