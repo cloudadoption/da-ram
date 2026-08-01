@@ -88,7 +88,7 @@
   margin: 0;
 }
 
-.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) :is(h1, h2, h3, h4, h5, h6) {
+.cards > ul > li.cards-card-icon :is(h1, h2, h3, h4, h5, h6) {
   font-size: var(--heading-font-size-m);
   font-weight: 700;
 }
@@ -109,15 +109,15 @@
    and 16 + 36 + 8 + 30 + 16 = 106 from 992 with it above. Ours read 92 and 104,
    the 92 because we stacked at both widths, and the icon sat on the card's top
    edge where live insets it. */
-.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) {
+.cards > ul > li.cards-card-icon {
   padding: 16px;
 }
 
-.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-body {
+.cards > ul > li.cards-card-icon .cards-card-body {
   margin: 0;
 }
 
-.cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-image {
+.cards > ul > li.cards-card-icon .cards-card-image {
   margin-bottom: 8px;
 }
 
@@ -125,20 +125,20 @@
   /* A grid rather than a flex row, because a card can hold a description as well
      as a title and a row would drag it up beside the icon. The image spans every
      row of column one, so column two stacks whatever the card carries. */
-  .cards > ul > li:has(.cards-card-image):not(.cards-card-photo) {
+  .cards > ul > li.cards-card-icon {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 0 8px;
     align-items: center;
   }
 
-  .cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-image {
+  .cards > ul > li.cards-card-icon .cards-card-image {
     grid-column: 1;
     grid-row: 1 / -1;
     margin-bottom: 0;
   }
 
-  .cards > ul > li:has(.cards-card-image):not(.cards-card-photo) .cards-card-body {
+  .cards > ul > li.cards-card-icon .cards-card-body {
     grid-column: 2;
   }
 }
