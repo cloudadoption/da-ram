@@ -42,3 +42,36 @@ describe('brand colour tokens', () => {
     assert.doesNotMatch(styles, /#3b63fb|#1d3ecf/);
   });
 });
+
+// Live's section heading is the modal h3 on the page and it does not agree with
+// itself across templates. Over 30 templates on the 2025 theme, measured at 1440:
+// 16 read 28px, which is our value, then 24px on 4, 32px on 3, 20.8px on 2 and six
+// singletons. Decision 0024 carries the commonest three and aligns the tail, so
+// 28px stays the default and 24 and 32 ride in `theme` metadata, which
+// decorateTemplateAndTheme splits on comma so a page can carry a heading colour too.
+describe('the section heading size a page can carry', () => {
+  const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('keeps 28px as the default, which 16 of 30 templates read', () => {
+    const rule = /(?:^|\n)h3 \{[\s\S]*?\n\}/.exec(declarations);
+    assert.ok(rule, 'expected an h3 rule');
+    assert.match(rule[0], /--heading-font-size-l/);
+  });
+
+  it('carries live\'s 24px as a body class', () => {
+    assert.match(declarations, /body\.section-heading-24[\s\S]*?font-size:\s*24px/);
+  });
+
+  it('carries live\'s 32px as a body class', () => {
+    assert.match(declarations, /body\.section-heading-32[\s\S]*?font-size:\s*32px/);
+  });
+
+  it('names no third variant, because the vocabulary is three counting the default', () => {
+    const variants = [...declarations.matchAll(/body\.section-heading-(\d+)/g)].map((m) => m[1]);
+    assert.deepEqual([...new Set(variants)].sort(), ['24', '32']);
+  });
+
+  it('scopes the override to the section heading, not to every h3 on the page', () => {
+    assert.match(declarations, /body\.section-heading-24 main h3/);
+  });
+});

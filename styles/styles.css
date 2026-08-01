@@ -144,6 +144,19 @@ h2 {
   font-weight: 300;
 }
 h3 { font-size: var(--heading-font-size-l); }
+
+/* Live's section heading is the modal h3 on a page and it does not agree with
+   itself across templates. Over 30 templates on the 2025 theme at 1440: 16 read
+   28px, which is the value above, then 24px on 4, 32px on 3, 20.8px on 2 and six
+   values once each. Decision 0024 carries the commonest three and aligns the tail
+   onto them, so a template reading 20.8 or 22.4 takes the 24 and one reading
+   25.998 takes the 32.
+
+   These ride in `theme` metadata, which decorateTemplateAndTheme splits on comma,
+   so a page can carry a heading colour and a section heading size at once. Scoped
+   to main, because a h3 in the header or footer is chrome. */
+body.section-heading-24 main h3 { font-size: 24px; }
+body.section-heading-32 main h3 { font-size: 32px; }
 h4 { font-size: var(--heading-font-size-m); }
 h5 { font-size: var(--heading-font-size-s); }
 h6 { font-size: var(--heading-font-size-xs); }
