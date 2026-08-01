@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { LOCALES, applyLocale, localeForPath } from '../scripts/locale.js';
+import { LOCALES, applyLocale, localeForPath, directionForPath } from '../scripts/locale.js';
 
 const element = (attributes = {}) => ({ lang: '', dir: '', ...attributes });
 
@@ -70,5 +70,28 @@ describe('applyLocale', () => {
     const html = element({ lang: '  ' });
     applyLocale(html, '/ru-ru/o-nas');
     assert.equal(html.lang, 'ru');
+  });
+});
+
+// scripts.js is a module, so applyLocale runs after the document is parsed and
+// the Arabic estate paints left to right before flipping: measured on
+// /ar-sa/checked-baggage, documentElement.dir is null at readyState interactive
+// and rtl only at complete. Live sets dir="rtl" in the served HTML and never
+// flashes. The direction has to be decidable from the pathname alone, with no
+// DOM and no imports, so an inline script in head.html can set it during parse.
+describe('directionForPath', () => {
+  it('reads rtl from an Arabic path', () => {
+    assert.equal(directionForPath('/ar-sa/checked-baggage'), 'rtl');
+    assert.equal(directionForPath('/ar-sa/'), 'rtl');
+  });
+
+  it('reads ltr from the other locales', () => {
+    assert.equal(directionForPath('/en-gb/checked-baggage'), 'ltr');
+    assert.equal(directionForPath('/de-de/'), 'ltr');
+  });
+
+  it('falls back to ltr for a path with no locale', () => {
+    assert.equal(directionForPath('/'), 'ltr');
+    assert.equal(directionForPath('/nav'), 'ltr');
   });
 });
