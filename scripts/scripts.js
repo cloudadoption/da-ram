@@ -12,6 +12,7 @@ import {
   buildBlock,
 } from './aem.js';
 import { decorateImageRows } from './image-rows.js';
+import { decorateVideoLinks } from './video-embed.js';
 
 import { applyLocale } from './locale.js';
 
@@ -169,6 +170,7 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     decorateImageRows(main, document);
+    decorateVideoLinks(main, document);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }

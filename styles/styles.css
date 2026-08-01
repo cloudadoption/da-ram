@@ -459,3 +459,44 @@ main .section.highlight {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* The transform carries an embedded video as a link, because the DA canvas
+   cannot hold an iframe. The page turns it back into a frame on click: 38 pages
+   across the ten languages have one and a YouTube frame costs about 700KB
+   before anyone asks for it. 16 by 9 is what live plays them at. */
+.video-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  margin-bottom: 20px;
+  background: #1a1717;
+}
+
+.video-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-embed-play {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.video-embed-play::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-inline-start: 36px solid #fff;
+}
