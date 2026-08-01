@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { LOCALES, applyLocale, localeForPath, directionForPath } from '../scripts/locale.js';
+import {
+  LOCALES, applyLocale, localeForPath, directionForPath,
+} from '../scripts/locale.js';
 
 const element = (attributes = {}) => ({ lang: '', dir: '', ...attributes });
 
