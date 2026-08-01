@@ -73,7 +73,9 @@ describe('the card image', () => {
 // shifted the layout under the reader: 0.1432 of a 0.1591 CLS on
 // checked-baggage. There is no class here and no JS.
 describe('the icon card is the default, so nothing moves for it', () => {
-  const base = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
+  // The 992px block declares the same selector, indented, and comes first in the
+  // file, so anchor on the rule that starts at column 0.
+  const base = /^\.cards > ul > li img \{[\s\S]*?\n\}/m.exec(declarations)[0];
 
   it('takes live\'s measured 24px height below the breakpoint', () => {
     assert.match(base, /height:\s*24px/);
