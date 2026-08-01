@@ -29,9 +29,30 @@ describe('the delayed phase is gated on consent', () => {
     assert.ok(existsSync(new URL('../scripts/consented.js', import.meta.url)));
   });
 
-  it('declines by default, so nothing loads until a CMP says otherwise', () => {
+  // Decision 0030, Ben on 2026-08-01: no CMP for the POC and consent is granted.
+  // The gate wraps nothing today, because consented.js is a comment and nothing
+  // listens for consent.update, so the default changes no behaviour. It removes a
+  // trap: the next thing added to consented.js would silently never run under a
+  // declining default.
+  it('grants consent by default for the POC', () => {
     const check = readFileSync(new URL('../scripts/consent-check.js', import.meta.url), 'utf8');
-    assert.match(check, /return false/);
+    const rule = /function hasConsent\(\) \{[\s\S]*?\n\}/.exec(check)[0];
+    assert.match(rule, /return true;/);
+    assert.doesNotMatch(rule, /return false;/);
+  });
+
+  it('still lets a query parameter decline, so the gate can be exercised', () => {
+    const check = readFileSync(new URL('../scripts/consent-check.js', import.meta.url), 'utf8');
+    assert.match(check, /consent=decline|'decline'/);
     assert.match(check, /consent\.update/);
+  });
+
+  // A site that grants consent by default is not lawful in the EU once it loads
+  // tracking, so the file has to say out loud that this is the POC default and
+  // what has to happen before cutover.
+  it('says in the file that a real CMP is pre-cutover work', () => {
+    const check = readFileSync(new URL('../scripts/consent-check.js', import.meta.url), 'utf8');
+    assert.match(check, /0030/);
+    assert.match(check, /cutover/i);
   });
 });
