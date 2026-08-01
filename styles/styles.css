@@ -83,60 +83,56 @@
    size-adjusted local face is what stops that moment costing a reflow.
 
    One ratio does not cover the type scale. The single 95.14% here was measured from
-   a body paragraph and it shrank Arial, where Museo Sans is wider than Arial at
-   every weight. The h1 is 32px at weight 500: it fitted "More comfort for your trip"
-   on one line in the shrunken fallback and needed two in the brand font, so
-   everything below it moved 38px when the swap landed, 32 times the 1.2 heading line
-   height, and 0.0369 of layout shift at mobile 412px.
+   a body paragraph and it shrank Arial, where Museo Sans is wider than Arial at the
+   weights the estate renders. The h1 is 32px at weight 500: it fitted "More comfort
+   for your trip" on one line in the shrunken fallback and needed two in the brand
+   font, so everything below it moved 38px when the swap landed, 32 times the 1.2
+   heading line height, and 0.0369 of layout shift at mobile 412px.
 
-   Measured in the DOM on /en-gb/add-extra-luggage with a 61-character probe at 32px,
-   each weight force-loaded first and document.fonts.check confirming it resolved. A
-   canvas substitutes silently for a face nothing has asked for, and the substitute
-   measures as a real ratio: that read weight 700 as 0.9176 where it is 1.0062.
+   Measured over 382 strings taken from eight rendered pages at the size and weight
+   each one actually uses, comparing Museo Sans against Arial in the DOM with the face
+   force-loaded first. The median is the value: size-adjust is a uniform scale and the
+   two fonts differ per glyph, so within weight 300 the ratio runs from 0.9354 to
+   1.0569 and no single number makes every string wrap alike. A ratio from one probe
+   string read weight 500 as 1.0669 and overshot, wrapping the checked-baggage h3 to
+   three lines where the brand font takes two.
 
-   Museo, the secondary family, measures 1.0204, 1.0424, 1.0670, 1.0670, 1.0174 and
-   1.0545 over the same weights. It gets no face here because
-   --secondary-font-family is declared and used nowhere. */
-@font-face {
-  font-family: ram-primary-font-fallback;
-  font-weight: 100;
-  size-adjust: 103.73%;
-  src: local('Arial');
-}
+     weight 300, 278 strings, median 1.0257
+     weight 400, 6 strings,   median 1.0518
+     weight 500, 45 strings,  median 1.0380
+     weight 700, 53 strings,  median 0.9801
 
+   Weights 100 and 900 get no face. Nothing in the corpus renders at either, so there
+   is nothing to calibrate against, and the browser takes the closest declared weight.
+
+   Museo, the secondary family, is not covered either: --secondary-font-family is
+   declared and used nowhere. */
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 300;
-  size-adjust: 105.15%;
+  size-adjust: 102.57%;
   src: local('Arial');
 }
 
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 400;
-  size-adjust: 106.69%;
+  size-adjust: 105.18%;
   src: local('Arial');
 }
 
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 500;
-  size-adjust: 106.69%;
+  size-adjust: 103.8%;
   src: local('Arial');
 }
 
-/* Arial Bold is the baseline here, not Arial, which is why 700 is nearly 1. */
+/* Arial Bold is the baseline at 700, and Museo Sans Bold is narrower than it. */
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 700;
-  size-adjust: 100.62%;
-  src: local('Arial');
-}
-
-@font-face {
-  font-family: ram-primary-font-fallback;
-  font-weight: 900;
-  size-adjust: 104.18%;
+  size-adjust: 98.01%;
   src: local('Arial');
 }
 
