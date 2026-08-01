@@ -62,17 +62,45 @@ describe('the card image', () => {
   });
 });
 
-// The icon class lands when the image loads, which is after the first paint.
-// Sizing the card from it moved the layout under the reader: 0.1432 of a 0.1591
-// CLS on checked-baggage, against 0.0088 on a page with no cards. object-fit is
-// a paint property, so switching it moves nothing.
+// Live gives the icon a fixed height and lets the width follow: 24px below 992
+// and 36px from 992, measured at 375, 412, 600, 720, 768, 860, 900, 960, 992,
+// 1024, 1200, 1280 and 1440 on checked-baggage. The card is 60px then 110px.
+// height: auto rendered each icon at its natural 59 to 80px and made the card
+// 156px at every width, which is 96px added per card at mobile.
+//
+// A height in the stylesheet also reserves the space, so nothing moves when the
+// image arrives. An earlier attempt sized the card from a class added on load and
+// shifted the layout under the reader: 0.1432 of a 0.1591 CLS on
+// checked-baggage. There is no class here and no JS.
 describe('the icon card is the default, so nothing moves for it', () => {
-  const base = /\.cards > ul > li img \{[\s\S]*?\n\}/.exec(declarations)[0];
+  // The 992px block declares the same selector, indented, and comes first in the
+  // file, so anchor on the rule that starts at column 0.
+  const base = /^\.cards > ul > li img \{[\s\S]*?\n\}/m.exec(declarations)[0];
 
-  it('lets an icon keep its own size with no class at all', () => {
-    assert.match(base, /height:\s*auto/);
+  it('takes live\'s measured 24px height below the breakpoint', () => {
+    assert.match(base, /height:\s*24px/);
+  });
+
+  it('lets the width follow the aspect ratio', () => {
+    assert.match(base, /width:\s*auto/);
     assert.match(base, /max-width:\s*100%/);
     assert.doesNotMatch(base, /[^-]width:\s*100%/);
+  });
+
+  it('reserves the height rather than growing on load', () => {
+    assert.doesNotMatch(base, /height:\s*auto/);
+  });
+
+  // The 36px has to be declared after the 24px, not in the grid's 992px block
+  // near the top: same specificity, so the later declaration wins.
+  it('goes to live\'s 36px at 992px', () => {
+    const blocks = [...declarations.matchAll(/@media \(width >= 992px\) \{[\s\S]*?\n\s*\}\n\}/g)];
+    const withIcon = blocks.filter((b) => /\.cards > ul > li img \{[^}]*height:\s*36px/.test(b[0]));
+    assert.equal(withIcon.length, 1, 'expected one 992px block sizing the icon');
+    assert.ok(
+      declarations.indexOf(withIcon[0][0]) > declarations.search(/^\.cards > ul > li img \{/m),
+      'the 36px must come after the 24px or it is overridden',
+    );
   });
 
   it('has no icon class left to add', () => {

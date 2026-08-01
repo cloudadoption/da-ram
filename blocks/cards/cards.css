@@ -37,11 +37,26 @@
 }
 
 .cards > ul > li img {
-  /* The default is the icon, at its own size: live renders those 105 and 106px
-     on how-it-works and 27x36 on checked-baggage, in a card about 110px tall. */
+  /* Live sizes the icon by height and lets the width follow: 24px below 992 and
+     36px from 992, measured at thirteen widths on checked-baggage. Its card is
+     60px then 110px. Rendering each icon at its natural 59 to 80px made every
+     card 156px, which is 96px added per card at mobile.
+
+     The height in the stylesheet also reserves the space, so nothing moves when
+     the image arrives. */
   max-width: 100%;
-  height: auto;
+  width: auto;
+  height: 24px;
   display: block;
+}
+
+/* This block has to follow the rule above rather than join the grid's 992px one
+   near the top: same specificity, so the later declaration wins and a 36px put
+   up there is overridden by the 24px down here. */
+@media (width >= 992px) {
+  .cards > ul > li img {
+    height: 36px;
+  }
 }
 
 .cards > ul > li.cards-card-photo img {
