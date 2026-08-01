@@ -1,0 +1,47 @@
+/* Live's authors set a callout box inline, per page. The estate holds 20 page
+   templates that carry one and no two agree on the pixels: eight paddings and four
+   radii across the set. Decision 0024 carries three variants and aligns the rest
+   onto them, so a box whose authored values are not among these renders with the
+   closest of the three. docs/divergences.md records that as deliberate.
+
+   The values are the modal ones within each family, measured per template rather
+   than per rendered box, because the sample spans nine languages and counts one
+   authored box once per translation.
+
+   The base is the outline shape without its border, which is the commonest
+   padding and radius across the whole set. A box that arrives with no variant
+   renders as this rather than unstyled. */
+.callout {
+  margin: 0 0 24px;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #fff;
+  font-size: var(--body-font-size-s);
+}
+
+.callout > div > div > *:first-child {
+  margin-top: 0;
+}
+
+.callout > div > div > *:last-child {
+  margin-bottom: 0;
+}
+
+/* #9a1c3e is the only red any box border uses across the sample. It is not the
+   brand red in styles.css, #c20831, and not the rgb(194, 0, 47) the kartenstatus
+   box fills with: three reds are in play on live. */
+.callout.accent {
+  /* The family's modal radius is 10px, not the 12px the base carries. */
+  border: 4px solid #9a1c3e;
+  border-radius: 10px;
+}
+
+.callout.fill {
+  padding: 25px;
+  border: 0;
+  background-color: #f8f8f8;
+}
+
+.callout.outline {
+  border: 1px solid #ebeae8;
+}
