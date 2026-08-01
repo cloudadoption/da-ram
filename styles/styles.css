@@ -424,8 +424,18 @@ button.button.accent:disabled:focus-visible {
 }
 
 main img {
+  /* No `width: auto` here. The pipeline stamps width and height on every content
+     image, and those attributes are a presentational hint the browser uses to
+     reserve the box before a byte of the image arrives. `width: auto` overrode the
+     hint, so between the moment styles.css applied and the moment the image decoded
+     the box was 0x0: on /en-gb/information/travel-with-animals the third section
+     started at 213px and moved to 355 when the image arrived, for CLS 0.185 at
+     mobile in Lighthouse.
+
+     max-width caps a 600px image to the 344px column and height: auto then takes the
+     height from the attribute ratio, so an 80x80 icon still renders 80x80 rather
+     than stretching. */
   max-width: 100%;
-  width: auto;
   height: auto;
 }
 
