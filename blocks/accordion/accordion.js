@@ -1,3 +1,6 @@
+import { decorateBlock, loadBlock } from '../../scripts/aem.js';
+import nestedBlockName from './nested-blocks.js';
+
 /*
  * Live builds its FAQ from native details and summary: <details class="faq-item">
  * holds a <summary> with the question and a plus icon, and a div with the answer.
@@ -9,6 +12,12 @@
  *
  * Without this block the rows decorated as plain divs and every answer showed:
  * /en-gb/add-extra-luggage displayed 2,452 characters where live displays 1,006.
+ *
+ * A panel can hold a block of its own. Live's alliance-partnerships and both safar-flyer
+ * tier pages put a table inside every collapsed panel: 120 panels over 30 pages, each
+ * holding a table and a list. EDS decorates blocks at main > div > div only, so a nested
+ * one never loads its JS or its CSS and renders as bare divs, which is why this module
+ * decorates and loads them itself.
  *
  * Two families of live page reach this block and they differ on what is open at load.
  * None of the 73 FAQ pages opens a panel. All 10 news pages open their first, which is
@@ -31,6 +40,11 @@ export default function decorate(block) {
       content.className = 'accordion-answer';
       while (answer.firstChild) content.append(answer.firstChild);
       item.append(content);
+      [...content.children].forEach((child) => {
+        if (child.tagName !== 'DIV' || !nestedBlockName(child.className)) return;
+        decorateBlock(child);
+        loadBlock(child);
+      });
     }
     if (openFirst && index === 0) item.open = true;
     row.replaceWith(item);
