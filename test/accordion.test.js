@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
-import { nestedBlockName } from '../blocks/accordion/accordion.js';
+import nestedBlockName from '../blocks/accordion/nested-blocks.js';
 
 const source = readFileSync(new URL('../blocks/accordion/accordion.js', import.meta.url), 'utf8');
 // Assertions about what the module does must not read its comments.
