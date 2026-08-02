@@ -1,0 +1,61 @@
+/* Live draws the strip as a flex row of labels with the selected one heavier and
+   taller: 15.75px at weight 700 selected against 300, and 63px tall against 51,
+   measured on /en-gb/general-terms-and-conditions at 1440. */
+
+.tabs .tabs-list {
+  display: none;
+}
+
+.tabs .tabs-tab {
+  flex: 0 0 auto;
+  padding: 16px 24px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 15.75px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.tabs .tabs-tab[aria-selected='true'] {
+  /* Live's selected tab is 12px taller than the rest, which the heavier weight and
+     the rule under it account for rather than a height. */
+  border-bottom-color: var(--link-color);
+  font-weight: 700;
+}
+
+.tabs .tabs-select {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--ram-border-color, #e0e0e0);
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: 15.75px;
+}
+
+/* Live shows its list from 1200 and hides its select from 992, so between the two a
+   visitor has no control at all. That gap is on the client register and this closes
+   it: one control below 1200, the other from 1200. */
+@media (width >= 1200px) {
+  .tabs .tabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--ram-border-color, #e0e0e0);
+  }
+
+  .tabs .tabs-select {
+    display: none;
+  }
+}
+
+.tabs .tabs-panel {
+  padding-top: 24px;
+}
+
+.tabs .tabs-panel > :first-child {
+  margin-top: 0;
+}
