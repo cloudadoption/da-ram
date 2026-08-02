@@ -107,18 +107,28 @@
   margin: 0;
 }
 
-.cards > ul > li.cards-card-icon :is(h1, h2, h3, h4, h5, h6) {
+/* 24px at weight 700 is what a card title measures on live wherever the card is not a
+   link-card. small-card reads it on all 8 of its templates, and card-animated on
+   /en-gb/information/contact-us reads 24px at 700 from 992 up.
+
+   The 16px below was measured on the link-card and applied to every image card, which
+   left contact-us 8px short and at the wrong weight, and our-fleet 12px short against
+   its 28px. Same mistake as the 200px image band: a treatment measured on one component
+   became the default for a bucket drawn for another question. */
+.cards > ul > li:is(.cards-card-icon, .cards-card-photo) :is(h1, h2, h3, h4, h5, h6) {
   font-size: var(--heading-font-size-m);
   font-weight: 700;
 }
 
-.cards > ul > li.cards-card-photo :is(h1, h2, h3, h4, h5, h6) {
+/* The link-card is the exception, and an exact one: 16px at weight 400, stepping to 20px
+   at 1280, matching live at 900, 1100 and 1440 on /en-gb/add-extra-luggage. */
+.cards.cover > ul > li :is(h1, h2, h3, h4, h5, h6) {
   font-size: var(--heading-font-size-xs);
   font-weight: 400;
 }
 
 @media (width >= 1280px) {
-  .cards > ul > li.cards-card-photo :is(h1, h2, h3, h4, h5, h6) {
+  .cards.cover > ul > li :is(h1, h2, h3, h4, h5, h6) {
     font-size: var(--heading-font-size-s);
   }
 }
