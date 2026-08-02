@@ -1,0 +1,49 @@
+/* Live draws each question as a row with a rule under it and a plus that becomes a
+   minus when the panel opens. The marker is drawn here rather than authored,
+   because the DA canvas strips an empty span on save. */
+
+.accordion details {
+  border-bottom: 1px solid var(--ram-border-color, #e0e0e0);
+}
+
+.accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  cursor: pointer;
+  font-weight: 500;
+
+  /* The default triangle sits before the text and cannot be positioned, so it goes
+     and the plus below takes its place. */
+  list-style: none;
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion summary::after {
+  content: '+';
+  flex: 0 0 auto;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--link-color);
+}
+
+.accordion details[open] summary::after {
+  content: '\2212';
+}
+
+.accordion .accordion-answer {
+  padding: 0 0 16px;
+}
+
+.accordion .accordion-answer > :first-child {
+  margin-top: 0;
+}
+
+.accordion .accordion-answer > :last-child {
+  margin-bottom: 0;
+}
