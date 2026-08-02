@@ -42,12 +42,16 @@ describe('the cards grid', () => {
   });
 });
 
-// Live's card image is 200px tall at 768, 992, 1200 and 1440 alike, whatever the
-// card width, and 157px in a 248px card at 375, which is the same proportion our
+// Live's cover card image is 200px tall at 768, 992, 1200 and 1440 alike, whatever
+// the card width, and 157px in a 248px card at 375, which is the same proportion our
 // wider mobile card reaches at 200px. The boilerplate forced 4/3, which at a
 // 397px card is 298px tall and made the card 676px against live's 456px.
-describe('the card image', () => {
-  const rule = /\.cards > ul > li\.cards-card-photo img \{[\s\S]*?\n\}/.exec(declarations)[0];
+//
+// Only the cover card. A photo in an ordinary card keeps its own proportions, because
+// 64 of the 1,066 blocks holding an image are link-card and the other 1,002 are not,
+// and cropping the rest to 200px would cut images live shows whole.
+describe('the cover card image', () => {
+  const rule = /\.cards\.cover > ul > li\.cards-card-photo img \{[\s\S]*?\n\}/.exec(declarations)[0];
 
   it('is the measured 200px tall', () => {
     assert.match(rule, /height:\s*200px/);
@@ -59,6 +63,19 @@ describe('the card image', () => {
 
   it('still covers its box', () => {
     assert.match(rule, /object-fit:\s*cover/);
+  });
+});
+
+describe('the photo card image outside a cover block', () => {
+  const rule = /^\.cards > ul > li\.cards-card-photo img \{[\s\S]*?\n\}/m.exec(declarations)[0];
+
+  it('keeps its own proportions rather than a fixed height', () => {
+    assert.match(rule, /height:\s*auto/);
+    assert.doesNotMatch(rule, /height:\s*200px/);
+  });
+
+  it('never overflows its card', () => {
+    assert.match(rule, /max-width:\s*100%/);
   });
 });
 
@@ -103,7 +120,24 @@ describe('the icon card is the default, so nothing moves for it', () => {
     );
   });
 
-  it('has no icon class left to add', () => {
-    assert.doesNotMatch(declarations, /cards-card-icon/);
+  // The icon height used to apply to every card image, so the stylesheet named no
+  // class and nothing ran on load. The cover variant needed the two apart, so the
+  // class is back. What matters is when it lands: markStatedCards reads the width the
+  // transform wrote into the document, before createOptimizedPicture drops it and
+  // before the image loads, so the card is sized on the first paint and CLS reads
+  // 0.0000. The earlier attempt decided from the loaded image and shifted the layout
+  // under the reader.
+  it('sizes the icon card from a class the stylesheet declares', () => {
+    assert.match(declarations, /\.cards > ul > li\.cards-card-icon/);
+  });
+
+  it('does not wait for the image to decide, so nothing moves', () => {
+    const js = readFileSync(new URL('../blocks/cards/card-icons.js', import.meta.url), 'utf8');
+    assert.match(js, /getAttribute\('width'\)/, 'it reads the authored width');
+    const cards = readFileSync(new URL('../blocks/cards/cards.js', import.meta.url), 'utf8');
+    assert.ok(
+      cards.indexOf('markStatedCards') < cards.indexOf('createOptimizedPicture(img.src'),
+      'the width has to be read before createOptimizedPicture drops it',
+    );
   });
 });
