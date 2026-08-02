@@ -12,6 +12,8 @@
  * 1200 and the tab list from 1200, with no gap.
  */
 
+import styleBareTables from '../../scripts/bare-tables.js';
+
 const show = (panels, tabs, select, index) => {
   panels.forEach((panel, at) => {
     panel.hidden = at !== index;
@@ -33,6 +35,9 @@ export default function decorate(block) {
     labels.push((label.textContent || '').trim());
     panel.className = 'tabs-panel';
     panel.setAttribute('role', 'tabpanel');
+    // The cookies panel of general-terms-and-conditions holds a table, and the pipeline
+    // cannot deliver a block inside a block, so it arrives as a real table.
+    styleBareTables(panel);
     panels.push(panel);
   });
   if (!panels.length) return;
