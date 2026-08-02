@@ -134,9 +134,9 @@ describe('the icon card is the default, so nothing moves for it', () => {
   it('does not wait for the image to decide, so nothing moves', () => {
     const js = readFileSync(new URL('../blocks/cards/card-icons.js', import.meta.url), 'utf8');
     assert.match(js, /getAttribute\('width'\)/, 'it reads the authored width');
-    const cards = readFileSync(new URL('../blocks/cards/cards.js', import.meta.url), 'utf8');
+    const decorator = readFileSync(new URL('../blocks/cards/cards.js', import.meta.url), 'utf8');
     assert.ok(
-      cards.indexOf('markStatedCards') < cards.indexOf('createOptimizedPicture(img.src'),
+      decorator.indexOf('markStatedCards') < decorator.indexOf('createOptimizedPicture(img.src'),
       'the width has to be read before createOptimizedPicture drops it',
     );
   });
