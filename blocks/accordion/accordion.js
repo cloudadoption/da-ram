@@ -9,9 +9,15 @@
  *
  * Without this block the rows decorated as plain divs and every answer showed:
  * /en-gb/add-extra-luggage displayed 2,452 characters where live displays 1,006.
+ *
+ * Two families of live page reach this block and they differ on what is open at load.
+ * None of the 73 FAQ pages opens a panel. All 10 news pages open their first, which is
+ * 688 characters on /en-gb/information/news, so with everything closed the migrated page
+ * displayed 182 characters where live displays 1,133. The open-first variant carries that.
  */
 export default function decorate(block) {
-  [...block.children].forEach((row) => {
+  const openFirst = block.classList.contains('open-first');
+  [...block.children].forEach((row, index) => {
     const [question, answer] = [...row.children];
     if (!question) return;
     const item = document.createElement('details');
@@ -26,6 +32,7 @@ export default function decorate(block) {
       while (answer.firstChild) content.append(answer.firstChild);
       item.append(content);
     }
+    if (openFirst && index === 0) item.open = true;
     row.replaceWith(item);
   });
 }
