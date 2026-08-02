@@ -261,3 +261,61 @@ describe('the group is closed before anything is painted', () => {
     assert.equal(ul.style.display, 'none');
   });
 });
+
+// The shape of the footer documents actually in DA, verified rendering in all ten markets on
+// 2026-08-02: four sections, three of them a heading and its list, and the bar as a list alone.
+// Each column is its own section, so the marking has to reach through a level rather than read the
+// footer's own children. Live's three columns are About us, Destinations and Help; the Destinations
+// links are absolute URLs onto the live flight estate and resolve, so pruneFooter keeps them.
+describe('the footer documents in DA', () => {
+  const section = (kids) => {
+    const wrapper = element('DIV');
+    wrapper.children = kids;
+    return wrapper;
+  };
+  const authored = () => {
+    const columns = ['About us', 'Destinations', 'Help']
+      .map((heading) => ({ title: element('H2', heading), list: element('UL') }));
+    const bar = element('UL');
+    const footer = {
+      children: [
+        ...columns.map(({ title, list }) => section([title, list])),
+        section([bar]),
+      ],
+    };
+    return { footer, columns, bar };
+  };
+
+  it('marks all three columns, one section deep', () => {
+    const { footer, columns } = authored();
+    assert.equal(markFooterGroups(footer), 3);
+    columns.forEach(({ title, list }) => {
+      assert.ok(title.classList.contains('footer-group-title'));
+      assert.ok(list.classList.contains('footer-group-list'));
+    });
+  });
+
+  it('closes each column, because live opens on a click', () => {
+    const { footer, columns } = authored();
+    markFooterGroups(footer);
+    columns.forEach(({ title, list }) => {
+      assert.equal(title.getAttribute('aria-expanded'), 'false');
+      assert.equal(list.style.display, 'none');
+    });
+  });
+
+  it('claims the bar and none of the column lists', () => {
+    const { footer, columns, bar } = authored();
+    markFooterGroups(footer);
+    assert.equal(markFooterBar(footer), 1);
+    assert.ok(bar.classList.contains('footer-bar-list'));
+    columns.forEach(({ list }) => assert.ok(!list.classList.contains('footer-bar-list')));
+  });
+
+  it('claims the bar the same way when it runs before markFooterGroups', () => {
+    const { footer, columns, bar } = authored();
+    assert.equal(markFooterBar(footer), 1);
+    assert.ok(bar.classList.contains('footer-bar-list'));
+    columns.forEach(({ list }) => assert.ok(!list.classList.contains('footer-bar-list')));
+  });
+});
