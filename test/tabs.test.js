@@ -42,6 +42,22 @@ describe('the tabs strip and a keyboard', () => {
   });
 });
 
+// The strip is a flex row and ar-sa computes direction rtl, so tab 1 is the rightmost: measured at
+// 1440 on ar-sa/general-terms-and-conditions the five tabs start at 1074, 916, 770, 664 and 558.
+// A right arrow that walks DOM order there moves the selection to the left. Home and End are not
+// remapped: they mean first and last in reading order, and in RTL the last is the leftmost.
+describe('the arrow keys in an RTL market', () => {
+  it('reads the direction the list computes rather than the market', () => {
+    assert.match(tabs, /getComputedStyle/);
+    assert.match(tabs, /direction/);
+    assert.doesNotMatch(tabs, /ar-sa|'ar'/);
+  });
+
+  it('swaps the horizontal arrows where the direction is rtl', () => {
+    assert.match(tabs, /rtl/);
+  });
+});
+
 // The roving tabindex and the select are the two halves of one control. A test that only reads the
 // script would pass while the stylesheet hid both.
 describe('the tabs controls', () => {
