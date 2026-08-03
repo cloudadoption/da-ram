@@ -25,6 +25,26 @@ const show = (panels, tabs, select, index) => {
   select.selectedIndex = index;
 };
 
+// A tab that is not selected carries tabindex -1, so Tab leaves the strip rather than walking it,
+// and a key has to move the selection. Without this a keyboard reached 1 panel of 5 at 1440, where
+// the select is display:none: measured on en-gb and ar-sa general-terms-and-conditions.
+//
+// The strip is a flex row, so the horizontal arrows walk it and wrap, and Home and End go to the
+// ends. A vertical arrow is left to the browser for scrolling.
+//
+// ar-sa computes direction rtl and draws tab 1 rightmost: at 1440 the five tabs start at 1074, 916,
+// 770, 664 and 558. So the arrows are swapped there, or the right arrow moves the selection left.
+// Home and End are not swapped: they mean first and last in reading order, and in RTL the last one
+// is the leftmost.
+const NEXT = (at, count) => (at + 1) % count;
+const PREVIOUS = (at, count) => (at - 1 + count) % count;
+const KEYS = (rtl) => ({
+  ArrowRight: rtl ? PREVIOUS : NEXT,
+  ArrowLeft: rtl ? NEXT : PREVIOUS,
+  Home: () => 0,
+  End: (at, count) => count - 1,
+});
+
 export default function decorate(block) {
   const rows = [...block.children];
   const labels = [];
@@ -68,6 +88,19 @@ export default function decorate(block) {
     return tab;
   });
   select.addEventListener('change', () => show(panels, tabs, select, Number(select.value)));
+  list.addEventListener('keydown', (event) => {
+    // Read at the key rather than at decoration: the stylesheet that sets the direction may not
+    // have arrived when the block decorates.
+    const keys = KEYS(getComputedStyle(list).direction === 'rtl');
+    const move = keys[event.key];
+    if (!move) return;
+    const at = tabs.indexOf(document.activeElement);
+    if (at < 0) return;
+    event.preventDefault();
+    const next = move(at, tabs.length);
+    show(panels, tabs, select, next);
+    tabs[next].focus();
+  });
 
   rows.forEach((row) => row.remove());
   block.append(list, select, ...panels);
