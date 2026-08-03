@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
-import { buildTable } from '../blocks/table/table.js';
+import decorate, { buildTable } from '../blocks/table/table.js';
 
 // A row is a div of cell divs, which is what the authored block gives. The cells
 // are returned as themselves, so decorate can move their nodes rather than copy
@@ -92,5 +92,75 @@ describe('the table cell padding', () => {
 
   it('does not step at 600px, because live does not', () => {
     assert.doesNotMatch(declarations, /@media \(width >= 600px\)/);
+  });
+});
+
+// decorate is what puts the header association in the DOM, and nothing tested it. Live's own
+// association is broken: each data cell of the fare tables carries headers="dataHeader-$id"
+// unrendered, 3,362 occurrences over 100 captured pages, pointing at an id no element has. The
+// migrated estate carries none of it, because the block rebuilds the table from the authored
+// cells. So scope="col" on a th inside a thead is what a screen reader has to go on.
+//
+// A minimal document, because the repository has no DOM. An element records its tag, its
+// attributes and the nodes appended to it, which is what decorate touches.
+const element = (tagName) => {
+  const node = {
+    tagName,
+    attributes: {},
+    children: [],
+    childNodes: [],
+    setAttribute(name, value) { this.attributes[name] = value; },
+    append(...nodes) { this.children.push(...nodes); this.childNodes.push(...nodes); },
+    replaceChildren(...nodes) { this.children = [...nodes]; this.childNodes = [...nodes]; },
+  };
+  return node;
+};
+const cell = (text) => ({ ...element('div'), childNodes: [text] });
+const row = (cells) => ({
+  ...element('div'),
+  children: cells.map(cell),
+});
+const block = (grid) => ({
+  ...element('div'),
+  children: grid.map(row),
+});
+
+describe('decorate', () => {
+  const rendered = (grid) => {
+    global.document = { createElement: element };
+    const target = block(grid);
+    decorate(target);
+    return target.children[0];
+  };
+
+  it('builds a thead whose cells are th with scope col', () => {
+    const table = rendered([['Country', 'Code'], ['Kenya', 'KR']]);
+    const [thead, tbody] = table.children;
+    assert.equal(thead.tagName, 'thead');
+    assert.equal(tbody.tagName, 'tbody');
+    const heads = thead.children[0].children;
+    assert.deepEqual(heads.map((th) => th.tagName), ['th', 'th']);
+    assert.deepEqual(heads.map((th) => th.attributes.scope), ['col', 'col']);
+  });
+
+  it('builds body rows of td, which carry no scope', () => {
+    const table = rendered([['Country', 'Code'], ['Kenya', 'KR']]);
+    const [, tbody] = table.children;
+    const cells = tbody.children[0].children;
+    assert.deepEqual(cells.map((td) => td.tagName), ['td', 'td']);
+    assert.equal(cells[0].attributes.scope, undefined);
+  });
+
+  // buildTable puts a lone row in the body, so the table has content rather than a header with
+  // nothing under it. The DOM has to agree: no thead.
+  it('gives a single row no thead', () => {
+    const table = rendered([['Kenya', 'KR']]);
+    assert.deepEqual(table.children.map((part) => part.tagName), ['tbody']);
+  });
+
+  it('moves the authored nodes into the cell rather than copying them', () => {
+    const table = rendered([['Country', 'Code'], ['Kenya', 'KR']]);
+    const cells = table.children[1].children[0].children;
+    assert.deepEqual(cells.map((td) => td.children), [['Kenya'], ['KR']]);
   });
 });
