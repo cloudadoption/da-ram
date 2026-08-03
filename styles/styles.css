@@ -111,6 +111,8 @@
   font-family: ram-primary-font-fallback;
   font-weight: 300;
   size-adjust: 102.57%;
+  unicode-range: U+0000-05FF, U+1E00-1FFF, U+2000-206F, U+20A0-20BF, U+2100-214F,
+    U+2190-21FF, U+2200-22FF, U+2C60-2C7F, U+A720-A7FF, U+FB00-FB4F;
   src: local('Arial');
 }
 
@@ -118,6 +120,8 @@
   font-family: ram-primary-font-fallback;
   font-weight: 400;
   size-adjust: 105.18%;
+  unicode-range: U+0000-05FF, U+1E00-1FFF, U+2000-206F, U+20A0-20BF, U+2100-214F,
+    U+2190-21FF, U+2200-22FF, U+2C60-2C7F, U+A720-A7FF, U+FB00-FB4F;
   src: local('Arial');
 }
 
@@ -125,6 +129,8 @@
   font-family: ram-primary-font-fallback;
   font-weight: 500;
   size-adjust: 103.8%;
+  unicode-range: U+0000-05FF, U+1E00-1FFF, U+2000-206F, U+20A0-20BF, U+2100-214F,
+    U+2190-21FF, U+2200-22FF, U+2C60-2C7F, U+A720-A7FF, U+FB00-FB4F;
   src: local('Arial');
 }
 
@@ -133,6 +139,47 @@
   font-family: ram-primary-font-fallback;
   font-weight: 700;
   size-adjust: 98.01%;
+  unicode-range: U+0000-05FF, U+1E00-1FFF, U+2000-206F, U+20A0-20BF, U+2100-214F,
+    U+2190-21FF, U+2200-22FF, U+2C60-2C7F, U+A720-A7FF, U+FB00-FB4F;
+  src: local('Arial');
+}
+
+
+/* The four faces above are size-adjusted from Latin strings, comparing Museo Sans against Arial.
+   Museo Sans carries no Arabic, so on an Arabic page there is no swap to compensate for and the
+   adjust only inflates the text. Measured at 32px weight 500 in headless Chrome: the Arabic string
+   "دليلكم الكامل للأمتعة" renders 213.75px through the adjusted family against 205.95px in plain
+   Arial, 3.79% wider, and CSS.getPlatformFontsForNode on a live Arabic paragraph reports
+   "Museo Sans 500 x2, Arial x18", so Arial is what draws the letters.
+
+   So the adjusted faces are restricted to the Latin ranges and each weight gets an unadjusted
+   Arabic face. After the change the same string renders 206.64px, 0.33% off nominal, and the Latin
+   string is untouched at 461.59px against 444.77px. */
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 300;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 400;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 500;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  src: local('Arial');
+}
+
+@font-face {
+  font-family: ram-primary-font-fallback;
+  font-weight: 700;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
   src: local('Arial');
 }
 
