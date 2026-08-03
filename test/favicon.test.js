@@ -7,10 +7,11 @@ const head = readFileSync(new URL('../head.html', import.meta.url), 'utf8');
 const LIVE_FAVICON = 'https://www.royalairmaroc.com/documents/31824/0/favicon.ico'
   + '/a24318ac-7ec0-3c0f-581d-930009528883';
 
-// www.royalairmaroc.com declares rel="icon" and rel="apple-touch-icon", both pointing at the same
-// 1,150-byte ICO. This estate declared neither, so a browser fell back to probing /favicon.ico and got
-// the one this repository inherited from aem-boilerplate at commit 783231b, "chore: reduce to the max".
-// Every tab on a Royal Air Maroc site showed Adobe's icon.
+// www.royalairmaroc.com declares rel="icon" and rel="apple-touch-icon", both
+// pointing at the same 1,150-byte ICO. This estate declared neither, so a browser
+// fell back to probing /favicon.ico and got the one this repository inherited from
+// aem-boilerplate at commit 783231b, "chore: reduce to the max". Every tab on a
+// Royal Air Maroc site showed Adobe's icon.
 //
 // The URL points at the live origin for the reason decision 0026 gives for the brand fonts and the
 // header logo: they are the client's licensed assets and this repository is public, so nothing is
