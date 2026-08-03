@@ -25,6 +25,19 @@ const show = (panels, tabs, select, index) => {
   select.selectedIndex = index;
 };
 
+// A tab that is not selected carries tabindex -1, so Tab leaves the strip rather than walking it,
+// and a key has to move the selection. Without this a keyboard reached 1 panel of 5 at 1440, where
+// the select is display:none: measured on en-gb and ar-sa general-terms-and-conditions.
+//
+// The strip is a flex row, so the horizontal arrows walk it and wrap, and Home and End go to the
+// ends. A vertical arrow is left to the browser for scrolling.
+const KEYS = {
+  ArrowRight: (at, count) => (at + 1) % count,
+  ArrowLeft: (at, count) => (at - 1 + count) % count,
+  Home: () => 0,
+  End: (at, count) => count - 1,
+};
+
 export default function decorate(block) {
   const rows = [...block.children];
   const labels = [];
@@ -68,6 +81,16 @@ export default function decorate(block) {
     return tab;
   });
   select.addEventListener('change', () => show(panels, tabs, select, Number(select.value)));
+  list.addEventListener('keydown', (event) => {
+    const move = KEYS[event.key];
+    if (!move) return;
+    const at = tabs.indexOf(document.activeElement);
+    if (at < 0) return;
+    event.preventDefault();
+    const next = move(at, tabs.length);
+    show(panels, tabs, select, next);
+    tabs[next].focus();
+  });
 
   rows.forEach((row) => row.remove());
   block.append(list, select, ...panels);

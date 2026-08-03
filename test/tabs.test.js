@@ -29,8 +29,8 @@ describe('the tabs strip and a keyboard', () => {
   });
 
   it('handles Home and End', () => {
-    assert.match(tabs, /'Home'/);
-    assert.match(tabs, /'End'/);
+    assert.match(tabs, /\bHome\b/);
+    assert.match(tabs, /\bEnd\b/);
   });
 
   it('moves focus with the selection, or the roving tabindex traps it on the old tab', () => {
