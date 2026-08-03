@@ -48,7 +48,7 @@ describe('structuredDataFor', () => {
     assert.equal(airline.offers.eligibleRegion.name, 'DE');
   });
 
-  it('carries the constants live carries: the iata code, the logo and the social profiles', () => {
+  it('carries the constants: the iata code, the logo and the social profiles', () => {
     const [, airline] = structuredDataFor(DE);
     assert.equal(airline.name, 'Royal Air Maroc');
     assert.equal(airline.alternateName, 'RAM');
@@ -58,9 +58,9 @@ describe('structuredDataFor', () => {
     assert.equal(SAME_AS.length, 4);
   });
 
-  // en-GB and ar-SA are like this on live. Filling them in would be inventing an address for a market
-  // whose office the client has not named, and decision 0023 reproduces a poor live value rather than
-  // improving it.
+  // en-GB and ar-SA are like this on live. Filling them in would invent an address
+  // for a market whose office the client has not named, and decision 0023 reproduces
+  // a poor live value rather than improving it.
   it('keeps an empty field empty rather than dropping the key', () => {
     const [website, airline] = structuredDataFor({
       market: 'en-gb',
@@ -97,9 +97,9 @@ describe('structuredDataFor', () => {
       telephone: '+33820 821 821',
       currency: 'EUR',
     });
-    for (const block of blocks) {
+    blocks.forEach((block) => {
       assert.deepEqual(JSON.parse(JSON.stringify(block)), block);
-    }
+    });
     assert.equal(blocks[1].address.streetAddress, "38, Avenue de l'Opéra");
   });
 });

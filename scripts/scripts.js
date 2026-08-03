@@ -10,11 +10,44 @@ import {
   loadSections,
   loadCSS,
   buildBlock,
+  getMetadata,
 } from './aem.js';
 import { decorateImageRows } from './image-rows.js';
 import { decorateVideoLinks } from './video-embed.js';
 
 import { applyLocale } from './locale.js';
+import { structuredDataFor } from './structured-data.js';
+
+/**
+ * Emits the two JSON-LD blocks live carries on a market home page.
+ *
+ * Only on a market root, because that is where live carries them. The per-market
+ * values come from the page's own metadata, so adding a market is a content change
+ * rather than a code change.
+ */
+function addStructuredData(doc) {
+  const segments = window.location.pathname.replace(/^\//, '').split('/').filter(Boolean);
+  const isMarketRoot = segments.length === 1 && /^[a-z]{2}-[a-z]{2}$/.test(segments[0]);
+  if (!isMarketRoot) return;
+  const blocks = structuredDataFor({
+    market: segments[0],
+    alternateName: getMetadata('schema-alternate-name'),
+    street: getMetadata('schema-street-address'),
+    locality: getMetadata('schema-locality'),
+    postalCode: getMetadata('schema-postal-code'),
+    country: getMetadata('schema-country'),
+    telephone: getMetadata('schema-telephone'),
+    currency: getMetadata('schema-currency'),
+  });
+  if (!blocks.length || !getMetadata('schema-alternate-name')) return;
+  blocks.forEach((block) => {
+    const script = doc.createElement('script');
+    script.type = 'application/ld+json';
+    script.nonce = 'aem';
+    script.textContent = JSON.stringify(block);
+    doc.head.append(script);
+  });
+}
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
@@ -190,6 +223,7 @@ async function loadEager(doc) {
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
+  addStructuredData(doc);
   loadHeader(doc.querySelector('header'));
 
   const main = doc.querySelector('main');
