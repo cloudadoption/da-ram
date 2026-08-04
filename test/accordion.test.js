@@ -52,3 +52,70 @@ describe('the accordion block', () => {
     assert.match(accordion, /open-first/);
   });
 });
+
+// Live declares the accordion in /o/ram-airways-theme/2025/css/styles.css, read on 2026-08-04:
+//
+//   .accordion__item{border-block-end:.0625rem solid var(--ram-neutral-200-color)}
+//   .accordion__button{padding-block:.75rem}
+//   .accordion__title{margin-inline-start:.25rem;color:var(--ram-text-dark-color)}
+//   .accordion__content{flex-direction:column;padding-block:.5rem;padding-inline:.25rem}
+//   .accordion__chevron{margin-inline-end:.25rem;color:var(--ram-text-dark-color)}
+//   .accordion__button.active .accordion__chevron{transform:rotate(180deg)}
+//
+// Measured against ours on /en-gb/faq-version-02, 46 items on each side: live's rule is #ebeae8 and
+// ours #e0e0e0, live's button padding-block 12px and ours 16px, the title weight 400 and ours 500,
+// the title inset 4px and ours 0, the panel 8px/4px and ours 0 0 16px. Live's marker is a 20x20
+// chevron in #1a1717 with a 4px trailing margin, and ours a 24px plus in the brand red.
+describe('the accordion follows live-s own rule', () => {
+  const css = read('../blocks/accordion/accordion.css');
+  const rootStyles = read('../styles/styles.css');
+  const declared = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = (selector) => {
+    const at = declared.indexOf(selector);
+    assert.ok(at >= 0, `expected a rule for ${selector}`);
+    return declared.slice(at, declared.indexOf('}', at) + 1);
+  };
+
+  it('rules an item with the client-s own neutral token', () => {
+    assert.match(rule('.accordion details'), /border-block-end:\s*1px solid var\(--ram-neutral-200-color\)/);
+    assert.match(rootStyles, /--ram-neutral-200-color:\s*#ebeae8/);
+  });
+
+  it('takes the declared button padding and the measured weight', () => {
+    const summary = rule('.accordion summary');
+    assert.match(summary, /padding-block:\s*12px/);
+    assert.match(summary, /font-weight:\s*400/);
+  });
+
+  // Live's h3 title reads 16px on 22.4px, body leading. The summary took the page's 1.5 and drew a
+  // 50px row against live's 46.
+  it('gives the question body leading, as live-s title has', () => {
+    assert.match(rule('.accordion summary'), /line-height:\s*1\.4/);
+  });
+
+  // The pipeline wraps the question in a paragraph and live's is an h3 with no margin, so the
+  // global 4px paragraph margin drew a 50px row against live's 46.
+  it('takes the margin off what the pipeline wraps the question in', () => {
+    assert.match(rule('.accordion summary > *'), /margin-block:\s*0/);
+  });
+
+  it('insets the question, as the title rule does', () => {
+    assert.match(rule('.accordion summary'), /padding-inline-start:\s*4px/);
+  });
+
+  it('takes the declared panel padding', () => {
+    const answer = rule('.accordion .accordion-answer');
+    assert.match(answer, /padding-block:\s*8px/);
+    assert.match(answer, /padding-inline:\s*4px/);
+  });
+
+  // The client's ram-icons font is not loaded here, so the chevron is drawn rather than set: a
+  // square with two edges, turned 45deg one way while the panel is closed and the other while open.
+  it('draws a chevron rather than a plus', () => {
+    const marker = rule('.accordion summary::after');
+    assert.doesNotMatch(marker, /content:\s*'\+'/);
+    assert.match(marker, /transform:\s*rotate/);
+    assert.match(marker, /var\(--ram-text-dark-color\)/);
+    assert.match(declared, /details\[open\] summary::after \{[^}]*transform:\s*rotate/);
+  });
+});

@@ -1,9 +1,17 @@
-/* Live draws each question as a row with a rule under it and a plus that becomes a
-   minus when the panel opens. The marker is drawn here rather than authored,
-   because the DA canvas strips an empty span on save. */
+/* Live draws each question as a row with a rule under it and a chevron that turns over when the
+   panel opens. The marker is drawn here rather than authored, because the DA canvas strips an empty
+   span on save.
+
+   Live's own rule, from /o/ram-airways-theme/2025/css/styles.css:
+   .accordion__item{border-block-end:.0625rem solid var(--ram-neutral-200-color)}
+   .accordion__button{padding-block:.75rem}
+   .accordion__title{margin-inline-start:.25rem;color:var(--ram-text-dark-color)}
+   .accordion__content{flex-direction:column;padding-block:.5rem;padding-inline:.25rem}
+   .accordion__chevron{margin-inline-end:.25rem;color:var(--ram-text-dark-color)}
+   .accordion__button.active .accordion__chevron{transform:rotate(180deg)} */
 
 .accordion details {
-  border-bottom: 1px solid var(--ram-border-color, #e0e0e0);
+  border-block-end: 1px solid var(--ram-neutral-200-color);
 }
 
 .accordion summary {
@@ -11,12 +19,18 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 0;
+  padding-block: 12px;
+  padding-inline-start: 4px;
   cursor: pointer;
-  font-weight: 500;
+
+  /* Live's question is an h3.accordion__title reading 16px on 22.4px at weight 400, so the component
+     overrides the heading ramp and the question reads at body weight and body leading. Ours drew 500
+     and took the page's 1.5, which made a 50px row against live's 46. */
+  font-weight: 400;
+  line-height: 1.4;
 
   /* The default triangle sits before the text and cannot be positioned, so it goes
-     and the plus below takes its place. */
+     and the chevron below takes its place. */
   list-style: none;
 }
 
@@ -24,20 +38,37 @@
   display: none;
 }
 
+/* The pipeline wraps the question in a paragraph and live's is an h3.accordion__title with no
+   margin, so the global 4px paragraph margin drew a 50px row against live's 46. */
+.accordion summary > * {
+  margin-block: 0;
+}
+
+/* Live's marker is i.accordion__chevron.ram-icon-chevron-down, a 20x20 box at font-size 20px in
+   --ram-text-dark-color with margin-inline-end 4px, turned 180deg while the panel is open. The glyph
+   comes from the client's own ram-icons font, which this repository does not load, so the chevron is
+   drawn: an 8px square with two 2px edges, turned 45deg. Its trailing edge sits 10px in, which puts
+   the ink where live's 20px glyph centres. */
 .accordion summary::after {
-  content: '+';
+  content: '';
+  box-sizing: border-box;
   flex: 0 0 auto;
-  font-size: 24px;
-  line-height: 1;
-  color: var(--link-color);
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 10px;
+  border-inline-end: 2px solid var(--ram-text-dark-color);
+  border-block-end: 2px solid var(--ram-text-dark-color);
+  transform: rotate(45deg);
+  transition: transform 0.2s;
 }
 
 .accordion details[open] summary::after {
-  content: '\2212';
+  transform: rotate(225deg);
 }
 
 .accordion .accordion-answer {
-  padding: 0 0 16px;
+  padding-block: 8px;
+  padding-inline: 4px;
 }
 
 .accordion .accordion-answer > :first-child {
