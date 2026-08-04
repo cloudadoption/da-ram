@@ -238,8 +238,13 @@ h6 {
      This read margin-top 0.8em, computing to 32px at 40px, 25.6 at 32, 22.4 at 28, 19.2 at 24 and 16 at
      20, plus a flat 20px below. The earlier comment, "the gap under a heading measures 15 to 24px
      across four live pages", was reading the authored tail rather than the declaration, and it said
-     nothing about the space above. */
-  margin: 0 0 8px;
+     nothing about the space above.
+
+     Zero below as well as above, because the rendered distribution says so and not only the
+     declaration: over 32 headings on /en-gb/checked-baggage live reads 0 below on 18, then 20 on 5, 10
+     on 3 and 8 on 3. So 0 is both what live declares and its modal rendered value, and the 8, 10 and 20
+     are the authored tail decision 0024 collapses. */
+  margin: 0;
   font-family: var(--heading-font-family);
   font-weight: 500;
   line-height: 1.2;
