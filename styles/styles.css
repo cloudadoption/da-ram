@@ -562,6 +562,17 @@ main > .section {
   margin: 24px 0;
 }
 
+/* main's padding makes the two ends, so the outer margins come off or they add to it: the branch read
+   48px under the last section, 24 of padding plus its own 24. Between two sections the margins collapse
+   to one 24. */
+main > .section:first-child {
+  margin-block-start: 0;
+}
+
+main > .section:last-child {
+  margin-block-end: 0;
+}
+
 main > .section > div {
   /* content-box would add the inset to the 90% rather than take it out, which
      leaves the column 27px too wide. */
