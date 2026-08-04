@@ -312,4 +312,11 @@ describe('the section rhythm', () => {
     assert.ok(rule, 'expected a rule for main');
     assert.match(rule[0], /padding-block:\s*24px/);
   });
+
+  // Read at 1440 on the branch: 24px above the first section and 24 between each pair, both live's.
+  // Under the last one it is 48 rather than 24, because every page carries a trailing section with
+  // no height and :last-child matches that rather than the last one a reader sees.
+  it('takes the first section-s own top margin off, so the padding is not doubled', () => {
+    assert.match(declared, /main > \.section:first-child \{[^}]*margin-block-start:\s*0/);
+  });
 });
