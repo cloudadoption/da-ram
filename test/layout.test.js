@@ -318,6 +318,31 @@ describe('the heading weights', () => {
 //
 // It also makes the card boxes visible. A cards block draws white and drew it on white, so the six
 // small cards on /en-gb/checked-baggage read as no boxes at all against live's white cards on grey.
+// Live declares its headings flat, verbatim from /o/ram-airways-theme/2025/css/styles.css:
+//
+//   body h1,body h2,body h3,body h4,body h5,body h6{margin:0;padding:0}
+//
+// and its authors add the gap under one back where they want it:
+//
+//   .seat-content .small-heading{margin-block-end:.5rem;...}
+//
+// Measured across five 2025-theme pages, 39 headings: 0 above every one of them, and 8px below on the
+// dominant case. Ours carried margin-top 0.8em, which computes to 32px at 40px, 25.6 at 32, 22.4 at 28,
+// 19.2 at 24 and 16 at 20, plus a flat 20px below.
+//
+// The earlier comment here read "the gap under a heading measures 15 to 24px across four live pages",
+// which is the authored tail rather than the declaration, and it said nothing about the space above.
+describe('the heading margins', () => {
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('leaves no space above a heading, as live declares', () => {
+    const rule = /\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected the shared heading rule');
+    assert.doesNotMatch(rule[0], /margin-top:\s*0\.8em/);
+    assert.match(rule[0], /margin:\s*0 0 8px/);
+  });
+});
+
 describe('the page ground', () => {
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
