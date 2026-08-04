@@ -120,6 +120,15 @@
   font-weight: 700;
 }
 
+/* Live declares the title's colour: .small-card__title{color:var(--ram-text-dark-color)} and
+   .card-full__title says the same. Measured over eight en-GB card pages at 1440, small-card reads
+   #1a1717 on 11 titles, baggage-card #000 on 4, ram-card #333 on 3 and ram-header-card #634959 on 1,
+   against the link-card's brand red on 3. The title is an anchor here, so it took --link-color and
+   drew red on each. The link-card keeps the red, which is the same split the sizes above make. */
+.cards > ul > li:is(.cards-card-icon, .cards-card-photo) :is(h1, h2, h3, h4, h5, h6) a {
+  color: var(--ram-text-dark-color);
+}
+
 /* The link-card is the exception, and an exact one: 16px at weight 400, stepping to 20px
    at 1280, matching live at 900, 1100 and 1440 on /en-gb/add-extra-luggage. */
 .cards.cover > ul > li :is(h1, h2, h3, h4, h5, h6) {
