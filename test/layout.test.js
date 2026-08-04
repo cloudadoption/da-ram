@@ -391,13 +391,14 @@ describe('the section rhythm', () => {
     assert.match(declared, /main > \.section:first-child \{[^}]*margin-block-start:\s*0/);
   });
 
-  // Live leaves 24px between the last ink and the footer, measured at 1440 on /en-gb/checked-baggage,
-  // /en-gb/carry-on-baggage and /en-gb/airport-transit: 24 on each. Ours read 48 on checked-baggage.
+  // Live leaves 24px between the last ink and the footer, measured at 1440 on
+  // /en-gb/checked-baggage, /en-gb/carry-on-baggage and /en-gb/airport-transit: 24 on each. Ours
+  // read 48 on checked-baggage.
   //
-  // The pipeline leaves a trailing <div class="section"> with no children, which is what the metadata
-  // block was in. :last-child matches that rather than the last section a reader sees, so the visible
-  // one keeps its 24px bottom margin, the empty one's 24px top margin collapses with it, and main's
-  // 24px padding makes 48.
+  // The pipeline leaves a trailing <div class="section"> with no children, which is what the
+  // metadata block was in. :last-child matches that rather than the last section a reader sees, so
+  // the visible one keeps its 24px bottom margin, the empty one's 24px top margin collapses with
+  // it, and main's 24px padding makes 48.
   //
   // The empty box goes out of flow, which takes its margin with it, and the section before it is
   // zeroed the same way :last-child zeroes a real last one.
