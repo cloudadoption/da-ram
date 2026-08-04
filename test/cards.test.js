@@ -209,11 +209,13 @@ describe('the card chevron', () => {
     assert.match(declared, /:has\(a\)::after/);
   });
 
-  // transform is physical, so the reading direction needs the other quarter turn. Live keeps
-  // ram-icon-chevron-right in Arabic with no transform and points the chevron into the text.
+  // transform is physical, so the reading direction needs its own angle. The logical borders already
+  // move: border-inline-end is the left edge there, so the strokes meet at the top left and the apex
+  // points up and to the left. A quarter turn anticlockwise brings it to the left. 135deg took it
+  // back to pointing right, which the Arabic branch preview showed.
   it('turns it the other way in a right-to-left market', () => {
     const rtl = /\[dir="rtl"\][^{]*::after \{[\s\S]*?\n\}/.exec(declared);
     assert.ok(rtl, 'expected an rtl rule for the chevron');
-    assert.match(rtl[0], /transform:\s*rotate\(135deg\)/);
+    assert.match(rtl[0], /transform:\s*rotate\(-45deg\)/);
   });
 });
