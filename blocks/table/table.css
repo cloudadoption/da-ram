@@ -74,11 +74,36 @@
    not, so the paragraph and list rules' 22.4px leading and weight 300 landed inside a cell live
    draws at 24px and weight 400. Measured over eight table pages in four markets: six have no
    paragraph in a cell at all, and the two that do draw it at 16px/25.6px/400.
-   The cell already matches on both sides, so it owns the type of what is in it. */
+   The cell already matches on both sides, so it owns the type of what is in it.
+
+   The margins are live's spacing inside a cell, read on /en-gb/airport-transit: a paragraph 15px
+   below, a list item 8px below, a list 10px above and nothing below. Ours drew 4px, 0 and 0, and the
+   transit rows came out 174 153 153 177 177 against live's 230 205 205 231 231. */
 .table th p,
-.table td p,
+.table td p {
+  line-height: inherit;
+  font-weight: inherit;
+  margin-block-end: 15px;
+}
+
 .table th li,
 .table td li {
   line-height: inherit;
   font-weight: inherit;
+  margin-block-end: 8px;
+}
+
+.table th ul,
+.table th ol,
+.table td ul,
+.table td ol {
+  margin-block: 10px 0;
+}
+
+/* A cell whose only child is a paragraph is live's bare-text cell, which holds no paragraph and so
+   no margin. 16 of the 17 cells on /en-gb/checked-baggage are that, where our rows read 70 93 93
+   against live's 66 89 89 on the 4px the global paragraph rule adds. */
+.table th p:only-child,
+.table td p:only-child {
+  margin-block-end: 0;
 }
