@@ -581,18 +581,20 @@ main {
   padding-block: 24px;
 }
 
+/* The 24px between two sections is carried by the second one's top margin, not the first one's
+   bottom. Either way gives 24 between a pair, and this way there is nothing at all below the last
+   one, so main's own 24px padding is the whole gap under the last ink. Live gives 24 there, read at
+   1440 on /en-gb/checked-baggage, /en-gb/carry-on-baggage and /en-gb/airport-transit; ours read 48.
+
+   A bottom margin cannot do it, because the pipeline leaves a trailing section with no children,
+   which is what the metadata block was in. :last-child matched that instead of the last section a
+   reader sees. */
 main > .section {
-  margin: 24px 0;
+  margin-block: 24px 0;
 }
 
-/* The pipeline leaves a trailing section with no children, which is what the metadata block was in.
-   :last-child matched that, so the last section a reader sees kept its 24px, the empty one's 24px
-   collapsed with it, and main's 24px padding made 48 under the last ink. Live gives 24, read at 1440
-   on /en-gb/checked-baggage, /en-gb/carry-on-baggage and /en-gb/airport-transit.
-
-   Out of flow rather than zeroed: a display: none box contributes no margin at all, where a zeroed
-   bottom margin still leaves its own top margin to collapse. :not(:has(> *)) rather than :empty,
-   because a whitespace text node defeats :empty. */
+/* And the empty one goes out of flow, or its own top margin adds the 24 back.
+   :not(:has(> *)) rather than :empty, because a whitespace text node defeats :empty. */
 main > .section:not(:has(> *)) {
   display: none;
 }
@@ -600,14 +602,6 @@ main > .section:not(:has(> *)) {
 /* main's padding makes the top end, so the first section's own margin comes off or it adds to it. */
 main > .section:first-child {
   margin-block-start: 0;
-}
-
-main > .section:last-child {
-  margin-block-end: 0;
-}
-
-main > .section:has(+ .section:not(:has(> *))) {
-  margin-block-end: 0;
 }
 
 main > .section > div {
