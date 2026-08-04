@@ -103,6 +103,16 @@ describe('the hover and active colours, measured on live', () => {
     assert.match(declared, /--link-hover-color:\s*var\(--link-color\)/);
   });
 
+  // Live declares `body a:hover { text-decoration: none; color: var(--ram-text-primary-color) }`,
+  // so it takes the underline off the hover as well as off the rest. The boilerplate underlines on
+  // hover and that was left behind when the colour was corrected. Decision 0023 reproduces live
+  // including where it is poor, and the cost is on the client register: the link colour #c20831
+  // against body text #1a1717 is 2.86:1, under the 3:1 WCAG 1.4.1 asks for where colour is the
+  // only distinguisher, with no underline to carry it.
+  it('takes the underline off the hover, which is what live declares', () => {
+    assert.doesNotMatch(rule('a:hover'), /text-decoration:\s*underline/);
+  });
+
   it('gives the accent button live’s hover background', () => {
     assert.match(rule('a.button.accent:hover'), /var\(--ram-background-positive-color\)/);
   });

@@ -353,9 +353,14 @@ a:any-link {
   overflow-wrap: break-word;
 }
 
+/* Live declares `body a:hover { text-decoration: none; color: var(--ram-text-primary-color) }`,
+   so it takes the underline off the hover as well as off the rest. Read from the client's
+   stylesheet on 2026-08-04. Decision 0023 reproduces live including where it is poor, and the
+   cost is on the client register: #c20831 against body text #1a1717 is 2.86:1, under the 3:1
+   WCAG 1.4.1 asks for where colour is the only distinguisher. */
 a:hover {
   color: var(--link-hover-color);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* buttons */
