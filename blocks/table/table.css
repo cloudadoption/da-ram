@@ -1,48 +1,109 @@
+/* A table wider than its column can be scrolled rather than squeezed, and the
+   scroll starts at the reading edge in either direction. Live rounds the box:
+   .table-responsive{...border-radius:.5rem}. */
+.table {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
 .table table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--body-font-size-m);
 }
 
+/* Live's own rule, from /o/ram-airways-theme/2025/css/styles.css:
+   .table-responsive table th,.table-responsive table td{padding:.5rem .75rem;
+     text-align:center;vertical-align:middle;height:3.5rem}
+   height on a cell is a minimum row height, 56px, and the boilerplate had none.
+   Clay's row rule is #dee2e6 on both block edges, much lighter than the body colour. */
 .table th,
 .table td {
-  padding: 8px 12px 8px 15px;
-  text-align: start;
-  vertical-align: top;
+  /* height on a cell is a minimum, and live counts the padding inside it: live is border-box
+     throughout and this repository is content-box, so 3.5rem plus 8px twice plus the rules drew a
+     73px header row against live's 56. */
+  box-sizing: border-box;
+  height: 3.5rem;
+  padding: 8px 12px;
+  text-align: center;
+  vertical-align: middle;
+  border-block: 1px solid #dee2e6;
+}
 
-  /* Live's row rule is #dee2e6, much lighter than the body colour. */
-  border-block-end: 1px solid #dee2e6;
+.table tbody td {
+  background-color: var(--ram-background-default-color);
+  color: var(--ram-neutral-900-color);
 }
 
 .table thead th {
   /* Live's table head is the client's own positive-background token, #a22032,
      with white text at weight 400. Measured on checked-baggage in English and
-     German. The boilerplate drew grey with dark bold text. */
+     German. The boilerplate drew grey with dark bold text. The head has no top
+     rule and a 2px one below, read on the same page. */
   background-color: var(--ram-background-positive-color);
-  color: #fff;
+  color: var(--ram-text-inverse-color);
   font-weight: 400;
+  border-block-start-width: 0;
   border-block-end-width: 2px;
 }
 
-/* The transform wraps every cell's text in a paragraph and live mostly does not, so
-   the paragraph rule's 22.4px leading and weight 300 land inside a cell live draws at
-   24px and weight 400. Measured over eight table pages in four markets: six have no
+/* Clay puts 15px on the outer edges of the row, and the 2025 theme starts the first cell's text:
+   table th:first-child,.table td:first-child{padding-left:15px}
+   table th:last-child,.table td:last-child{padding-right:15px}
+   .table-responsive table th:first-child,...td:first-child{text-align:start}
+
+   Live also pins that column so it stays while the rest scrolls, which is what the opaque cell
+   background above is for:
+   .table-responsive.scroll-table table th:first-child,...{position:sticky;inset-inline-start:0;
+     z-index:1} */
+.table th:first-child,
+.table td:first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  padding-inline-start: 15px;
+  text-align: start;
+}
+
+.table th:last-child,
+.table td:last-child {
+  padding-inline-end: 15px;
+}
+
+/* The transform wraps a cell's text in a paragraph and its bullets in a list, and live mostly does
+   not, so the paragraph and list rules' 22.4px leading and weight 300 landed inside a cell live
+   draws at 24px and weight 400. Measured over eight table pages in four markets: six have no
    paragraph in a cell at all, and the two that do draw it at 16px/25.6px/400.
-   The cell already matches on both sides, so it owns the type of what is in it. */
+   The cell already matches on both sides, so it owns the type of what is in it.
+
+   The margins are live's spacing inside a cell, read on /en-gb/airport-transit: a paragraph 15px
+   below, a list item 8px below, a list 10px above and nothing below. Ours drew 4px, 0 and 0, and the
+   transit rows came out 174 153 153 177 177 against live's 230 205 205 231 231. */
 .table th p,
 .table td p {
   line-height: inherit;
   font-weight: inherit;
+  margin-block-end: 15px;
 }
 
-.table tbody tr:last-child th,
-.table tbody tr:last-child td {
-  border-block-end: 0;
+.table th li,
+.table td li {
+  line-height: inherit;
+  font-weight: inherit;
+  margin-block-end: 8px;
 }
 
-/* A table wider than its column can be scrolled rather than squeezed, and the
-   scroll starts at the reading edge in either direction. */
-.table {
-  overflow-x: auto;
+.table th ul,
+.table th ol,
+.table td ul,
+.table td ol {
+  margin-block: 10px 0;
 }
 
+/* A cell whose only child is a paragraph is live's bare-text cell, which holds no paragraph and so
+   no margin. 16 of the 17 cells on /en-gb/checked-baggage are that, where our rows read 70 93 93
+   against live's 66 89 89 on the 4px the global paragraph rule adds. */
+.table th p:only-child,
+.table td p:only-child {
+  margin-block-end: 0;
+}

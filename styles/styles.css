@@ -29,6 +29,7 @@
   --ram-background-positive-color: #a22032;
   --ram-background-alternative-color: #f7f7f7;
   --ram-background-inverse-color: #1a1717;
+  --ram-neutral-900-color: #333231;
 
   /* colors */
   --background-color: var(--ram-background-default-color);
