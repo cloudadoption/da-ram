@@ -16,11 +16,21 @@ footer .footer > div {
 
 /* The only paragraph in the footer is the market legal notice, because the
    columns are headings and lists. France states its RCS registration and
-   Portugal links the Livro de Reclamacoes; the other eight carry none. */
+   Portugal links the Livro de Reclamacoes; the other eight carry none.
+
+   Live draws it as a band rather than as a line of small print:
+   .footer__subfooter{background-color:var(--ram-brand-primary-color);padding-inline:1rem;
+     padding-block:1rem;color:var(--ram-text-inverse-color);text-align:center}
+   at 16px on 24px at weight 400. Ours read 12px on 16.8px at weight 300 on the same dark ground.
+   The band is full-bleed on live and this one is not, because the notice sits inside the content
+   box the footer's own wrapper draws. */
 footer .footer p {
   margin: 0;
-  padding-top: 12px;
-  font-size: var(--body-font-size-xs);
+  padding: 16px;
+  background-color: var(--ram-brand-primary-color);
+  color: var(--ram-text-inverse-color);
+  font-size: var(--body-font-size-m);
+  font-weight: 400;
   text-align: center;
 }
 
@@ -29,8 +39,15 @@ footer .footer a:any-link {
   text-decoration: none;
 }
 
+/* Live colours a footer link on hover and does not underline it:
+   .footer__link:hover{color:var(--ram-text-primary-color);text-decoration:none}
+   and .footer__list__item:hover says the same. Ours underlined and stayed white.
+
+   Reading this took a real mouse event. A JS-synthesised one does not fire CSS :hover, so the first
+   measurement came back white on both sides and looked like a match. */
 footer .footer a:hover {
-  text-decoration: underline;
+  color: var(--ram-text-primary-color);
+  text-decoration: none;
 }
 
 .footer-group-title {
@@ -38,6 +55,10 @@ footer .footer a:hover {
   padding: 12px 0;
   border-bottom: 1px solid rgb(255 255 255 / 20%);
   font-size: var(--body-font-size-m);
+
+  /* Live's h3.footer__menu__title is 16px on 22.4px, its .f-body-l declaring line-height 140%. Ours
+     read 19.2px, from the 1.2 the shared heading rule in styles.css sets. */
+  line-height: 1.4;
   font-weight: 400;
   cursor: pointer;
 }
@@ -75,20 +96,31 @@ footer .footer a:hover {
   font-size: var(--body-font-size-s);
 }
 
-/* Live shows three links below the columns, centred and wrapping, and they do
-   not collapse: the site map, the terms and the partner page. */
+/* Live shows three links below the columns and they do not collapse: the site map, the terms and the
+   partner page. The row shrink-wraps at the reading edge with a rule between the items, not centred
+   across the column:
+   .footer__webmap li{border-inline-end:1px solid var(--ram-text-inverse-color);
+     padding-inline-end:.5rem}
+   .footer__webmap li:last-child{border-inline-end:none}
+   Ours spanned the whole 1240px centred with no rule, and read 63px tall against live's 48. */
 .footer-bar-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px 24px;
+  justify-content: start;
+  gap: 8px;
   margin: 0;
   padding: 16px 0 0;
   list-style: none;
 }
 
 .footer-bar-list li {
+  padding-inline-end: 8px;
+  border-inline-end: 1px solid var(--ram-text-inverse-color);
   font-size: var(--body-font-size-s);
+}
+
+.footer-bar-list li:last-child {
+  border-inline-end: none;
 }
 
 
