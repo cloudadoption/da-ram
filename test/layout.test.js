@@ -420,8 +420,8 @@ describe('the section rhythm', () => {
   // The empty section was not the whole of it. A block's bottom margin escapes its section, because
   // the section has no padding or border at that edge, so it lands on top of main's 24px padding.
   // The last thing on /en-gb/checked-baggage is a callout carrying 24, which is where the 48 came
-  // from. Between two sections the escaping margin collapses with the next one's 24px top margin, so
-  // stopping it changes nothing there.
+  // from. Between two sections the escaping margin collapses with the next one's 24px top margin,
+  // so stopping it changes nothing there.
   it('keeps a block-s own bottom margin inside its section', () => {
     assert.match(declared, /main > \.section > div > :last-child \{[^}]*margin-block-end:\s*0/);
   });
