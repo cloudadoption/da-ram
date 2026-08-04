@@ -174,20 +174,20 @@ describe('the card title colour', () => {
 
 // Live puts a chevron at the card's trailing edge, on the title's line: i.small-card__arrow at
 // font-size 24px in the brand red, a 25x24 box 16px from the card's trailing edge. Measured on
-// /en-gb/checked-baggage, /en-gb/baggage-information and /en-gb/add-extra-luggage, identical on each.
+// /en-gb/checked-baggage, /en-gb/baggage-information and /en-gb/add-extra-luggage, the same on each.
 //
-// 18 of the 23 card titles read across eight en-GB pages carry one: small-card 11, baggage-card 4 and
-// link-card 3. The 5 without are ram-card and ram-header-card, which are the cards with no image, so
+// 18 of the 23 card titles read across eight en-GB pages carry one: small-card 11, baggage-card 4
+// and link-card 3. The 5 without are ram-card and ram-header-card, the cards with no image, so
 // the chevron follows the same icon-and-photo split the type sizes make.
 //
-// The glyph is from the client's ram-icons font and this repository does not load it, so the chevron
-// is drawn: an 8px square with two 2px edges, turned 45deg.
+// The glyph is from the client's ram-icons font and this repository does not load it, so it is
+// drawn: an 8px square with two 2px edges, turned 45deg.
 describe('the card chevron', () => {
   const styles = readFileSync(new URL('../blocks/cards/cards.css', import.meta.url), 'utf8');
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const CARD = '\\.cards > ul > li:is\\(\\.cards-card-icon, \\.cards-card-photo\\)';
   const marker = () => {
-    const found = /\.cards > ul > li:is\(\.cards-card-icon, \.cards-card-photo\)[^{]*::after \{[\s\S]*?\n\}/
-      .exec(declared);
+    const found = new RegExp(`${CARD}[^{]*::after \\{[\\s\\S]*?\\n\\}`).exec(declared);
     assert.ok(found, 'expected a chevron rule for the icon and photo card');
     return found[0];
   };
@@ -198,7 +198,8 @@ describe('the card chevron', () => {
 
   it('puts it at the trailing edge of the title row', () => {
     assert.match(marker(), /margin-inline-start:\s*auto/);
-    const row = /\.cards > ul > li :is\(h1, h2, h3, h4, h5, h6\) \{[\s\S]*?\n\}/.exec(declared);
+    const row = /\.cards > ul > li :is\(h1, h2, h3, h4, h5, h6\) \{[\s\S]*?\n\}/
+      .exec(declared);
     assert.ok(row, 'expected a rule for the title row');
     assert.match(row[0], /display:\s*flex/);
   });
