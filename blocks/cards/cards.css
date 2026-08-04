@@ -105,6 +105,47 @@
      20px margin-bottom every heading carries escaped the card body and made the
      icon card 112px against live's 106. */
   margin: 0;
+
+  /* The row carries the chevron below at its trailing edge. */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Live puts a chevron at the card's trailing edge, on the title's line: i.small-card__arrow at
+   font-size 24px in the brand red, a 25x24 box 16px from the card's trailing edge, identical on
+   /en-gb/checked-baggage, /en-gb/baggage-information and /en-gb/add-extra-luggage.
+
+   18 of the 23 card titles read across eight en-GB pages carry one: small-card 11, baggage-card 4 and
+   link-card 3. The 5 without are ram-card and ram-header-card, the cards with no image, so this
+   follows the same icon-and-photo split the type sizes make.
+
+   The glyph comes from the client's ram-icons font, which this repository does not load, so the
+   chevron is drawn: an 8px square with two 2px edges, turned 45deg. The card's own 16px of padding
+   puts it where live's sits. :has(a) is the guard, because a chevron on a card that links nowhere
+   tells the reader they can go somewhere. */
+.cards > ul > li:is(.cards-card-icon, .cards-card-photo) :is(h1, h2, h3, h4, h5, h6):has(a)::after {
+  content: '';
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-inline-start: auto;
+  border-block-start: 2px solid var(--link-color);
+  border-inline-end: 2px solid var(--link-color);
+  transform: rotate(45deg);
+}
+
+/* transform is physical, so the reading direction needs its own angle. The logical borders already
+   move: in a right-to-left market border-inline-end is the left edge, so the two strokes meet at the
+   top left and the apex points up and to the left. A quarter turn anticlockwise brings it to the
+   left, and 135deg took it back to pointing right, which the Arabic branch preview showed.
+
+   Live keeps ram-icon-chevron-right in Arabic with no transform, so its chevron points into the text:
+   recorded in ram2-migration docs/divergences.md. */
+[dir="rtl"] .cards > ul > li:is(.cards-card-icon, .cards-card-photo)
+  :is(h1, h2, h3, h4, h5, h6):has(a)::after {
+  transform: rotate(-45deg);
 }
 
 /* 24px at weight 700 is what a card title measures on live wherever the card is not a
