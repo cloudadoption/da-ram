@@ -126,3 +126,33 @@ describe('the hover and active colours, measured on live', () => {
     assert.match(rule('a.button.accent'), /background-color:\s*var\(--link-color\)/);
   });
 });
+
+// The header height was the boilerplate's 64px, flat at every width. Live carries two heights and
+// the step is at 768, measured in a browser on /en-gb/checked-baggage on 2026-08-04:
+//
+//            live 1440   live 375   ours before
+//   height      80px       48px       64px
+//   min-height  80px        0px        0px
+//   position   sticky     sticky     static
+//
+// The 80px comes from .header__logo__img{height:5rem} and
+// .header__container{max-height:fit-content},
+// both gated at 768, which is what 0.1 of the design spec corrected from an earlier reading of 992.
+// The spec's section 3.4 named the token change and it had not been made.
+describe('the header height, measured on live', () => {
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('starts at live’s narrow height', () => {
+    assert.match(declared, /--nav-height:\s*48px/);
+  });
+
+  it('steps to live’s wide height at 768, where live steps', () => {
+    const found = /@media\s*\(width\s*>=\s*768px\)\s*\{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(found, 'expected a 768px media query');
+    assert.match(found[0], /--nav-height:\s*80px/);
+  });
+
+  it('no longer carries the boilerplate 64px', () => {
+    assert.doesNotMatch(declared, /--nav-height:\s*64px/);
+  });
+});
