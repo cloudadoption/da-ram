@@ -79,19 +79,99 @@ describe('the table head', () => {
   });
 });
 
-// Live's cell padding is 8px 12px 8px 15px at 375, 900 and 1440 alike, so the
-// boilerplate's 600px step from 8px 12px to 12px 16px has nothing behind it.
+// The earlier reading, 8px 12px 8px 15px at 375, 900 and 1440 alike, was the first column of the
+// row. Clay declares the base at .75rem and puts 15px on the outer edges:
+//
+//   table td{...padding:.75rem...}
+//   table th:first-child,.table td:first-child{padding-left:15px}
+//   table th:last-child,.table td:last-child{padding-right:15px}
+//
+// and the 2025 theme takes the vertical down to .5rem. So the flat rule matched live on the first
+// cell of each row and was 3px out on the rest, in both directions.
 describe('the table cell padding', () => {
   const styles = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
   const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
-  it('takes the measured padding', () => {
+  it('takes the base padding the 2025 theme declares', () => {
     const cell = /\.table th,\n\.table td \{[\s\S]*?\n\}/.exec(declarations)[0];
-    assert.match(cell, /padding:\s*8px 12px 8px 15px/);
+    assert.match(cell, /padding:\s*8px 12px;/);
+  });
+
+  it('puts 15px on the outer edge of each row, as Clay does', () => {
+    assert.match(declarations, /:first-child \{[^}]*padding-inline-start:\s*15px/);
+    assert.match(declarations, /:last-child \{[^}]*padding-inline-end:\s*15px/);
   });
 
   it('does not step at 600px, because live does not', () => {
     assert.doesNotMatch(declarations, /@media \(width >= 600px\)/);
+  });
+});
+
+// The 2025 theme declares the whole cell in one rule, read on 2026-08-04 from
+// /o/ram-airways-theme/2025/css/styles.css:
+//
+//   .table-responsive table th,.table-responsive table td{padding:.5rem .75rem;text-align:center;
+//     vertical-align:middle;height:3.5rem}
+//   .table-responsive table th:first-child,.table-responsive table td:first-child{text-align:start}
+//   .table-responsive table td{background-color:var(--ram-background-default-color);
+//     color:var(--ram-neutral-900-color)}
+//   .table-responsive{...border-radius:.5rem}
+//   .table-responsive.scroll-table table th:first-child,...td:first-child{position:sticky;
+//     inset-inline-start:0;z-index:1}
+//
+// Every live table sampled is table.table.table-alternate-reverse inside
+// div.table-responsive.scroll-table, so the whole set applies. Measured against ours on
+// /en-gb/checked-baggage: row heights 56 66 89 89 against 45 70 93 93, cell background #fff against
+// transparent, colour #333231 against #1a1717, a 1px top rule against none, an 8px corner against
+// a square one, and the first column pinned against scrolling away.
+describe('the table cell follows the 2025 theme rule', () => {
+  const styles = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
+  const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
+  const declarations = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const cell = () => /\.table th,\n\.table td \{[\s\S]*?\n\}/.exec(declarations)[0];
+
+  it('centres a cell and starts the first one', () => {
+    assert.match(cell(), /text-align:\s*center/);
+    assert.match(declarations, /:first-child \{[^}]*text-align:\s*start/);
+  });
+
+  it('sits the text in the middle of the cell rather than at the top', () => {
+    assert.match(cell(), /vertical-align:\s*middle/);
+    assert.doesNotMatch(cell(), /vertical-align:\s*top/);
+  });
+
+  it('takes the declared minimum row height', () => {
+    assert.match(cell(), /height:\s*3\.5rem/);
+  });
+
+  it('gives a body cell the declared background and colour', () => {
+    const body = /\n\.table tbody td \{[\s\S]*?\n\}/.exec(declarations);
+    assert.ok(body, 'expected a rule for a body cell');
+    assert.match(body[0], /background-color:\s*var\(--ram-background-default-color\)/);
+    assert.match(body[0], /color:\s*var\(--ram-neutral-900-color\)/);
+    assert.match(rootStyles, /--ram-neutral-900-color:\s*#333231/);
+  });
+
+  it('rules a cell above and below, and keeps the last row-s', () => {
+    assert.match(cell(), /border-block:\s*1px solid #dee2e6/);
+    assert.doesNotMatch(declarations, /tbody tr:last-child/);
+  });
+
+  it('rounds the corner of the scroll box', () => {
+    const box = /\n\.table \{[\s\S]*?\n\}/.exec(declarations)[0];
+    assert.match(box, /border-radius:\s*8px/);
+  });
+
+  it('pins the first column while the rest scrolls', () => {
+    assert.match(declarations, /:first-child \{[^}]*position:\s*sticky/);
+    assert.match(declarations, /:first-child \{[^}]*inset-inline-start:\s*0/);
+  });
+
+  it('lets a list item in a cell take the cell-s type, as a paragraph does', () => {
+    const rule = /\.table (?:th|td) (?:p|li)[^{]*\{[\s\S]*?\n\}/.exec(declarations)[0];
+    assert.match(rule, /line-height:\s*inherit/);
+    assert.match(rule, /font-weight:\s*inherit/);
+    assert.match(declarations, /\.table (?:th|td) li/);
   });
 });
 
