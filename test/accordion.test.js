@@ -93,6 +93,12 @@ describe('the accordion follows live-s own rule', () => {
     assert.match(rule('.accordion summary'), /line-height:\s*1\.4/);
   });
 
+  // The pipeline wraps the question in a paragraph and live's is an h3 with no margin, so the global
+  // 4px paragraph margin drew a 50px row against live's 46.
+  it('takes the margin off what the pipeline wraps the question in', () => {
+    assert.match(rule('.accordion summary > *'), /margin-block:\s*0/);
+  });
+
   it('insets the question, as the title rule does', () => {
     assert.match(rule('.accordion summary'), /padding-inline-start:\s*4px/);
   });

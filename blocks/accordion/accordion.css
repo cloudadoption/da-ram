@@ -38,6 +38,12 @@
   display: none;
 }
 
+/* The pipeline wraps the question in a paragraph and live's is an h3.accordion__title with no
+   margin, so the global 4px paragraph margin drew a 50px row against live's 46. */
+.accordion summary > * {
+  margin-block: 0;
+}
+
 /* Live's marker is i.accordion__chevron.ram-icon-chevron-down, a 20x20 box at font-size 20px in
    --ram-text-dark-color with margin-inline-end 4px, turned 180deg while the panel is open. The glyph
    comes from the client's own ram-icons font, which this repository does not load, so the chevron is
