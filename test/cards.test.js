@@ -141,3 +141,33 @@ describe('the icon card is the default, so nothing moves for it', () => {
     );
   });
 });
+
+// Live declares the card title's colour, in /o/ram-airways-theme/2025/css/styles.css:
+//
+//   .small-card__title{width:100%;color:var(--ram-text-dark-color)}
+//   .card-full__title{width:100%;color:var(--ram-text-dark-color)}
+//
+// Measured over eight en-GB card pages at 1440: small-card reads #1a1717 on 11 titles, baggage-card
+// #000 on 4, ram-card #333 on 3, ram-header-card #634959 on 1, and link-card the brand red #c20831
+// on 3. So 19 of 23 are a dark colour and the link-card is the exception, which is the same split
+// the type scale already makes. Ours drew the brand red on each, because the title is an anchor and
+// takes --link-color.
+describe('the card title colour', () => {
+  const styles = readFileSync(new URL('../blocks/cards/cards.css', import.meta.url), 'utf8');
+  const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('is the client-s dark token on a card', () => {
+    const rule = /\.cards:not\(\.cover\) > ul > li [^{]*a[^{]*\{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a title colour rule for a card');
+    assert.match(rule[0], /color:\s*var\(--ram-text-dark-color\)/);
+    assert.match(rootStyles, /--ram-text-dark-color:\s*#1a1717/);
+  });
+
+  // A cover block's cards are photo cards, so scoping the rule to the icon and photo card let it
+  // through there: six titles on /en-gb/add-extra-luggage went dark against live's red.
+  it('leaves the link-card on the brand red, which is what live draws', () => {
+    assert.doesNotMatch(declared, /\.cards\.cover[^{]*a[^{]*\{[^}]*color:/);
+    assert.match(declared, /\.cards:not\(\.cover\)/);
+  });
+});
