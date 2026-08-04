@@ -16,7 +16,16 @@
   padding: 20px;
   border-radius: 12px;
   background-color: #fff;
-  font-size: var(--body-font-size-s);
+
+  /* Live renders box copy at the size of the prose around it, 16px on 22.4px, measured on
+     .ram-advice-block and .ram-unified-box. This read --body-font-size-s, 14px, so text shrank
+     inside our box and does not shrink inside live's. */
+  font-size: var(--body-font-size-m);
+
+  /* Live shadows a box on 54 templates, 229 instances, and nothing here declared one at all. The
+     modal value is 0 4px 12px rgba(0,0,0,0.03) on 100 of them, then 80, 19, 18 and a tail. Carried
+     the way decision 0024 carries a padding or a radius. */
+  box-shadow: 0 4px 12px rgb(0 0 0 / 3%);
 }
 
 .callout > div > div > *:first-child {
@@ -36,9 +45,16 @@
   border-radius: 10px;
 }
 
+/* Live marks this family with a bar down the reading edge:
+   .ram-advice-block{...border-left:6px solid #B02736...}, and .ram-card, .ram-block and .ram-row
+   carry the same one. The padding, the radius and the background already matched, so the bar was the
+   whole difference on 50 instances across five templates. #b02736 is a fourth red on live, alongside
+   the #9a1c3e the accent border uses, the #c20831 in styles.css and the rgb(194,0,47) the
+   kartenstatus box fills with. */
 .callout.fill {
   padding: 25px;
   border: 0;
+  border-inline-start: 6px solid #b02736;
   background-color: #f8f8f8;
 }
 
