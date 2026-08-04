@@ -240,11 +240,15 @@ h6 {
      across four live pages", was reading the authored tail rather than the declaration, and it said
      nothing about the space above.
 
-     Zero below as well as above, because the rendered distribution says so and not only the
-     declaration: over 32 headings on /en-gb/checked-baggage live reads 0 below on 18, then 20 on 5, 10
-     on 3 and 8 on 3. So 0 is both what live declares and its modal rendered value, and the 8, 10 and 20
-     are the authored tail decision 0024 collapses. */
-  margin: 0;
+     The 20px below stays. Zeroing it made the page tighter than live looks, and the screenshot is what
+     caught it: live's air around a prose heading comes from a <br> and from portlet wrappers carrying
+     20px, neither of which the transform keeps. Live's own prose blocks read 0/0, 0/4 and 0/20 across
+     four pages with no value dominating, so 20 is a decision-0024 choice and it was already made here.
+
+     The top margin has no such support. No live heading measured carries one, on any page or under any
+     filter, and the space above comes from whatever sits before it: on /en-gb/checked-baggage that is
+     5px. Ours will read 4px, from the paragraph's own bottom margin. */
+  margin: 0 0 20px;
   font-family: var(--heading-font-family);
   font-weight: 500;
   line-height: 1.2;

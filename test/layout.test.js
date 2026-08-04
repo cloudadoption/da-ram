@@ -194,9 +194,9 @@ describe('the vertical rhythm', () => {
   // The 20px was the authored tail. Live declares body h1..h6{margin:0;padding:0}, and over 32
   // headings on /en-gb/checked-baggage it renders 0 below on 18, then 20 on 5, 10 on 3 and 8 on 3.
   // So 0 is both the declaration and the mode.
-  it('gives a heading no margin, which is live-s declaration and its mode', () => {
+  it('gives a heading the measured 20px below it and nothing above', () => {
     const headings = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
-    assert.match(headings, /margin:\s*0;/);
+    assert.match(headings, /margin:\s*0 0 20px;/);
   });
 
   it('indents a list by the measured 20px, not the browser default 40', () => {
@@ -346,7 +346,7 @@ describe('the heading margins', () => {
     const rule = /\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 \{[\s\S]*?\n\}/.exec(declared);
     assert.ok(rule, 'expected the shared heading rule');
     assert.doesNotMatch(rule[0], /margin-top:\s*0\.8em/);
-    assert.match(rule[0], /margin:\s*0;/);
+    assert.match(rule[0], /margin:\s*0 0 20px;/);
   });
 });
 
