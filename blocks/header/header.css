@@ -30,7 +30,12 @@ header nav[aria-expanded='true'] {
   min-height: 100dvh;
 }
 
-@media (width >= 900px) {
+/* Live switches the nav bar at 1280, measured in a browser on /en-gb/checked-baggage at 375,
+   900, 1024, 1279, 1280 and 1440: the hamburger from 375 through 1279 and the desktop bar from
+   1280. The boilerplate switched at 900, so between 900 and 1279 this header was structurally
+   different from live's over 380px of viewport. The 900 in scripts.js is the eager font-loading
+   threshold and is unrelated. */
+@media (width >= 1280px) {
   header .nav-wrapper {
     position: relative;
   }
@@ -132,7 +137,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   transform: rotate(-45deg);
 }
 
-@media (width >= 900px) {
+@media (width >= 1280px) {
   header nav .nav-hamburger {
     display: none;
     visibility: hidden;
@@ -198,7 +203,7 @@ header nav .nav-sections .nav-group > ul {
   font-weight: 400;
 }
 
-@media (width >= 900px) {
+@media (width >= 1280px) {
   header nav .nav-sections {
     display: block;
     visibility: visible;
