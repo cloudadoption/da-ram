@@ -132,3 +132,37 @@ describe('the nav bar breakpoint', () => {
     assert.doesNotMatch(js, /matchMedia\('\(min-width:\s*900px\)'\)/);
   });
 });
+
+// Live's header is position: sticky at every width, read on /en-gb/checked-baggage at 1440 and 375.
+// Ours scrolled away from 1280 up, because the boilerplate makes .nav-wrapper fixed below the
+// breakpoint and relative above it, and relative scrolls.
+//
+// The sticky element has to be header rather than .nav-wrapper. A sticky wrapper can only stick
+// inside its containing block, and header carries height: var(--nav-height), so it would stick
+// within 80px and scroll away with the page. header is a direct child of body.
+//
+// Tried in a browser before it was written: with header sticky, scrolling to 900 leaves the header
+// at top 0, the wrapper keeps its white background and z-index 2, and elementFromPoint in the
+// middle of the header band returns a UL inside the header rather than the page behind it.
+describe('the header follows the page, as live’s does', () => {
+  const root = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
+  const declared = root.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = /(?:^|\n)header \{[\s\S]*?\n\}/.exec(declared);
+
+  it('makes the header sticky rather than static', () => {
+    assert.ok(rule, 'expected a header rule in styles.css');
+    assert.match(rule[0], /position:\s*sticky/);
+  });
+
+  it('pins it to the top, because sticky with no offset does not stick', () => {
+    assert.match(rule[0], /top:\s*0/);
+  });
+
+  it('lifts it over the page it now scrolls under', () => {
+    assert.match(rule[0], /z-index:\s*3/);
+  });
+
+  it('keeps the height that reserves the band', () => {
+    assert.match(rule[0], /height:\s*var\(--nav-height\)/);
+  });
+});
