@@ -157,15 +157,17 @@ describe('the card title colour', () => {
   const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
-  it('is the client-s dark token on an icon or photo card', () => {
-    const rule = /\.cards > ul > li:is\(\.cards-card-icon, \.cards-card-photo\)[^{]*a[^{]*\{[\s\S]*?\n\}/
-      .exec(declared);
-    assert.ok(rule, 'expected a title colour rule for the icon and photo card');
+  it('is the client-s dark token on a card', () => {
+    const rule = /\.cards:not\(\.cover\) > ul > li [^{]*a[^{]*\{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a title colour rule for a card');
     assert.match(rule[0], /color:\s*var\(--ram-text-dark-color\)/);
     assert.match(rootStyles, /--ram-text-dark-color:\s*#1a1717/);
   });
 
+  // A cover block's cards are photo cards, so scoping the rule to the icon and photo card let it
+  // through there: six titles on /en-gb/add-extra-luggage went dark against live's red.
   it('leaves the link-card on the brand red, which is what live draws', () => {
     assert.doesNotMatch(declared, /\.cards\.cover[^{]*a[^{]*\{[^}]*color:/);
+    assert.match(declared, /\.cards:not\(\.cover\)/);
   });
 });
