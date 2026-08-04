@@ -90,3 +90,41 @@ describe('the header brand mark', () => {
     assert.match(brand[0], /(text-indent|font-size:\s*0|overflow:\s*hidden)/);
   });
 });
+
+// The nav bar switches at 1280 on live, not at 900. Measured in a browser on
+// /en-gb/checked-baggage at 375, 900, 1024, 1279, 1280 and 1440 on 2026-08-04: live shows the
+// hamburger from 375 through 1279 and the desktop bar from 1280, and ours showed the desktop bar
+// from 900. So between 900 and 1279, 380px of viewport, the header was structurally different.
+//
+// 0.1 of the design spec corrected an earlier reading of 992 to this, and section 3.4 named the
+// change under what has to change in blocks/header: "change it to 1280, because the nav bar
+// switches there, not at 900 and not at 768".
+//
+// The 900 in scripts.js is a different thing, the eager font-loading threshold, and stays.
+describe('the nav bar breakpoint', () => {
+  const css = readFileSync(new URL('../blocks/header/header.css', import.meta.url), 'utf8');
+  const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const js = readFileSync(new URL('../blocks/header/header.js', import.meta.url), 'utf8');
+
+  it('gates the desktop layout at 1280 in the stylesheet', () => {
+    assert.doesNotMatch(declarations, /@media\s*\(width\s*>=\s*900px\)/);
+    assert.match(declarations, /@media\s*\(width\s*>=\s*1280px\)/);
+  });
+
+  it('hides the hamburger from 1280 and not before', () => {
+    const blocks = declarations.match(/@media \(width >= 1280px\) \{[\s\S]*?\n\}/g) || [];
+    assert.ok(blocks.some((b) => /\.nav-hamburger[\s\S]*?display:\s*none/.test(b)),
+      'expected the hamburger hidden inside a 1280 block');
+  });
+
+  it('shows the sections from 1280 and not before', () => {
+    const blocks = declarations.match(/@media \(width >= 1280px\) \{[\s\S]*?\n\}/g) || [];
+    assert.ok(blocks.some((b) => /\.nav-sections[\s\S]*?display:\s*block/.test(b)),
+      'expected the sections shown inside a 1280 block');
+  });
+
+  it('reads the same width in the module, so the JS and the CSS agree', () => {
+    assert.match(js, /matchMedia\('\(min-width:\s*1280px\)'\)/);
+    assert.doesNotMatch(js, /matchMedia\('\(min-width:\s*900px\)'\)/);
+  });
+});
