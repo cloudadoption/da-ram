@@ -72,3 +72,63 @@ describe('the tabs controls', () => {
     assert.match(wide[0], /\.tabs-select \{[^}]*display: none/);
   });
 });
+
+// Live declares the tab strip in /o/ram-airways-theme/2025/css/styles.css, read on 2026-08-04:
+//
+//   .nav.nav-tabs.nav-tabs--custom{display:flex;justify-content:center;align-items:flex-start;border:0}
+//   .nav.nav-tabs.nav-tabs--custom li.nav-item{padding:0;margin:0}
+//   ...a.nav-link{display:flex;justify-content:center;align-items:center;min-height:1.5rem;
+//     padding-block:.25rem;padding-inline:.75rem;font-size:1rem;font-weight:200;
+//     color:var(--ram-text-dark-color);border-block-end:.125rem solid rgba(0,0,0,0)}
+//   ...a.nav-link.active{border:0;font-weight:500;
+//     border-block-end:.125rem solid var(--ram-background-positive-color)}
+//   @media(min-width:992px){...a.nav-link{min-height:2.1875rem;padding-inline:2.625rem}}
+//
+// All 30 tab pages on live are legacy-theme, so their rendered values are measured under a stylesheet
+// decision 0025 discards and the 2025 declaration is the requirement. That is L-231.
+//
+// What we drew instead: a 1px #e0e0e0 rule across the whole column where live declares border 0, the
+// strip left-packed where live centres it, 15.75px at weight 300 rising to 700 where live declares
+// 1rem at 200 rising to 500, and the marker in #c20831 where live names its positive-background
+// token, #a22032. The #e0e0e0 came from var(--ram-border-color, #e0e0e0), and nothing in this
+// repository defines --ram-border-color.
+describe('the tab strip follows the 2025 theme', () => {
+  const styles = readFileSync(new URL('../blocks/tabs/tabs.css', import.meta.url), 'utf8');
+  const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = (selector) => {
+    const at = declared.indexOf(selector);
+    assert.ok(at >= 0, `expected a rule for ${selector}`);
+    return declared.slice(at, declared.indexOf('}', at) + 1);
+  };
+
+  it('draws no rule under the strip, because live declares border 0', () => {
+    assert.doesNotMatch(declared, /border-bottom:\s*1px solid var\(--ram-border-color/);
+    assert.doesNotMatch(declared, /--ram-border-color/);
+  });
+
+  it('centres the strip', () => {
+    assert.match(rule('.tabs .tabs-list {'), /justify-content:\s*center/);
+  });
+
+  it('takes the declared type', () => {
+    const tab = rule('.tabs .tabs-tab {');
+    assert.match(tab, /font-size:\s*16px/);
+    assert.match(tab, /font-weight:\s*200/);
+    assert.doesNotMatch(tab, /15\.75px/);
+  });
+
+  it('takes the declared selected weight and the client-s own marker token', () => {
+    const selected = rule(".tabs .tabs-tab[aria-selected='true'] {");
+    assert.match(selected, /font-weight:\s*500/);
+    assert.match(selected, /border-bottom-color:\s*var\(--ram-background-positive-color\)/);
+    assert.match(rootStyles, /--ram-background-positive-color:\s*#a22032/);
+  });
+
+  it('takes the declared padding and its 992 step', () => {
+    assert.match(rule('.tabs .tabs-tab {'), /padding:\s*4px 12px/);
+    const step = /@media \(width >= 992px\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(step, 'expected a 992px step, where live steps');
+    assert.match(step[0], /padding-inline:\s*42px/);
+  });
+});
