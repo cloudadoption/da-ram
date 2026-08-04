@@ -387,9 +387,28 @@ describe('the section rhythm', () => {
   });
 
   // Read at 1440 on the branch: 24px above the first section and 24 between each pair, both live's.
-  // Under the last one it is 48 rather than 24, because every page carries a trailing section with
-  // no height and :last-child matches that rather than the last one a reader sees.
   it('takes the first section-s own top margin off, so the padding is not doubled', () => {
     assert.match(declared, /main > \.section:first-child \{[^}]*margin-block-start:\s*0/);
+  });
+
+  // Live leaves 24px between the last ink and the footer, measured at 1440 on /en-gb/checked-baggage,
+  // /en-gb/carry-on-baggage and /en-gb/airport-transit: 24 on each. Ours read 48 on checked-baggage.
+  //
+  // The pipeline leaves a trailing <div class="section"> with no children, which is what the metadata
+  // block was in. :last-child matches that rather than the last section a reader sees, so the visible
+  // one keeps its 24px bottom margin, the empty one's 24px top margin collapses with it, and main's
+  // 24px padding makes 48.
+  //
+  // The empty box goes out of flow, which takes its margin with it, and the section before it is
+  // zeroed the same way :last-child zeroes a real last one.
+  it('drops a trailing section the pipeline left with nothing in it', () => {
+    assert.match(declared, /main > \.section:not\(:has\(> \*\)\) \{[^}]*display:\s*none/);
+  });
+
+  it('ends the page 24px under the last ink rather than 48', () => {
+    assert.match(
+      declared,
+      /main > \.section:has\(\+ \.section:not\(:has\(> \*\)\)\) \{[^}]*margin-block-end:\s*0/,
+    );
   });
 });
