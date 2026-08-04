@@ -109,10 +109,11 @@ describe('the callout follows live-s own boxes', () => {
     assert.doesNotMatch(base, /font-size:\s*var\(--body-font-size-s\)/);
   });
 
+  // border: 0 stays: it zeroes the other three edges before the reading one is drawn.
   it('draws the fill variant-s left bar', () => {
     const fill = rule('.callout.fill {');
+    assert.match(fill, /border:\s*0/);
     assert.match(fill, /border-inline-start:\s*6px solid #b02736/i);
-    assert.doesNotMatch(fill, /border:\s*0/);
   });
 
   it('carries the modal shadow', () => {
