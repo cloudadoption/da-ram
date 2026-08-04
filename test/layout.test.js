@@ -297,6 +297,39 @@ describe('the heading weights', () => {
 // Ours read a flat 40px at every boundary and every width, from a 40px margin on main > .section
 // collapsing with its neighbour. And where live pads 24px above the first block and 24px below the
 // last, ours gave 0 above, because main's top sits exactly on the header's bottom, and 40 below.
+// Live paints the page ground below the header #f7f7f7 and leaves body white behind it. Read at 1440 on
+// three 2025-theme pages, walking up from the first long paragraph to whatever paints behind it:
+//
+//   /en-gb/checked-baggage      DIV.bck-gray rgb(247,247,247) w1440, then BODY white
+//   /en-gb/preparing-your-trip  DIV.card-full rgb(247,247,247) w1114 inside DIV.container--white w1240
+//   /en-gb/carry-on-baggage     DIV rgb(249,249,249) radius 8 shadow w1240, then DIV.bck-gray w1440
+//
+// So the grey band is on each of the three and live is content to put article prose straight onto it,
+// which /en-gb/checked-baggage does. The white card and the tinted box above it are per-page authored
+// wrappers, which is what decision 0024 collapses, and neither is carried.
+//
+// Declared: body .bck-gray{background-color:var(--ram-background-alternative-color)} and
+// body .bck-color-alternative the same. That token is already #f7f7f7 here.
+//
+// It also makes the card boxes visible. A cards block draws white and drew it on white, so the six
+// small cards on /en-gb/checked-baggage read as no boxes at all against live's white cards on grey.
+describe('the page ground', () => {
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('is the client-s alternative background below the header', () => {
+    const rule = /\nmain \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for main');
+    assert.match(rule[0], /background-color:\s*var\(--ram-background-alternative-color\)/);
+    assert.match(styles, /--ram-background-alternative-color:\s*#f7f7f7/);
+  });
+
+  it('leaves body white, as live does', () => {
+    const body = /\nbody \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(body, 'expected a rule for body');
+    assert.doesNotMatch(body[0], /background-color:\s*var\(--ram-background-alternative-color\)/);
+  });
+});
+
 describe('the section rhythm', () => {
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
