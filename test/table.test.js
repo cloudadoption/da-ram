@@ -181,6 +181,27 @@ describe('the table cell follows the 2025 theme rule', () => {
     assert.match(declarations, /:first-child \{[^}]*inset-inline-start:\s*0/);
   });
 
+  // Live's spacing inside a cell, read on /en-gb/airport-transit: a paragraph 15px below, a list
+  // item 8px below, a list 10px above and nothing below. Ours drew 4px, 0 and 0, so the transit
+  // rows came out 174 153 153 177 177 against live's 230 205 205 231 231.
+  //
+  // A cell whose only child is a paragraph is a different case. Live has bare text there and no
+  // paragraph at all, so no margin: 16 of the 17 cells on /en-gb/checked-baggage, where our rows
+  // read 70 93 93 against live's 66 89 89 on the 4px the global paragraph rule adds.
+  it('spaces what is in a cell the way live does', () => {
+    const para = /\.table th p,\n\.table td p \{[\s\S]*?\n\}/.exec(declarations);
+    assert.ok(para, 'expected a rule for a paragraph in a cell');
+    assert.match(para[0], /margin-block-end:\s*15px/);
+    const item = /\.table th li,\n\.table td li \{[\s\S]*?\n\}/.exec(declarations);
+    assert.ok(item, 'expected a rule for a list item in a cell');
+    assert.match(item[0], /margin-block-end:\s*8px/);
+    assert.match(declarations, /\.table td (?:ul|ol)[\s\S]*?margin-block:\s*10px 0/);
+  });
+
+  it('gives a cell holding one paragraph no margin, because live has no paragraph there', () => {
+    assert.match(declarations, /p:only-child[\s\S]*?margin-block-end:\s*0/);
+  });
+
   it('lets a list item in a cell take the cell-s type, as a paragraph does', () => {
     const rule = /\.table (?:th|td) (?:p|li)[^{]*\{[\s\S]*?\n\}/.exec(declarations)[0];
     assert.match(rule, /line-height:\s*inherit/);
