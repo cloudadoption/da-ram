@@ -113,14 +113,18 @@ describe('the nav bar breakpoint', () => {
 
   it('hides the hamburger from 1280 and not before', () => {
     const blocks = declarations.match(/@media \(width >= 1280px\) \{[\s\S]*?\n\}/g) || [];
-    assert.ok(blocks.some((b) => /\.nav-hamburger[\s\S]*?display:\s*none/.test(b)),
-      'expected the hamburger hidden inside a 1280 block');
+    assert.ok(
+      blocks.some((b) => /\.nav-hamburger[\s\S]*?display:\s*none/.test(b)),
+      'expected the hamburger hidden inside a 1280 block',
+    );
   });
 
   it('shows the sections from 1280 and not before', () => {
     const blocks = declarations.match(/@media \(width >= 1280px\) \{[\s\S]*?\n\}/g) || [];
-    assert.ok(blocks.some((b) => /\.nav-sections[\s\S]*?display:\s*block/.test(b)),
-      'expected the sections shown inside a 1280 block');
+    assert.ok(
+      blocks.some((b) => /\.nav-sections[\s\S]*?display:\s*block/.test(b)),
+      'expected the sections shown inside a 1280 block',
+    );
   });
 
   it('reads the same width in the module, so the JS and the CSS agree', () => {

@@ -3,7 +3,9 @@ import markNavGroups from './nav-groups.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates mobile/tablet width
-const isDesktop = window.matchMedia('(min-width: 900px)');
+// 1280 is where live switches its nav bar, and header.css gates the desktop layout on the same
+// width. Measured in a browser on 2026-08-04.
+const isDesktop = window.matchMedia('(min-width: 1280px)');
 
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
