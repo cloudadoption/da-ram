@@ -231,6 +231,23 @@ describe('the vertical rhythm', () => {
     const rule = /\nul,\nol\s*\{[\s\S]*?\n\}/.exec(styles)[0];
     assert.match(rule, /margin-block-end:\s*8px/);
   });
+
+  // Live's item spacing, read inside `.journal-content-article` at 1440 on six en-GB 2025-theme
+  // pages: 8px on 9 prose lists, 5px on 4, and 0 on the 6 single-item lists standing in for the
+  // cells of reduced-mobility's div-built table. Ours was 0 throughout, so a live list of seven
+  // items ran 56px shorter than ours.
+  //
+  // The theme declares no item margin and `*{margin:0}` enforces it, so live's 8px is a per-page
+  // inline style. Decision 0024 carries the commonest, which is the 8.
+  it('puts the measured 8px between one list item and the next', () => {
+    assert.match(styles, /main li \{[^}]*margin-block-end:\s*8px/);
+  });
+
+  // A cards block's `li` is a card and a tabs block's is a tab, so neither takes prose spacing. The
+  // grid and the strip carry their own gap.
+  it('leaves the blocks whose item is not prose at zero', () => {
+    assert.match(styles, /main :is\(\.cards, \.tabs\) li \{[^}]*margin-block-end:\s*0/);
+  });
 });
 
 // 974 documents carry a title lifted from live's `.page-heading__title`

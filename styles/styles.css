@@ -384,6 +384,23 @@ li {
   line-height: 1.4;
 }
 
+/* Live's item spacing, read inside `.journal-content-article` at 1440 on six en-GB 2025-theme pages:
+   8px on 9 prose lists, 5px on 4, and 0 on the 6 single-item lists standing in for the cells of
+   reduced-mobility's div-built table. Ours was 0, so a live list of seven items ran 56px shorter.
+
+   The theme declares no item margin and `*{margin:0}` enforces it, so the 8 is a per-page inline
+   style and decision 0024 carries the commonest. Scoped to main, which leaves the header and footer
+   navigation alone. */
+main li {
+  margin-block-end: 8px;
+}
+
+/* A cards block's `li` is a card and a tabs block's is a tab. Neither is prose, and each carries its
+   own gap. */
+main :is(.cards, .tabs) li {
+  margin-block-end: 0;
+}
+
 /* The browser's own rule for b and strong is font-weight: bolder, which from a 300 body computes to
    400. Live declares it flat: `body strong{font-weight:700}` in the 2025 theme. Read on the published
    /en-gb/checked-baggage, ours drew 12 strongs at 300 -> 400 against live's 300 -> 700. */
