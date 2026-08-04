@@ -76,3 +76,46 @@ describe('the callout block', () => {
     assert.doesNotMatch(declarations, /#c20831/i);
   });
 });
+
+// Live styles its boxes in per-page inline <style> blocks, so the theme stylesheets hold no
+// ram-*box rule at all and the declarations below were read from the live HTML on 2026-08-04.
+// Three of them are not a per-page value decision 0024 collapses; they are a treatment the block
+// has none of.
+//
+// The content size. Live renders box copy at 16px on 22.4px, the same as the prose around it:
+// .ram-advice-block reads 16px/22.4px w300 on its p and li. Ours forces 14px/19.6px, so text
+// shrinks inside our box and does not shrink inside live's. All 110 documents carrying a callout.
+//
+// The left bar. `.ram-advice-block{...border-left:6px solid #B02736...}` and the same bar is on
+// .ram-card, .ram-block and .ram-row. The fill variant declares `border: 0`, and padding 25px,
+// radius 12px and background #f8f8f8 already match, so the bar is the whole difference on 50
+// instances across five templates.
+//
+// The shadow. Live shadows a box on 54 templates, 229 instances: `0 4px 12px rgba(0,0,0,0.03)` on
+// 100 of them, then 80, 19, 18 and a tail. Nothing in this repository declares a box-shadow at all.
+// The modal value is carried here, which is what decision 0024 does with a padding or a radius.
+describe('the callout follows live-s own boxes', () => {
+  const styles = readFileSync(new URL('../blocks/callout/callout.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = (selector) => {
+    const at = declared.indexOf(selector);
+    assert.ok(at >= 0, `expected a rule for ${selector}`);
+    return declared.slice(at, declared.indexOf('}', at) + 1);
+  };
+
+  it('leaves box copy at the size the prose around it reads', () => {
+    const base = rule('.callout {');
+    assert.match(base, /font-size:\s*var\(--body-font-size-m\)/);
+    assert.doesNotMatch(base, /font-size:\s*var\(--body-font-size-s\)/);
+  });
+
+  it('draws the fill variant-s left bar', () => {
+    const fill = rule('.callout.fill {');
+    assert.match(fill, /border-inline-start:\s*6px solid #b02736/i);
+    assert.doesNotMatch(fill, /border:\s*0/);
+  });
+
+  it('carries the modal shadow', () => {
+    assert.match(rule('.callout {'), /box-shadow:\s*0 4px 12px rgb\(0 0 0 \/ 3%\)/);
+  });
+});
