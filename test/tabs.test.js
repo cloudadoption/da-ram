@@ -75,7 +75,8 @@ describe('the tabs controls', () => {
 
 // Live declares the tab strip in /o/ram-airways-theme/2025/css/styles.css, read on 2026-08-04:
 //
-//   .nav.nav-tabs.nav-tabs--custom{display:flex;justify-content:center;align-items:flex-start;border:0}
+//   .nav.nav-tabs.nav-tabs--custom
+//     {display:flex;justify-content:center;align-items:flex-start;border:0}
 //   .nav.nav-tabs.nav-tabs--custom li.nav-item{padding:0;margin:0}
 //   ...a.nav-link{display:flex;justify-content:center;align-items:center;min-height:1.5rem;
 //     padding-block:.25rem;padding-inline:.75rem;font-size:1rem;font-weight:200;
@@ -84,14 +85,14 @@ describe('the tabs controls', () => {
 //     border-block-end:.125rem solid var(--ram-background-positive-color)}
 //   @media(min-width:992px){...a.nav-link{min-height:2.1875rem;padding-inline:2.625rem}}
 //
-// All 30 tab pages on live are legacy-theme, so their rendered values are measured under a stylesheet
+// All 30 tab pages on live are legacy-theme, so their rendered values come from a stylesheet
 // decision 0025 discards and the 2025 declaration is the requirement. That is L-231.
 //
-// What we drew instead: a 1px #e0e0e0 rule across the whole column where live declares border 0, the
-// strip left-packed where live centres it, 15.75px at weight 300 rising to 700 where live declares
-// 1rem at 200 rising to 500, and the marker in #c20831 where live names its positive-background
-// token, #a22032. The #e0e0e0 came from var(--ram-border-color, #e0e0e0), and nothing in this
-// repository defines --ram-border-color.
+// What we drew instead: a 1px #e0e0e0 rule across the whole column where live declares border 0,
+// the strip left-packed where live centres it, 15.75px at weight 300 rising to 700 where live
+// declares 1rem at 200 rising to 500, and the marker in #c20831 where live names its own
+// positive-background token, #a22032. The #e0e0e0 came from var(--ram-border-color, #e0e0e0), and
+// this repository defines no such token.
 describe('the tab strip follows the 2025 theme', () => {
   const styles = readFileSync(new URL('../blocks/tabs/tabs.css', import.meta.url), 'utf8');
   const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
@@ -107,8 +108,12 @@ describe('the tab strip follows the 2025 theme', () => {
     assert.doesNotMatch(declared, /--ram-border-color/);
   });
 
+  // The strip is flex only from 1200, where the select gives way to it, so it centres there.
   it('centres the strip', () => {
-    assert.match(rule('.tabs .tabs-list {'), /justify-content:\s*center/);
+    const wide = /@media \(width >= 1200px\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(wide, 'expected the 1200px rule');
+    assert.match(wide[0], /justify-content:\s*center/);
+    assert.match(wide[0], /border:\s*0/);
   });
 
   it('takes the declared type', () => {

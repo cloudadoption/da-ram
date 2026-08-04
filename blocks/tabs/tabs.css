@@ -1,6 +1,19 @@
-/* Live draws the strip as a flex row of labels with the selected one heavier and
-   taller: 15.75px at weight 700 selected against 300, and 63px tall against 51,
-   measured on /en-gb/general-terms-and-conditions at 1440. */
+/* Live declares the strip in /o/ram-airways-theme/2025/css/styles.css, read on 2026-08-04:
+
+   .nav.nav-tabs.nav-tabs--custom{display:flex;justify-content:center;align-items:flex-start;border:0}
+   .nav.nav-tabs.nav-tabs--custom li.nav-item{padding:0;margin:0}
+   ...a.nav-link{display:flex;justify-content:center;align-items:center;min-height:1.5rem;
+     padding-block:.25rem;padding-inline:.75rem;font-size:1rem;font-weight:200;
+     color:var(--ram-text-dark-color);border-block-end:.125rem solid rgba(0,0,0,0)}
+   ...a.nav-link.active{border:0;font-weight:500;
+     border-block-end:.125rem solid var(--ram-background-positive-color)}
+   @media(min-width:992px){...a.nav-link{min-height:2.1875rem;padding-inline:2.625rem}}
+
+   All 30 tab pages on live are legacy-theme, so their rendered values are measured under a stylesheet
+   decision 0025 discards and the declaration above is the requirement. The earlier comment here read
+   15.75px at weight 700 selected against 300 off /en-gb/general-terms-and-conditions, which is one of
+   those pages. font-weight 200 resolves to the 100 face on both sides: live's ram-primary-font and
+   ours carry the same six, 100, 300, 400, 500, 700 and 900, and none of them is a 200. */
 
 .tabs .tabs-list {
   display: none;
@@ -8,33 +21,34 @@
 
 .tabs .tabs-tab {
   flex: 0 0 auto;
-  padding: 16px 24px;
+  min-height: 24px;
+  padding: 4px 12px;
   border: 0;
   border-bottom: 2px solid transparent;
   background: none;
-  color: var(--text-color);
+  color: var(--ram-text-dark-color);
   font-family: var(--body-font-family);
-  font-size: 15.75px;
-  font-weight: 300;
+  font-size: 16px;
+  font-weight: 200;
   cursor: pointer;
 }
 
 .tabs .tabs-tab[aria-selected='true'] {
-  /* Live's selected tab is 12px taller than the rest, which the heavier weight and
-     the rule under it account for rather than a height. */
-  border-bottom-color: var(--link-color);
-  font-weight: 700;
+  /* The client's own positive-background token, #a22032. We drew --link-color, #c20831, which live
+     paints on no tab strip. */
+  border-bottom-color: var(--ram-background-positive-color);
+  font-weight: 500;
 }
 
 .tabs .tabs-select {
   display: block;
   width: 100%;
   padding: 16px;
-  border: 1px solid var(--ram-border-color, #e0e0e0);
+  border: 1px solid #dee2e6;
   background: var(--background-color);
   color: var(--text-color);
   font-family: var(--body-font-family);
-  font-size: 15.75px;
+  font-size: 16px;
 }
 
 /* Live shows its list from 1200 and hides its select from 992, so between the two a
@@ -44,11 +58,21 @@
   .tabs .tabs-list {
     display: flex;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--ram-border-color, #e0e0e0);
+    justify-content: center;
+    align-items: flex-start;
+    border: 0;
   }
 
   .tabs .tabs-select {
     display: none;
+  }
+}
+
+/* Live's own step, at the width it steps. */
+@media (width >= 992px) {
+  .tabs .tabs-tab {
+    min-height: 35px;
+    padding-inline: 42px;
   }
 }
 
