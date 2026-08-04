@@ -191,9 +191,12 @@ describe('the vertical rhythm', () => {
     assert.match(rule[0], /margin-bottom:\s*4px;/);
   });
 
-  it('gives a heading the measured 20px below it', () => {
+  // The 20px was the authored tail. Live declares body h1..h6{margin:0;padding:0}, and over 32
+  // headings on /en-gb/checked-baggage it renders 0 below on 18, then 20 on 5, 10 on 3 and 8 on 3.
+  // So 0 is both the declaration and the mode.
+  it('gives a heading the measured 20px below it and nothing above', () => {
     const headings = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
-    assert.match(headings, /margin-bottom:\s*20px;/);
+    assert.match(headings, /margin:\s*0 0 20px;/);
   });
 
   it('indents a list by the measured 20px, not the browser default 40', () => {
@@ -318,6 +321,38 @@ describe('the heading weights', () => {
 //
 // It also makes the card boxes visible. A cards block draws white and drew it on white, so the six
 // small cards on /en-gb/checked-baggage read as no boxes at all against live's white cards on grey.
+// Live declares its headings flat, verbatim from /o/ram-airways-theme/2025/css/styles.css:
+//
+//   body h1,body h2,body h3,body h4,body h5,body h6{margin:0;padding:0}
+//
+// and its authors add the gap under one back where they want it:
+//
+//   .seat-content .small-heading{margin-block-end:.5rem;...}
+//
+// No live heading measured carries a top margin, on any page or under any filter. The space above
+// one
+// comes from whatever sits before it: 5px on /en-gb/checked-baggage, where that is a <br>. Ours
+// carried margin-top 0.8em, computing to 32px at 40px, 25.6 at 32, 22.4 at 28, 19.2 at 24, 16 at
+// 20.
+//
+// The 20px below stays. Zeroing it as well made the page tighter than live looks, and the
+// screenshot
+// is what caught it: live's air comes from a <br> and from portlet wrappers carrying 20px,
+// neither of
+// which the transform keeps. Live's own prose blocks read 0/0, 0/4 and 0/20 across four pages
+// with no
+// value dominating, so the 20 is a decision-0024 choice already made here.
+describe('the heading margins', () => {
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('leaves no space above a heading, as live declares', () => {
+    const rule = /\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected the shared heading rule');
+    assert.doesNotMatch(rule[0], /margin-top:\s*0\.8em/);
+    assert.match(rule[0], /margin:\s*0 0 20px;/);
+  });
+});
+
 describe('the page ground', () => {
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 

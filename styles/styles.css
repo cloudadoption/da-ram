@@ -231,10 +231,24 @@ h3,
 h4,
 h5,
 h6 {
-  margin-top: 0.8em;
+  /* Live declares its headings flat, `body h1..h6{margin:0;padding:0}`, and its authors add the gap
+     under one back where they want it, `.seat-content .small-heading{margin-block-end:.5rem}`. Across
+     five 2025-theme pages, 39 headings, that is 0 above every one and 8px below on the dominant case.
 
-  /* The gap under a heading measures 15 to 24px across four live pages. */
-  margin-bottom: 20px;
+     This read margin-top 0.8em, computing to 32px at 40px, 25.6 at 32, 22.4 at 28, 19.2 at 24 and 16 at
+     20, plus a flat 20px below. The earlier comment, "the gap under a heading measures 15 to 24px
+     across four live pages", was reading the authored tail rather than the declaration, and it said
+     nothing about the space above.
+
+     The 20px below stays. Zeroing it made the page tighter than live looks, and the screenshot is what
+     caught it: live's air around a prose heading comes from a <br> and from portlet wrappers carrying
+     20px, neither of which the transform keeps. Live's own prose blocks read 0/0, 0/4 and 0/20 across
+     four pages with no value dominating, so 20 is a decision-0024 choice and it was already made here.
+
+     The top margin has no such support. No live heading measured carries one, on any page or under any
+     filter, and the space above comes from whatever sits before it: on /en-gb/checked-baggage that is
+     5px. Ours will read 4px, from the paragraph's own bottom margin. */
+  margin: 0 0 20px;
   font-family: var(--heading-font-family);
   font-weight: 500;
   line-height: 1.2;
