@@ -37,10 +37,11 @@
   --text-color: var(--ram-text-dark-color);
   --link-color: var(--ram-text-primary-color);
 
-  /* The client declares no hover token. This is their dark brand variant, taken
-     from the name rather than measured, because a hover state cannot be read
-     from a headless computed style. */
-  --link-hover-color: var(--ram-brand-primary-dark-color);
+  /* Measured on 2026-08-04 in the client's own /o/ram-airways-theme/2025/css/styles.css:
+     `body a:hover { color: var(--ram-text-primary-color) }`, which is the link colour. Live
+     does not change a link's colour on hover, so neither does this. It used to take the dark
+     brand variant by name, which is live's ACTIVE colour and one state too far. */
+  --link-hover-color: var(--link-color);
 
   /* fonts */
   --body-font-family: ram-primary-font, ram-primary-font-fallback, sans-serif;
@@ -451,12 +452,24 @@ button.button.accent {
   color: var(--background-color);
 }
 
+/* Live's primary button, .ram-btn-f1, moves through three backgrounds and the middle one is not
+   the dark variant:
+     rest    var(--ram-brand-primary-color)       #c20831
+     hover   var(--ram-background-positive-color) #a22032
+     active  var(--ram-brand-primary-dark-color)  #8d2b61
+   Read from the client's stylesheet on 2026-08-04. The rest state already matched. */
 a.button.accent:hover,
 a.button.accent:focus-visible,
 button.button.accent:hover,
 button.button.accent:focus-visible {
-  border-color: var(--link-hover-color);
-  background-color: var(--link-hover-color);
+  border-color: var(--ram-background-positive-color);
+  background-color: var(--ram-background-positive-color);
+}
+
+a.button.accent:active,
+button.button.accent:active {
+  border-color: var(--ram-brand-primary-dark-color);
+  background-color: var(--ram-brand-primary-dark-color);
 }
 
 a.button.accent[aria-disabled="true"],
