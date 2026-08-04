@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import { footerGroups, markFooterBar, markFooterGroups } from '../blocks/footer/footer-groups.js';
@@ -317,5 +318,66 @@ describe('the footer documents in DA', () => {
     assert.equal(markFooterBar(footer), 1);
     assert.ok(bar.classList.contains('footer-bar-list'));
     columns.forEach(({ list }) => assert.ok(!list.classList.contains('footer-bar-list')));
+  });
+});
+
+// Live declares the footer in /o/ram-airways-theme/2025/css/styles.css, read on 2026-08-04:
+//
+//   .footer__link:hover{color:var(--ram-text-primary-color);text-decoration:none}
+//   .footer__list__item:hover{color:var(--ram-text-primary-color);text-decoration:none}
+//   .footer__webmap li{border-inline-end:1px solid var(--ram-text-inverse-color);
+//     padding-inline-end:.5rem}
+//   .footer__webmap li:last-child{border-inline-end:none}
+//   .footer__subfooter{background-color:var(--ram-brand-primary-color);padding-inline:1rem;
+//     padding-block:1rem;color:var(--ram-text-inverse-color);text-align:center}
+//   html[dir=rtl] .footer__webmap li:last-child{border-inline-start:none}
+//
+// Measured on five 2025-theme pages at 1440 and 375, live against ours:
+//   hover        live no underline and #c20831, ours underline and white
+//   bottom bar   live shrink-wraps flush left at 367px with a 1px rule between items,
+//                ours spans 1240px centred with no rule, 63px tall against live's 48
+//   group title  live 16px on 22.4px, ours 16px on 19.2px from the shared 1.2 in styles.css
+//   subfooter    live a full-bleed #c20831 band, 16px at weight 400 centred,
+//                ours 12px at weight 300 on the same dark ground inside the content box
+//
+// The hover colour took a real mouse event to read. A JS-synthesised event does not fire CSS
+// :hover, so the first reading came back white and looked like a match.
+describe('the footer follows live-s own rules', () => {
+  const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
+  const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = (selector) => {
+    const at = declared.indexOf(selector);
+    assert.ok(at >= 0, `expected a rule for ${selector}`);
+    return declared.slice(at, declared.indexOf('}', at) + 1);
+  };
+
+  it('colours a link on hover rather than underlining it', () => {
+    const hover = rule('footer .footer a:hover');
+    assert.match(hover, /color:\s*var\(--ram-text-primary-color\)/);
+    assert.match(hover, /text-decoration:\s*none/);
+    assert.doesNotMatch(hover, /text-decoration:\s*underline/);
+    assert.match(rootStyles, /--ram-text-primary-color:\s*#c20831/);
+  });
+
+  it('rules the bottom bar between its items and keeps it flush', () => {
+    const bar = rule('.footer-bar-list {');
+    assert.match(bar, /justify-content:\s*(?:start|flex-start)/);
+    assert.doesNotMatch(bar, /justify-content:\s*center/);
+    const item = rule('.footer-bar-list li {');
+    assert.match(item, /border-inline-end:\s*1px solid/);
+    assert.match(declared, /\.footer-bar-list li:last-child \{[^}]*border-inline-end:\s*(?:none|0)/);
+  });
+
+  it('gives the group title live-s leading rather than the shared heading-s', () => {
+    assert.match(rule('.footer-group-title {'), /line-height:\s*1\.4/);
+  });
+
+  it('draws the market notice as live-s band', () => {
+    const notice = rule('footer .footer p');
+    assert.match(notice, /background-color:\s*var\(--ram-brand-primary-color\)/);
+    assert.match(notice, /font-size:\s*var\(--body-font-size-m\)/);
+    assert.match(notice, /font-weight:\s*400/);
+    assert.match(rootStyles, /--ram-brand-primary-color:\s*#c20831/);
   });
 });
