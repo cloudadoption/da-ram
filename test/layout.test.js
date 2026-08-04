@@ -199,10 +199,37 @@ describe('the vertical rhythm', () => {
     assert.match(headings, /margin:\s*0 0 20px;/);
   });
 
-  it('indents a list by the measured 20px, not the browser default 40', () => {
+  // Live's prose list, verbatim from /o/ram-airways-theme/2025/css/styles.css read on 2026-08-04:
+  //
+  //   *{margin:0;padding:0}
+  //   body ul,body ol{list-style:none;margin-inline-start:0;margin-block-end:0;margin:0}
+  //   .seat-content ul{margin-block-end:.5rem;list-style:disc;margin-inline-start:2rem}
+  //   .seat-content ul li{font-weight:300;font-size:1rem;line-height:140%}
+  //
+  // The reboot takes the marker off a bare list, and `.seat-content ul` puts a disc back at a 2rem
+  // margin indent. `.seat-content` is the wrapper live's prose sits in, on 1,381 of 1,889 captured
+  // pages, and 5,296 of 7,079 prose `ul` elements are inside it. So the disc is the majority case,
+  // not the exception, and 7 of the 10 genuine prose lists on six 2025-theme en-GB pages paint one.
+  //
+  // The indent is a margin with the padding at zero, so the disc is drawn outside the list box.
+  // Ours indented 20px of padding, which draws the disc in the gutter and puts the text 12px short
+  // of live's. The item type already matches: 300 at 16px on 22.4px both sides.
+  it('indents a list the 32px live declares, as a margin with no padding', () => {
     const rule = /\nul,\nol\s*\{[\s\S]*?\n\}/.exec(styles);
     assert.ok(rule, 'expected a list rule');
-    assert.match(rule[0], /padding-inline-start:\s*20px/);
+    assert.match(rule[0], /margin-inline-start:\s*32px/);
+    assert.match(rule[0], /padding-inline-start:\s*0/);
+    assert.doesNotMatch(rule[0], /padding-inline-start:\s*20px/);
+  });
+
+  it('keeps the browser-s own disc, which is what live draws', () => {
+    const rule = /\nul,\nol\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.doesNotMatch(rule, /list-style:\s*none/);
+  });
+
+  it('leaves the measured 8px under a list, not the 4px a paragraph takes', () => {
+    const rule = /\nul,\nol\s*\{[\s\S]*?\n\}/.exec(styles)[0];
+    assert.match(rule, /margin-block-end:\s*8px/);
   });
 });
 
