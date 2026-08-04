@@ -562,9 +562,13 @@ main > .section {
   margin: 24px 0;
 }
 
-/* main's padding makes the two ends, so the outer margins come off or they add to it: the branch read
-   48px under the last section, 24 of padding plus its own 24. Between two sections the margins collapse
-   to one 24. */
+/* main's padding makes the top end, so the first section's own margin comes off or it adds to it.
+
+   The bottom end is 48px rather than 24: every page carries a trailing section with no height, the one
+   the metadata block leaves behind, so :last-child matches that and the last section a reader sees
+   keeps its 24px. 24 of padding under it makes 48. Zeroing the bottom margin on all of them moves the
+   problem rather than fixing it, because the empty section still contributes its own top margin.
+   Recorded as measured and not matched. */
 main > .section:first-child {
   margin-block-start: 0;
 }
