@@ -169,7 +169,7 @@ describe('decorate', () => {
 // eight table pages in four markets on 2026-08-04:
 //
 //   live, bare text in a cell        16px / 24px / 400   6 of the 8 pages
-//   live, a paragraph in a cell      16px / 25.6px / 400 /en-gb/airport-transit and its de-DE sibling
+//   live, a paragraph in a cell      16px / 25.6px / 400 /en-gb/airport-transit, de-DE sibling
 //   ours, always a paragraph         16px / 22.4px / 300 every page, 4 to 65 per page
 //
 // The cell itself already matches at 16px / 24px / 400 on both sides. What differs is the wrapper:

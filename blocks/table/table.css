@@ -24,6 +24,17 @@
   border-block-end-width: 2px;
 }
 
+/* The transform wraps every cell's text in a paragraph and live mostly does not, so
+   the paragraph rule's 22.4px leading and weight 300 land inside a cell live draws at
+   24px and weight 400. Measured over eight table pages in four markets: six have no
+   paragraph in a cell at all, and the two that do draw it at 16px/25.6px/400.
+   The cell already matches on both sides, so it owns the type of what is in it. */
+.table th p,
+.table td p {
+  line-height: inherit;
+  font-weight: inherit;
+}
+
 .table tbody tr:last-child th,
 .table tbody tr:last-child td {
   border-block-end: 0;
