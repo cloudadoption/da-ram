@@ -329,13 +329,18 @@ describe('the heading weights', () => {
 //
 //   .seat-content .small-heading{margin-block-end:.5rem;...}
 //
-// No live heading measured carries a top margin, on any page or under any filter. The space above one
+// No live heading measured carries a top margin, on any page or under any filter. The space above
+// one
 // comes from whatever sits before it: 5px on /en-gb/checked-baggage, where that is a <br>. Ours
-// carried margin-top 0.8em, computing to 32px at 40px, 25.6 at 32, 22.4 at 28, 19.2 at 24, 16 at 20.
+// carried margin-top 0.8em, computing to 32px at 40px, 25.6 at 32, 22.4 at 28, 19.2 at 24, 16 at
+// 20.
 //
-// The 20px below stays. Zeroing it as well made the page tighter than live looks, and the screenshot
-// is what caught it: live's air comes from a <br> and from portlet wrappers carrying 20px, neither of
-// which the transform keeps. Live's own prose blocks read 0/0, 0/4 and 0/20 across four pages with no
+// The 20px below stays. Zeroing it as well made the page tighter than live looks, and the
+// screenshot
+// is what caught it: live's air comes from a <br> and from portlet wrappers carrying 20px,
+// neither of
+// which the transform keeps. Live's own prose blocks read 0/0, 0/4 and 0/20 across four pages
+// with no
 // value dominating, so the 20 is a decision-0024 choice already made here.
 describe('the heading margins', () => {
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
