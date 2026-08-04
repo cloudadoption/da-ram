@@ -33,8 +33,9 @@ describe('brand colour tokens', () => {
     assert.doesNotMatch(styles, /--link-color:\s*#3b63fb/);
   });
 
-  it('takes the link hover from the client dark brand token', () => {
-    assert.match(styles, /--link-hover-color:\s*var\(--ram-brand-primary-dark-color\)/);
+  // Superseded by the measurement below: live keeps the link colour on hover and the dark
+  // brand token is its active colour.
+  it('leaves no boilerplate blue in the link hover', () => {
     assert.doesNotMatch(styles, /--link-hover-color:\s*#1d3ecf/);
   });
 
@@ -76,18 +77,18 @@ describe('the section heading size a page can carry', () => {
   });
 });
 
-// The hover value was the one token in styles.css taken from a name rather than measured: the comment
-// said a hover state cannot be read from a headless computed style. It can be read from the client's own
-// stylesheet, /o/ram-airways-theme/2025/css/styles.css, fetched on 2026-08-04.
+// The hover value was the one token in styles.css taken from a name rather than measured. The
+// comment said a hover state cannot be read from a headless computed style. It can be read from
+// the client's own stylesheet, /o/ram-airways-theme/2025/css/styles.css, fetched 2026-08-04.
 //
-// Live declares `body a:hover { color: var(--ram-text-primary-color) }`, which is #c20831 and the same
-// value as the link colour. So live does not change a link's colour on hover, and ours went to #8d2b61.
+// Live declares `body a:hover { color: var(--ram-text-primary-color) }`, which is #c20831 and
+// the link colour. Live does not change a link's colour on hover, and ours went to #8d2b61.
 //
-// The dark brand variant is live's ACTIVE colour, not its hover colour. On the primary button:
-//   .ram-btn-f1                background-color: var(--ram-brand-primary-color)     #c20831
-//   .ram-btn-f1:hover, :focus  background:       var(--ram-background-positive-color) #a22032
-//   .ram-btn-f1:active         background:       var(--ram-brand-primary-dark-color)  #8d2b61
-// Our accent button matches at rest and took the dark variant for hover, one state too far.
+// The dark brand variant is live's ACTIVE colour, not its hover. On the primary button:
+//   .ram-btn-f1               background-color: var(--ram-brand-primary-color)       #c20831
+//   .ram-btn-f1:hover,:focus  background: var(--ram-background-positive-color)       #a22032
+//   .ram-btn-f1:active        background: var(--ram-brand-primary-dark-color)        #8d2b61
+// Our accent button matches at rest and took the dark variant for hover, a state too far.
 describe('the hover and active colours, measured on live', () => {
   // Assertions about what the file declares must not read its comments.
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
