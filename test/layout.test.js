@@ -288,3 +288,35 @@ describe('the heading weights', () => {
     assert.doesNotMatch(styles, /\nh4\s*\{[^}]*font-weight/);
   });
 });
+
+// Live's section rhythm, measured on five 2025-theme pages at 1440, 1100 and 375. Its portlet
+// boundaries add nothing of their own: on /en-gb/checked-baggage portlet 0's bottom and portlet 1's
+// top are both 479.39, so the space between sections is whatever the content region pads. That is
+// .f-pt-24 and .f-pb-24, `padding-block-start: 1.5rem` and `padding-block-end: 1.5rem`, so 24px.
+//
+// Ours read a flat 40px at every boundary and every width, from a 40px margin on main > .section
+// collapsing with its neighbour. And where live pads 24px above the first block and 24px below the
+// last, ours gave 0 above, because main's top sits exactly on the header's bottom, and 40 below.
+describe('the section rhythm', () => {
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('spaces one section from the next the way live pads them', () => {
+    const rule = /\nmain > \.section \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for main > .section');
+    assert.match(rule[0], /margin(?:-block)?:\s*24px/);
+    assert.doesNotMatch(rule[0], /40px/);
+  });
+
+  it('pads the content region above its first block, where live gives 24px and we gave 0', () => {
+    const rule = /\nmain \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for main');
+    assert.match(rule[0], /padding-block:\s*24px/);
+  });
+
+  // Read at 1440 on the branch: 24px above the first section and 24 between each pair, both live's.
+  // Under the last one it is 48 rather than 24, because every page carries a trailing section with
+  // no height and :last-child matches that rather than the last one a reader sees.
+  it('takes the first section-s own top margin off, so the padding is not doubled', () => {
+    assert.match(declared, /main > \.section:first-child \{[^}]*margin-block-start:\s*0/);
+  });
+});
