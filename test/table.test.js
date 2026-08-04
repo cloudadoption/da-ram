@@ -164,3 +164,35 @@ describe('decorate', () => {
     assert.deepEqual(cells.map((td) => td.children), [['Kenya'], ['KR']]);
   });
 });
+
+// Text inside a cell reads the paragraph rule rather than the cell's own. Measured at 1440 over
+// eight table pages in four markets on 2026-08-04:
+//
+//   live, bare text in a cell        16px / 24px / 400   6 of the 8 pages
+//   live, a paragraph in a cell      16px / 25.6px / 400 /en-gb/airport-transit and its de-DE sibling
+//   ours, always a paragraph         16px / 22.4px / 300 every page, 4 to 65 per page
+//
+// The cell itself already matches at 16px / 24px / 400 on both sides. What differs is the wrapper:
+// the transform emits a p where live often has bare text, and the global paragraph rule then wins
+// inside the cell, taking the leading from 24px to 22.4px and the weight from 400 to 300.
+//
+// Letting the cell own both matches live's bare-text case exactly and lands 1.6px off its
+// paragraph case, which is the smaller population. 599 of 1,860 generated documents carry a table
+// block, so this is the type of the tabular copy across a third of the estate.
+describe('a paragraph inside a cell takes the cell’s type', () => {
+  const css = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
+  const declared = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = /(?:^|\n)\.table (?:th|td) p[^{]*\{[\s\S]*?\n\}/.exec(declared);
+
+  it('has a rule for it', () => {
+    assert.ok(rule, 'expected a rule for a paragraph inside a cell');
+  });
+
+  it('takes the cell’s leading rather than the paragraph rule’s', () => {
+    assert.match(rule[0], /line-height:\s*inherit/);
+  });
+
+  it('takes the cell’s weight, which is the visible half of the difference', () => {
+    assert.match(rule[0], /font-weight:\s*inherit/);
+  });
+});
