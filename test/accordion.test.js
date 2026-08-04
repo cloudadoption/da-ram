@@ -87,6 +87,12 @@ describe('the accordion follows live-s own rule', () => {
     assert.match(summary, /font-weight:\s*400/);
   });
 
+  // Live's h3 title reads 16px on 22.4px, body leading. The summary took the page's 1.5 and drew a
+  // 50px row against live's 46.
+  it('gives the question body leading, as live-s title has', () => {
+    assert.match(rule('.accordion summary'), /line-height:\s*1\.4/);
+  });
+
   it('insets the question, as the title rule does', () => {
     assert.match(rule('.accordion summary'), /padding-inline-start:\s*4px/);
   });

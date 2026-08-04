@@ -23,9 +23,11 @@
   padding-inline-start: 4px;
   cursor: pointer;
 
-  /* Live's question is an h3.accordion__title reading 16px at weight 400, so the component overrides
-     the heading ramp and the question reads at body weight. Ours drew 500. */
+  /* Live's question is an h3.accordion__title reading 16px on 22.4px at weight 400, so the component
+     overrides the heading ramp and the question reads at body weight and body leading. Ours drew 500
+     and took the page's 1.5, which made a 50px row against live's 46. */
   font-weight: 400;
+  line-height: 1.4;
 
   /* The default triangle sits before the text and cannot be positioned, so it goes
      and the chevron below takes its place. */
