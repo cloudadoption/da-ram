@@ -544,14 +544,16 @@ main img {
   width: 100%;
 }
 
-/* sections */
-/* Live's portlet boundaries add nothing of their own: on /en-gb/checked-baggage at 1440 portlet 0's
+/* sections
+
+   Live's portlet boundaries add nothing of their own: on /en-gb/checked-baggage at 1440 portlet 0's
    bottom and portlet 1's top are both 479.39, so the space between sections is whatever the content
    region pads. That is .f-pt-24 and .f-pb-24, 1.5rem each, so 24px. Ours read a flat 40 at every
-   boundary and every width, because these margins collapse with the neighbour's. */
-/* Live pads the content region 24px above its first block and 24px below its last, from .f-pt-24 and
-   .f-pb-24 on the ground div. main's top sat exactly on the header's bottom here, so there was 0 above
-   and 40 below. The margins above collapse through, so this padding is what makes the two ends. */
+   boundary and every width, because these margins collapse with the neighbour's.
+
+   Live also pads 24px above the first block and 24px below the last, from the same two utilities on
+   the ground div. main's top sat exactly on the header's bottom here, so there was 0 above and 40
+   below. The section margins collapse through, so main's own padding is what makes the two ends. */
 main {
   padding-block: 24px;
 }

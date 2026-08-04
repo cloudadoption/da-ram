@@ -294,7 +294,7 @@ describe('the heading weights', () => {
 // top are both 479.39, so the space between sections is whatever the content region pads. That is
 // .f-pt-24 and .f-pb-24, `padding-block-start: 1.5rem` and `padding-block-end: 1.5rem`, so 24px.
 //
-  it('pads the content region above its first block, where live gives 24 and we gave 0', () => {
+// Ours read a flat 40px at every boundary and every width, from a 40px margin on main > .section
 // collapsing with its neighbour. And where live pads 24px above the first block and 24px below the
 // last, ours gave 0 above, because main's top sits exactly on the header's bottom, and 40 below.
 describe('the section rhythm', () => {
