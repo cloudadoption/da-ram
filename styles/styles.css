@@ -555,6 +555,15 @@ main img {
    the ground div. main's top sat exactly on the header's bottom here, so there was 0 above and 40
    below. The section margins collapse through, so main's own padding is what makes the two ends. */
 main {
+  /* Live paints the page ground below the header #f7f7f7 and leaves body white behind it:
+     body .bck-gray{background-color:var(--ram-background-alternative-color)}. Read at 1440 on three
+     2025-theme pages by walking up from the first long paragraph to whatever paints behind it, the grey
+     band is on each, and /en-gb/checked-baggage puts article prose straight onto it. The white card and
+     the tinted box the other two add are per-page authored wrappers, which decision 0024 collapses.
+
+     It also makes the card boxes visible. A cards block draws white and drew it on white, so the six
+     small cards on /en-gb/checked-baggage read as no boxes at all against live's white cards on grey. */
+  background-color: var(--ram-background-alternative-color);
   padding-block: 24px;
 }
 
