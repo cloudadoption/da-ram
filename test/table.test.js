@@ -152,6 +152,12 @@ describe('the table cell follows the 2025 theme rule', () => {
     assert.match(cell(), /height:\s*3\.5rem/);
   });
 
+  // Live is border-box throughout and this repository is content-box, so the 56px floor added the
+  // padding and the rules on top and drew a 73px header row against live's 56.
+  it('counts the padding inside that height, as live does', () => {
+    assert.match(cell(), /box-sizing:\s*border-box/);
+  });
+
   it('gives a body cell the declared background and colour', () => {
     const body = /\n\.table tbody td \{[\s\S]*?\n\}/.exec(declarations);
     assert.ok(body, 'expected a rule for a body cell');
