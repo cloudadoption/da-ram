@@ -171,3 +171,48 @@ describe('the card title colour', () => {
     assert.match(declared, /\.cards:not\(\.cover\)/);
   });
 });
+
+// Live puts a chevron at the card's trailing edge, on the title's line: i.small-card__arrow at
+// font-size 24px in the brand red, a 25x24 box 16px from the card's trailing edge. Measured on
+// /en-gb/checked-baggage, /en-gb/baggage-information and /en-gb/add-extra-luggage, identical on each.
+//
+// 18 of the 23 card titles read across eight en-GB pages carry one: small-card 11, baggage-card 4 and
+// link-card 3. The 5 without are ram-card and ram-header-card, which are the cards with no image, so
+// the chevron follows the same icon-and-photo split the type sizes make.
+//
+// The glyph is from the client's ram-icons font and this repository does not load it, so the chevron
+// is drawn: an 8px square with two 2px edges, turned 45deg.
+describe('the card chevron', () => {
+  const styles = readFileSync(new URL('../blocks/cards/cards.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const marker = () => {
+    const found = /\.cards > ul > li:is\(\.cards-card-icon, \.cards-card-photo\)[^{]*::after \{[\s\S]*?\n\}/
+      .exec(declared);
+    assert.ok(found, 'expected a chevron rule for the icon and photo card');
+    return found[0];
+  };
+
+  it('draws it in the brand red, as live does', () => {
+    assert.match(marker(), /var\(--link-color\)/);
+  });
+
+  it('puts it at the trailing edge of the title row', () => {
+    assert.match(marker(), /margin-inline-start:\s*auto/);
+    const row = /\.cards > ul > li :is\(h1, h2, h3, h4, h5, h6\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(row, 'expected a rule for the title row');
+    assert.match(row[0], /display:\s*flex/);
+  });
+
+  // A chevron on a card that links nowhere says the reader can go somewhere.
+  it('only draws it where the title holds a link', () => {
+    assert.match(declared, /:has\(a\)::after/);
+  });
+
+  // transform is physical, so the reading direction needs the other quarter turn. Live keeps
+  // ram-icon-chevron-right in Arabic with no transform and points the chevron into the text.
+  it('turns it the other way in a right-to-left market', () => {
+    const rtl = /\[dir="rtl"\][^{]*::after \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rtl, 'expected an rtl rule for the chevron');
+    assert.match(rtl[0], /transform:\s*rotate\(135deg\)/);
+  });
+});
