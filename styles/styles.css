@@ -201,7 +201,15 @@ body.appear {
   display: block;
 }
 
+/* Live's header is position: sticky at every width, read on /en-gb/checked-baggage at 1440 and
+   375. Ours scrolled away from 1280 up, because the boilerplate makes .nav-wrapper fixed below
+   the breakpoint and relative above it. The sticky element has to be this one rather than the
+   wrapper: a sticky wrapper can only stick inside its containing block, and this carries the
+   height that reserves the band, so it would stick within 80px. */
 header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
   height: var(--nav-height);
 }
 
