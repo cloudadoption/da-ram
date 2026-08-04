@@ -158,11 +158,10 @@ describe('the header height, measured on live', () => {
 });
 
 // The transform keeps live's bold now and the browser's own rule for b and strong is font-weight
-// bolder, which from a 300 body computes to 400. Live declares it flat: `body strong{font-weight:700}`
-// in /o/ram-airways-theme/2025/css/styles.css. Read on the published /en-gb/checked-baggage, ours
+// bolder, which from a 300 body computes to 400. Live declares it flat in the 2025 theme:
+// `body strong{font-weight:700}`. Read on the published /en-gb/checked-baggage, ours
 // drew 12 strongs at 300->400 against live's 300->700.
 describe('bold in prose', () => {
-  const styles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
   it('takes the weight live declares rather than the browser-s relative bolder', () => {
