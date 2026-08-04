@@ -62,8 +62,11 @@
   --heading-font-size-s: 20px;
   --heading-font-size-xs: 16px;
 
-  /* nav height */
-  --nav-height: 64px;
+  /* The header, measured in a browser on /en-gb/checked-baggage on 2026-08-04: live is 48px at
+     375 and 80px at 1440, and the step is at 768. The 80px comes from
+     .header__logo__img{height:5rem} and .header__container{max-height:fit-content}, both gated
+     at 768. The boilerplate shipped a flat 64px. */
+  --nav-height: 48px;
 
   /* The content column, measured twice over: a 22-point viewport sweep of the
      live container, and the rendered width of a body paragraph, which reads
@@ -288,6 +291,14 @@ body.titled main h1 {
   font-size: 24px;
   font-weight: 400;
   line-height: 32px;
+}
+
+/* Live steps the header at 768: .header__logo__img{height:5rem} and
+   .header__container{max-height:fit-content} are both gated there. */
+@media (width >= 768px) {
+  :root {
+    --nav-height: 80px;
+  }
 }
 
 @media (width >= 992px) {

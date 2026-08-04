@@ -135,7 +135,8 @@ describe('the hover and active colours, measured on live', () => {
 //   min-height  80px        0px        0px
 //   position   sticky     sticky     static
 //
-// The 80px comes from .header__logo__img{height:5rem} and .header__container{max-height:fit-content},
+// The 80px comes from .header__logo__img{height:5rem} and
+// .header__container{max-height:fit-content},
 // both gated at 768, which is what 0.1 of the design spec corrected from an earlier reading of 992.
 // The spec's section 3.4 named the token change and it had not been made.
 describe('the header height, measured on live', () => {
