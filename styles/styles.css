@@ -604,7 +604,7 @@ main > .section:not(:has(> *)) {
    one's 24px top margin and reads 24 either way. Under the last section it adds to main's 24px
    padding, and the last thing on /en-gb/checked-baggage is a callout carrying 24, so the page ended
    48px under its last box where live ends 24. The section's own margin is the rhythm. */
-main > .section > div > :last-child {
+main > .section > div:last-child > :last-child {
   margin-block-end: 0;
 }
 

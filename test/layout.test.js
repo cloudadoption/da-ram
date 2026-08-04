@@ -422,8 +422,15 @@ describe('the section rhythm', () => {
   // The last thing on /en-gb/checked-baggage is a callout carrying 24, which is where the 48 came
   // from. Between two sections the escaping margin collapses with the next one's 24px top margin,
   // so stopping it changes nothing there.
+  //
+  // div:last-child, not every wrapper: a section holds one wrapper per block, and the escape only
+  // reaches main from the last of them. Scoped wider it also took 4px off a paragraph ending one
+  // wrapper, which moved the next block inside the same section.
   it('keeps a block-s own bottom margin inside its section', () => {
-    assert.match(declared, /main > \.section > div > :last-child \{[^}]*margin-block-end:\s*0/);
+    assert.match(
+      declared,
+      /main > \.section > div:last-child > :last-child \{[^}]*margin-block-end:\s*0/,
+    );
   });
 });
 
