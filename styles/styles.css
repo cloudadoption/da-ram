@@ -581,23 +581,36 @@ main {
   padding-block: 24px;
 }
 
+/* The 24px between two sections is carried by the second one's top margin, not the first one's
+   bottom. Either way gives 24 between a pair, and this way there is nothing at all below the last
+   one, so main's own 24px padding is the whole gap under the last ink. Live gives 24 there, read at
+   1440 on /en-gb/checked-baggage, /en-gb/carry-on-baggage and /en-gb/airport-transit; ours read 48.
+
+   A bottom margin cannot do it, because the pipeline leaves a trailing section with no children,
+   which is what the metadata block was in. :last-child matched that instead of the last section a
+   reader sees. */
 main > .section {
-  margin: 24px 0;
+  margin-block: 24px 0;
 }
 
-/* main's padding makes the top end, so the first section's own margin comes off or it adds to it.
+/* And the empty one goes out of flow, or its own top margin adds the 24 back.
+   :not(:has(> *)) rather than :empty, because a whitespace text node defeats :empty. */
+main > .section:not(:has(> *)) {
+  display: none;
+}
 
-   The bottom end is 48px rather than 24: every page carries a trailing section with no height, the one
-   the metadata block leaves behind, so :last-child matches that and the last section a reader sees
-   keeps its 24px. 24 of padding under it makes 48. Zeroing the bottom margin on all of them moves the
-   problem rather than fixing it, because the empty section still contributes its own top margin.
-   Recorded as measured and not matched. */
+/* A block's own bottom margin escapes its section, because the section has no padding or border at
+   that edge, so it adds to whatever comes next. Between two sections that collapses with the next
+   one's 24px top margin and reads 24 either way. Under the last section it adds to main's 24px
+   padding, and the last thing on /en-gb/checked-baggage is a callout carrying 24, so the page ended
+   48px under its last box where live ends 24. The section's own margin is the rhythm. */
+main > .section > div:last-child > :last-child {
+  margin-block-end: 0;
+}
+
+/* main's padding makes the top end, so the first section's own margin comes off or it adds to it. */
 main > .section:first-child {
   margin-block-start: 0;
-}
-
-main > .section:last-child {
-  margin-block-end: 0;
 }
 
 main > .section > div {

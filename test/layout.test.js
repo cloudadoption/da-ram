@@ -387,9 +387,62 @@ describe('the section rhythm', () => {
   });
 
   // Read at 1440 on the branch: 24px above the first section and 24 between each pair, both live's.
-  // Under the last one it is 48 rather than 24, because every page carries a trailing section with
-  // no height and :last-child matches that rather than the last one a reader sees.
   it('takes the first section-s own top margin off, so the padding is not doubled', () => {
     assert.match(declared, /main > \.section:first-child \{[^}]*margin-block-start:\s*0/);
+  });
+
+  // Live leaves 24px between the last ink and the footer, measured at 1440 on
+  // /en-gb/checked-baggage, /en-gb/carry-on-baggage and /en-gb/airport-transit: 24 on each. Ours
+  // read 48 on checked-baggage.
+  //
+  // The pipeline leaves a trailing <div class="section"> with no children, which is what the
+  // metadata block was in. :last-child matches that rather than the last section a reader sees, so
+  // the visible one keeps its 24px bottom margin, the empty one's 24px top margin collapses with
+  // it, and main's 24px padding makes 48.
+  //
+  // The 24 is carried by the second section's top margin rather than the first one's bottom. Either
+  // way gives 24 between a pair, and this way nothing is below the last one at all.
+  //
+  // Selecting the section before the empty one was the first attempt and it does not work:
+  // :has(+ .section:not(:has(> *))) nests :has() inside :has(), which the spec forbids, so Chrome
+  // rejects the whole selector and drops the rule. The stylesheet was served with the rule in it
+  // and the rendered gap was still 48.
+  it('ends the page 24px under the last ink rather than 48', () => {
+    const rule = /\nmain > \.section \{[\s\S]*?\n\}/.exec(declared);
+    assert.match(rule[0], /margin-block:\s*24px 0/);
+    assert.doesNotMatch(declared, /main > \.section:last-child/);
+  });
+
+  it('drops a trailing section the pipeline left with nothing in it', () => {
+    assert.match(declared, /main > \.section:not\(:has\(> \*\)\) \{[^}]*display:\s*none/);
+  });
+
+  // The empty section was not the whole of it. A block's bottom margin escapes its section, because
+  // the section has no padding or border at that edge, so it lands on top of main's 24px padding.
+  // The last thing on /en-gb/checked-baggage is a callout carrying 24, which is where the 48 came
+  // from. Between two sections the escaping margin collapses with the next one's 24px top margin,
+  // so stopping it changes nothing there.
+  //
+  // div:last-child, not every wrapper: a section holds one wrapper per block, and the escape only
+  // reaches main from the last of them. Scoped wider it also took 4px off a paragraph ending one
+  // wrapper, which moved the next block inside the same section.
+  it('keeps a block-s own bottom margin inside its section', () => {
+    assert.match(
+      declared,
+      /main > \.section > div:last-child > :last-child \{[^}]*margin-block-end:\s*0/,
+    );
+  });
+});
+
+// A rule whose selector the browser cannot parse is dropped whole, and a test that reads the
+// stylesheet as text passes anyway. That shipped once: :has(+ .section:not(:has(> *))) is invalid
+// because :has() cannot contain :has(), and the assertion that the rule was declared was green.
+describe('the stylesheet parses', () => {
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('never nests :has() inside :has()', () => {
+    const selectors = [...declared.matchAll(/(^|\})\s*([^{}@]+?)\s*\{/gm)].map((m) => m[2]);
+    const nested = selectors.filter((s) => /:has\([^)]*:has\(/.test(s.replace(/\s+/g, '')));
+    assert.deepEqual(nested, [], 'a nested :has() makes the browser drop the whole rule');
   });
 });
