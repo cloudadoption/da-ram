@@ -191,9 +191,12 @@ describe('the vertical rhythm', () => {
     assert.match(rule[0], /margin-bottom:\s*4px;/);
   });
 
-  it('gives a heading the measured 20px below it', () => {
+  // The 20px was the authored tail. Live declares body h1..h6{margin:0;padding:0} and its authors
+  // add
+  // 8px back under one, which is what 39 headings across five 2025-theme pages read.
+  it('gives a heading the 8px below it that live-s authors add back', () => {
     const headings = /h1,\s*h2,\s*h3,\s*h4,\s*h5,\s*h6\s*\{[\s\S]*?\n\}/.exec(styles)[0];
-    assert.match(headings, /margin-bottom:\s*20px;/);
+    assert.match(headings, /margin:\s*0 0 8px;/);
   });
 
   it('indents a list by the measured 20px, not the browser default 40', () => {
@@ -326,12 +329,16 @@ describe('the heading weights', () => {
 //
 //   .seat-content .small-heading{margin-block-end:.5rem;...}
 //
-// Measured across five 2025-theme pages, 39 headings: 0 above every one of them, and 8px below on the
-// dominant case. Ours carried margin-top 0.8em, which computes to 32px at 40px, 25.6 at 32, 22.4 at 28,
+// Measured across five 2025-theme pages, 39 headings: 0 above every one of them, and 8px below on
+// the
+// dominant case. Ours carried margin-top 0.8em, which computes to 32px at 40px, 25.6 at 32, 22.4
+// at 28,
 // 19.2 at 24 and 16 at 20, plus a flat 20px below.
 //
-// The earlier comment here read "the gap under a heading measures 15 to 24px across four live pages",
-// which is the authored tail rather than the declaration, and it said nothing about the space above.
+// The earlier comment here read "the gap under a heading measures 15 to 24px across four live
+// pages",
+// which is the authored tail rather than the declaration, and it said nothing about the space
+// above.
 describe('the heading margins', () => {
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 

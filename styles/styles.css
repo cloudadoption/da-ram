@@ -231,10 +231,15 @@ h3,
 h4,
 h5,
 h6 {
-  margin-top: 0.8em;
+  /* Live declares its headings flat, `body h1..h6{margin:0;padding:0}`, and its authors add the gap
+     under one back where they want it, `.seat-content .small-heading{margin-block-end:.5rem}`. Across
+     five 2025-theme pages, 39 headings, that is 0 above every one and 8px below on the dominant case.
 
-  /* The gap under a heading measures 15 to 24px across four live pages. */
-  margin-bottom: 20px;
+     This read margin-top 0.8em, computing to 32px at 40px, 25.6 at 32, 22.4 at 28, 19.2 at 24 and 16 at
+     20, plus a flat 20px below. The earlier comment, "the gap under a heading measures 15 to 24px
+     across four live pages", was reading the authored tail rather than the declaration, and it said
+     nothing about the space above. */
+  margin: 0 0 8px;
   font-family: var(--heading-font-family);
   font-weight: 500;
   line-height: 1.2;
