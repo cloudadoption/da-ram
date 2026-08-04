@@ -174,7 +174,7 @@ describe('the card title colour', () => {
 
 // Live puts a chevron at the card's trailing edge, on the title's line: i.small-card__arrow at
 // font-size 24px in the brand red, a 25x24 box 16px from the card's trailing edge. Measured on
-// /en-gb/checked-baggage, /en-gb/baggage-information and /en-gb/add-extra-luggage, the same on each.
+// /en-gb/checked-baggage, /en-gb/baggage-information and /en-gb/add-extra-luggage, same on each.
 //
 // 18 of the 23 card titles read across eight en-GB pages carry one: small-card 11, baggage-card 4
 // and link-card 3. The 5 without are ram-card and ram-header-card, the cards with no image, so
