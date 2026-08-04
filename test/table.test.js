@@ -68,14 +68,22 @@ describe('the table head', () => {
   });
 
   it('puts white text on it at the measured weight', () => {
-    assert.match(head, /color:\s*#fff/);
+    assert.match(head, /color:\s*var\(--ram-text-inverse-color\)/);
+    assert.match(rootStyles, /--ram-text-inverse-color:\s*#fff/);
     assert.match(head, /font-weight:\s*400/);
   });
 
   it('gives a row the measured border rather than the body colour', () => {
     const cell = /\.table th,\n\.table td \{[\s\S]*?\n\}/.exec(declarations)[0];
-    assert.match(cell, /border-block-end:\s*1px solid #dee2e6/);
+    assert.match(cell, /border-block:\s*1px solid #dee2e6/);
     assert.doesNotMatch(cell, /var\(--dark-color\)/);
+  });
+
+  // No top rule and a 2px one below, read on /en-gb/checked-baggage. The base cell rule now sets a
+  // 1px rule on both edges, so the head says what it does not take.
+  it('keeps the head free of a top rule', () => {
+    assert.match(head, /border-block-start-width:\s*0/);
+    assert.match(head, /border-block-end-width:\s*2px/);
   });
 });
 
