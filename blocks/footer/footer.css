@@ -126,6 +126,43 @@ footer .footer a:hover {
   font-size: var(--body-font-size-s);
 }
 
+/* Live's payment row is its market's accepted methods as logos, 25 on en-GB down to 6 on ru-RU and
+   tr-TR, because the methods differ per market. Each is 40x24 from
+   .footer__paymentImage{width:2.5rem;height:1.5rem}, and at 1440 the row wraps after 17 of them:
+   18 at 40px with 17 16px gaps needs 992px against the row's 959.5px.
+
+   Its label is localised, unlike "Follow us on": Payment Methods, Modes de paiement,
+   Zahlungsmethoden and so for the other seven. Same paragraph treatment, for the same reason. */
+footer .footer p:has(+ .footer-payment-list) {
+  padding: 0;
+  margin-block-end: 8px;
+  background-color: transparent;
+  color: var(--ram-text-inverse-color);
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  text-align: start;
+}
+
+.footer-payment-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-payment-list li {
+  margin: 0;
+}
+
+.footer-payment-list li img {
+  display: block;
+  width: 40px;
+  height: 24px;
+  object-fit: contain;
+}
+
 /* Live labels the row "Follow us on" at 14px weight 400 in white with no transform. A real heading
    would be swept into an accordion by markFooterGroups, the way a column title is, so the label is a
    paragraph. `footer .footer p` claims every other footer paragraph for the red legal band, so this

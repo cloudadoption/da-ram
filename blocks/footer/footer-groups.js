@@ -124,6 +124,35 @@ export const markFooterSocial = (root, depth = 6) => {
 };
 
 /*
+ * Live's payment row is its market's accepted methods as logos: 25 on en-GB down to 6 on ru-RU and
+ * tr-TR, and the set differs per market because the methods do. Each is 40x24 from
+ * .footer__paymentImage{width:2.5rem;height:1.5rem}, and at 1440 the row wraps after 17 of them.
+ *
+ * It reaches the document as a bare list of images, so markFooterBar would claim it the way it
+ * would claim the social row. A list whose every item is one image is the payment row.
+ */
+const paymentImages = (list) => {
+  const items = [...(list.children || [])];
+  if (items.length < 2) return false;
+  return items.every((li) => {
+    const kids = [...(li.children || [])];
+    return kids.length === 1 && kids[0].tagName === 'IMG';
+  });
+};
+
+export const markFooterPayment = (root, depth = 6) => {
+  if (!root || depth < 0) return 0;
+  if (LIST.test(root.tagName) || root.tagName === 'LI') return 0;
+  const children = [...(root.children || [])];
+  const nested = children.reduce((total, child) => total + markFooterPayment(child, depth - 1), 0);
+  const here = children.filter((child) => LIST.test(child.tagName)
+    && !child.classList.contains('footer-payment-list')
+    && paymentImages(child));
+  here.forEach((list) => list.classList.add('footer-payment-list'));
+  return here.length + nested;
+};
+
+/*
  * Below the three columns live shows a bar of three links: the site map, the
  * terms and the partner page. It is always visible, so it reaches the document
  * as a list with no heading and markFooterGroups passes over it. Run this after
@@ -141,6 +170,7 @@ export const markFooterBar = (root, depth = 6) => {
   const here = children.filter((child) => LIST.test(child.tagName)
     && !claimed.has(child)
     && !child.classList.contains('footer-social-list')
+    && !child.classList.contains('footer-payment-list')
     && !child.classList.contains('footer-bar-list'));
   here.forEach((list) => list.classList.add('footer-bar-list'));
   return here.length + nested;

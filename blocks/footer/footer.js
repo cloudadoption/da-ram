@@ -1,6 +1,8 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-import { markFooterBar, markFooterGroups, markFooterSocial } from './footer-groups.js';
+import {
+  markFooterBar, markFooterGroups, markFooterPayment, markFooterSocial,
+} from './footer-groups.js';
 
 /**
  * loads and decorates the footer
@@ -20,6 +22,7 @@ export default async function decorate(block) {
   markFooterGroups(footer);
   // Before markFooterBar, which claims every bare list it finds.
   markFooterSocial(footer);
+  markFooterPayment(footer);
   markFooterBar(footer);
   block.append(footer);
 }
