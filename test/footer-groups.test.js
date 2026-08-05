@@ -443,6 +443,40 @@ describe('markFooterSocial', () => {
 
 // markFooterBar claims every bare list, so the social row has to be classified first or it lands on
 // the legal bar's class with its item dividers.
+describe('the social row-s CSS', () => {
+  const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('sizes each mark at live-s 36px, 16px apart', () => {
+    assert.match(declared, /\.footer-social-list \{[^}]*gap:\s*16px/);
+    assert.match(declared, /\.footer-social-list li a:any-link \{[^}]*width:\s*36px/);
+  });
+
+  it('draws the mark as a mask, so the CSS owns its colour', () => {
+    const link = /\.footer-social-list li a:any-link \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(link, /background-color:\s*currentcolor/);
+    assert.match(link, /mask-repeat:\s*no-repeat/);
+  });
+
+  it('turns the mark live-s brand red on hover and changes nothing else', () => {
+    const hover = /\.footer-social-list li a:hover \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(hover, /color:\s*var\(--ram-text-primary-color\)/);
+    assert.doesNotMatch(hover, /background-image|border|outline/);
+  });
+
+  it('names a mask for each of the five networks', () => {
+    ['facebook', 'x', 'instagram', 'youtube', 'messenger'].forEach((name) => {
+      assert.match(declared, new RegExp(`icon-${name} \\{[^}]*mask-image:\\s*url\\("/icons/${name}.svg"\\)`));
+    });
+  });
+
+  it('keeps the network name in the document and out of the box', () => {
+    const link = /\.footer-social-list li a:any-link \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(link, /text-indent:\s*100%/);
+    assert.match(link, /overflow:\s*hidden/);
+  });
+});
+
 describe('the two bare-list passes do not fight', () => {
   const socialList = () => {
     const added = [];
