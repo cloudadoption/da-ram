@@ -575,6 +575,26 @@ describe('markFooterPayment', () => {
     assert.ok(built.added.includes('footer-payment-list'));
   });
 
+  // The pipeline wraps an authored image in a picture with its source set, so the item's only child
+  // is a PICTURE and not an IMG. The first pass looked for an IMG, found none, and left the row on
+  // its natural size: the section measured 1929x1104 on the published page against the 40x24 per
+  // logo live draws.
+  it('marks a list the pipeline has wrapped in a picture', () => {
+    const added = [];
+    const li = () => ({
+      tagName: 'LI',
+      children: [{ tagName: 'PICTURE', children: [{ tagName: 'IMG' }] }],
+      classList: { add() {} },
+    });
+    const pictureList = {
+      tagName: 'UL',
+      children: Array.from({ length: 6 }, li),
+      classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+    };
+    assert.equal(markFooterPayment({ tagName: 'DIV', children: [pictureList] }), 1);
+    assert.deepEqual(added, ['footer-payment-list']);
+  });
+
   it('leaves a list of links alone, because that is the bar or the social row', () => {
     const added = [];
     const li = { tagName: 'LI', children: [{ tagName: 'A' }], classList: { add() {} } };
@@ -605,9 +625,9 @@ describe('the payment row-s CSS', () => {
   const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
   const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
 
-  it('sizes each logo at live-s 40x24', () => {
-    const rule = /\.footer-payment-list li img \{[\s\S]*?\n\}/.exec(declared);
-    assert.ok(rule, 'expected a rule for a payment logo');
+  it('sizes each logo at live-s 40x24, through the picture the pipeline adds', () => {
+    const rule = /\.footer-payment-list li :is\(img, picture\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule reaching the logo inside its picture');
     assert.match(rule[0], /width:\s*40px/);
     assert.match(rule[0], /height:\s*24px/);
   });
@@ -677,7 +697,15 @@ describe('the footer follows live-s own rules', () => {
     const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\}/.exec(declared);
     assert.ok(wide, 'expected a 992px block in the footer');
     assert.match(wide[0], /display:\s*flex/);
-    assert.match(wide[0], /column-gap:\s*64px/);
+    assert.match(wide[0], /gap:\s*16px 64px/);
+  });
+
+  // 64px between two triggers on a row, 16px between one wrapped row and the next, from the
+  // flex-g-16 live puts on its footer column. Without the row gap the payment row's second line ran
+  // into the social label.
+  it('leaves live-s 16px between one footer row and the next', () => {
+    const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(wide, /gap:\s*16px 64px/);
   });
 
   it('drops the bar onto its own row rather than beside a trigger', () => {

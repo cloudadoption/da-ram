@@ -131,12 +131,18 @@ export const markFooterSocial = (root, depth = 6) => {
  * It reaches the document as a bare list of images, so markFooterBar would claim it the way it
  * would claim the social row. A list whose every item is one image is the payment row.
  */
+// The pipeline wraps an authored image in a picture with its source set, so the item's only child
+// is a PICTURE by the time this runs. Reading either shape keeps the pass working on a raw
+// document too.
 const paymentImages = (list) => {
   const items = [...(list.children || [])];
   if (items.length < 2) return false;
   return items.every((li) => {
     const kids = [...(li.children || [])];
-    return kids.length === 1 && kids[0].tagName === 'IMG';
+    if (kids.length !== 1) return false;
+    if (kids[0].tagName === 'IMG') return true;
+    if (kids[0].tagName !== 'PICTURE') return false;
+    return [...(kids[0].children || [])].some((kid) => kid.tagName === 'IMG');
   });
 };
 
