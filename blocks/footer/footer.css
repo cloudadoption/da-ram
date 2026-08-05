@@ -126,6 +126,20 @@ footer .footer a:hover {
   font-size: var(--body-font-size-s);
 }
 
+/* Live labels the row "Follow us on" at 14px weight 400 in white with no transform. A real heading
+   would be swept into an accordion by markFooterGroups, the way a column title is, so the label is a
+   paragraph. `footer .footer p` claims every other footer paragraph for the red legal band, so this
+   one is picked out by the row it sits before. */
+footer .footer p:has(+ .footer-social-list) {
+  padding: 0;
+  margin-block-end: 8px;
+  background-color: transparent;
+  color: var(--ram-text-inverse-color);
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  text-align: start;
+}
+
 /* Live's social row: five glyphs from the ram-icons font at 36px in a 37x36 box, 16px apart, #fff at
    rest and #c20831 on hover, colour only. No ring, because .footer__link sets border 0 and a
    transparent background in each state, and the only nonzero radius rides a 0-width border.

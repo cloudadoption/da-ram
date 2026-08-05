@@ -477,6 +477,28 @@ describe('the social row-s CSS', () => {
   });
 });
 
+describe('the social row-s label', () => {
+  const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  // Live's label reads "Follow us on" at 14px weight 400 in white with no transform. A real heading
+  // would be swept into an accordion by markFooterGroups, so the label is a paragraph, and
+  // `footer .footer p` claims every other footer paragraph for the red legal band.
+  it('takes the label out of the legal band and gives it live-s type', () => {
+    const rule = /footer \.footer p:has\(\+ \.footer-social-list\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for the label before the social row');
+    assert.match(rule[0], /background-color:\s*transparent/);
+    assert.match(rule[0], /font-size:\s*var\(--body-font-size-s\)/);
+    assert.match(rule[0], /font-weight:\s*400/);
+  });
+
+  it('never nests :has() inside :has(), which the browser would drop', () => {
+    const selectors = [...declared.matchAll(/(^|\})\s*([^{}@]+?)\s*\{/gm)].map((m) => m[2]);
+    const nested = selectors.filter((sel) => /:has\([^)]*:has\(/.test(sel.replace(/\s+/g, '')));
+    assert.deepEqual(nested, []);
+  });
+});
+
 describe('the two bare-list passes do not fight', () => {
   const socialList = () => {
     const added = [];
