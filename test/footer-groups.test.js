@@ -404,7 +404,7 @@ describe('the footer follows live-s own rules', () => {
     );
   });
 
-  // Live's footer box, measured on /en-gb/our-fleet at 1100 and 375. The footer element pads 24px 0,
+  // Live's footer box, measured on /en-gb/our-fleet at 1100 and 375. The element pads 24px 0,
   // and its column is .footer__container{width:100%;max-width:95%;margin:0 auto}, with max-width
   // 1240px from 1280px up. So the column is 95% below the cap and 1240 centred above it, and it
   // takes no inline padding of its own.
