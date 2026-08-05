@@ -228,7 +228,8 @@ describe('the card chevron', () => {
 //     background-color:var(--ram-background-default-color)}
 //
 // So 20px on the block-start inline-end corner and the block-end inline-start one, and 0 on the
-// other two. Read on /en-gb/checked-baggage at 1440: 6 of 6 cards give 0 / 20 / 0 / 20 clockwise from
+// the top left, against 0 on all four of ours. The background and the 16px padding already
+// agree.
 // the top left, against 0 on all four of ours. The background and the 16px padding already agree.
 //
 // The `border: 1.25rem 1.25rem` in live's rule is not a border at all: the shorthand wants a style,
