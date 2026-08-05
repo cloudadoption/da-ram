@@ -17,6 +17,7 @@ import { decorateVideoLinks } from './video-embed.js';
 
 import { applyLocale } from './locale.js';
 import { structuredDataFor } from './structured-data.js';
+import { markExternalLinks } from './external-links.js';
 
 /**
  * Emits the two JSON-LD blocks live carries on a market home page.
@@ -190,6 +191,9 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
+  // After decorateButtons, which rewraps an anchor it turns into a button, so the mark lands on the
+  // anchor the reader clicks rather than on one that has been replaced.
+  markExternalLinks(main);
 }
 
 /**

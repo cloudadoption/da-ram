@@ -22,8 +22,8 @@ describe('isExternalHref', () => {
     assert.equal(isExternalHref('/en-gb/checked-baggage', HOST), false);
   });
 
-  // Live writes target="_blank" on 4,709 anchors with no href or only a fragment, and on 557 with the
-  // _blanck misspelling. Resolving the href drops each of those classes without naming them.
+  // Live writes target="_blank" on 4,709 anchors with no href or only a fragment, and on
+  // 557 with the _blanck misspelling. Resolving the href drops those without naming them.
   it('reads a fragment, an empty href and a non-http scheme as internal', () => {
     assert.equal(isExternalHref('#', HOST), false);
     assert.equal(isExternalHref('#earn', HOST), false);
@@ -53,8 +53,8 @@ describe('markExternalLinks', () => {
     assert.equal(internal.attributes.get('target'), undefined);
   });
 
-  // Live adds no rel on any of the 389, and a browser has implied noopener for target="_blank" since
-  // 2021, so adding one would be a divergence with no behaviour behind it.
+  // Live adds no rel on any of the 389, and a browser has implied noopener for
+  // target="_blank" since 2021, so adding one would be a divergence with nothing behind it.
   it('adds no rel, because live adds none and the browser implies noopener', () => {
     const external = anchor('https://www.cdc.gov/');
     markExternalLinks({ querySelectorAll: () => [external] }, HOST);
