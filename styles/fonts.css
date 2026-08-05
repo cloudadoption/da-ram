@@ -82,8 +82,13 @@
  * declares no Reserved Font Name, so the subset keeps the name.
  *
  * One variable file, the arabic subset Google Fonts serves, 30,712 bytes over weights 300 to 700,
- * mapping 297 Arabic codepoints. The range matches the Arabic fallback faces in styles.css. The
- * sampled estate reaches only U+0600-06FF, 41 distinct codepoints, each of them in this file.
+ * mapping 297 Arabic codepoints. The sampled estate reaches only U+0600-06FF, 41 distinct
+ * codepoints, each of them in this file.
+ *
+ * The range is narrower than Google's own, which claims Arabic Supplement U+0750-077F and
+ * Extended-A U+08A0-08FF. The file maps 0 codepoints in either, read with fontTools, so declaring
+ * them would make a character there download 30,712 bytes and then fall through anyway. The Arial
+ * fallback faces in styles.css keep the wider range, so such a character still gets its size-adjust.
  */
 @font-face {
   font-family: ram-arabic-font;
@@ -91,7 +96,7 @@
   font-weight: 300 700;
   font-display: swap;
   src: url('../fonts/cairo/cairo-arabic.woff2') format('woff2');
-  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  unicode-range: U+0600-06FF, U+FB50-FDFF, U+FE70-FEFF;
 }
 
 @font-face {

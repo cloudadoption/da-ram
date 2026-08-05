@@ -13,7 +13,11 @@ const valueOf = (face, property) => {
 
 const ARABIC_FAMILY = 'ram-arabic-font';
 const FALLBACK = 'ram-primary-font-fallback';
-const BLOCKS = ['U+0600', 'U+0750', 'U+08A0', 'U+FB50', 'U+FE70'];
+// The blocks the Cairo file maps, read with fontTools: 102 codepoints in U+0600-06FF, 106 in
+// U+FB50-FDFF, 89 in U+FE70-FEFF. The Arial fallback faces claim two more, Arabic Supplement
+// U+0750-077F and Extended-A U+08A0-08FF, which Cairo does not map.
+const MAPPED = ['U+0600', 'U+FB50', 'U+FE70'];
+const FALLBACK_BLOCKS = ['U+0600', 'U+0750', 'U+08A0', 'U+FB50', 'U+FE70'];
 
 // Measured over 323 Arabic strings from six served ar-sa pages, at the size and weight each one
 // renders at, Cairo against the Arial that draws Arabic today. Median ratio 1.209 / 1.216 / 1.327
@@ -43,7 +47,7 @@ describe('the Arabic brand face', () => {
     assert.equal(arabic.length, 1);
     const range = valueOf(arabic[0], 'unicode-range');
     assert.ok(range, 'the Arabic face must declare a unicode-range');
-    BLOCKS.forEach((block) => assert.ok(range.includes(block), `${block} missing from ${range}`));
+    MAPPED.forEach((block) => assert.ok(range.includes(block), `${block} missing from ${range}`));
     assert.doesNotMatch(range, /U\+0000/, 'the Arabic face must not claim the Latin range');
   });
 
@@ -97,10 +101,11 @@ describe('the Arabic fallback', () => {
   });
 });
 
-// Google's own unicode-range for the Cairo arabic subset claims Arabic Supplement and Extended-A, and the
-// file maps neither: 0 codepoints in U+0750-077F and 0 in U+08A0-08FF, read with fontTools. Declaring them
-// makes a character in those blocks download 30,712 bytes and then fall through anyway. The Arial fallback
-// faces in styles.css keep the wider range, so such a character still gets its size-adjust.
+// Google's own unicode-range for the Cairo arabic subset claims Arabic Supplement and
+// Extended-A, and the file maps neither: 0 codepoints in U+0750-077F and 0 in U+08A0-08FF,
+// read with fontTools. Declaring them would make a character in those blocks download
+// 30,712 bytes and then fall through anyway. The Arial fallback faces in styles.css keep
+// the wider range, so such a character still gets its size-adjust.
 describe('the Cairo unicode-range', () => {
   const face = fonts.slice(fonts.indexOf('font-family: ram-arabic-font'));
   const range = /unicode-range:\s*([^;]+);/.exec(face)[1];
@@ -114,5 +119,19 @@ describe('the Cairo unicode-range', () => {
     assert.match(range, /U\+0600-06FF/);
     assert.match(range, /U\+FB50-FDFF/);
     assert.match(range, /U\+FE70-FEFF/);
+  });
+
+  // The two blocks Cairo skips have to land somewhere with a size-adjust behind them, or a
+  // character in Arabic Supplement renders at its nominal size beside Arabic that renders at
+  // 118 to 144 percent.
+  it('leaves the two blocks it skips to the Arial faces, which keep them', () => {
+    const ranged = (one) => valueOf(one, 'unicode-range') || '';
+    const arial = facesIn(styles).filter((one) => /U\+0600/i.test(ranged(one)));
+    assert.equal(arial.length, 4);
+    arial.forEach((one) => {
+      const wider = ranged(one);
+      FALLBACK_BLOCKS.forEach((block) => assert.ok(wider.includes(block), `${block} not in ${wider}`));
+      assert.ok(valueOf(one, 'size-adjust'), 'each Arabic fallback face needs its size-adjust');
+    });
   });
 });
