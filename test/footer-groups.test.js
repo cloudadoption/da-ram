@@ -400,7 +400,7 @@ describe('the footer follows live-s own rules', () => {
   it('drops the bar onto its own row rather than beside a trigger', () => {
     assert.match(
       declared,
-      /\.section:not\(:has\(> \.footer-group-title\)\) \{[^}]*flex-basis:\s*100%/,
+      /\.section:not\(:has\(\.footer-group-title\)\) \{[^}]*flex-basis:\s*100%/,
     );
   });
 
