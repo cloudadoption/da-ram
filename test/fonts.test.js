@@ -31,11 +31,14 @@ describe('brand fonts', () => {
 
   // The live theme sets no unicode-range on any face, so Museo Sans is offered
   // for every script and the browser falls back per glyph. A Latin-only range
-  // would change which glyphs the brand font draws on the Arabic, Russian and
-  // Turkish estates.
-  it('sets no unicode-range, matching the live theme', () => {
-    // The property, not the word: the file explains itself in a comment.
-    assert.doesNotMatch(fonts, /^\s*unicode-range:/m);
+  // would change which glyphs the brand font draws on the Russian and Turkish
+  // estates. Cairo is the exception and carries one, so that a page with no
+  // Arabic on it never fetches the file.
+  it('sets no unicode-range on a Museo face, matching the live theme', () => {
+    const museo = (fonts.match(/@font-face\s*\{[^}]*\}/g) || [])
+      .filter((face) => /font-family: ram-(primary|secondary)-font\b/.test(face));
+    assert.equal(museo.length, 11, `expected the 11 Museo faces, found ${museo.length}`);
+    museo.forEach((face) => assert.doesNotMatch(face, /unicode-range:/));
   });
 
   it('keeps font-display swap on every face, as the live theme does', () => {
