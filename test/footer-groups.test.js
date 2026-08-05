@@ -586,12 +586,12 @@ describe('markFooterPayment', () => {
       children: [{ tagName: 'PICTURE', children: [{ tagName: 'IMG' }] }],
       classList: { add() {} },
     });
-    const node = {
+    const pictureList = {
       tagName: 'UL',
       children: Array.from({ length: 6 }, li),
       classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
     };
-    assert.equal(markFooterPayment({ tagName: 'DIV', children: [node] }), 1);
+    assert.equal(markFooterPayment({ tagName: 'DIV', children: [pictureList] }), 1);
     assert.deepEqual(added, ['footer-payment-list']);
   });
 

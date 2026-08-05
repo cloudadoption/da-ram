@@ -156,7 +156,10 @@ footer .footer p:has(+ .footer-payment-list) {
   margin: 0;
 }
 
-.footer-payment-list li img {
+/* :is(img, picture) because the pipeline wraps an authored image in a picture, so the img alone is not
+   what the item holds. Sizing only the img left the picture at its natural width and the section
+   measured 1929x1104 on the published page. */
+.footer-payment-list li :is(img, picture) {
   display: block;
   width: 40px;
   height: 24px;
