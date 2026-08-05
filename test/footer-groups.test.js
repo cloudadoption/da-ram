@@ -471,11 +471,14 @@ describe('the social row-s CSS', () => {
   });
 
   // The mask needs background-color: currentcolor, so the anchor's own colour is white and its text
-  // was white too, moved out of the box by text-indent. A reader never sees it. An automated contrast
-  // check does: a rendered audit over the published page reads #ffffff on #ffffff at 1:1 against the
+  // was white too, moved out of the box by text-indent. A reader never sees it. An automated
+  // contrast
+  // check does: a rendered audit over the published page reads #ffffff on #ffffff at 1:1 against
+  // the
   // 4.5 body text needs, on en-GB and ar-SA alike, and it is the only pair either page fails.
   //
-  // The name belongs in aria-label instead. Then a screen reader still reads Facebook, nothing is left
+  // The name belongs in aria-label instead. Then a screen reader still reads Facebook, nothing is
+  // left
   // to contrast-check, and the anchor degrades to a readable text link if the script does not run.
   it('moves the network name into aria-label, so no text sits on the mask', () => {
     const withText = () => {

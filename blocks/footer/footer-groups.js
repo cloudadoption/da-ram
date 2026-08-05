@@ -121,7 +121,8 @@ export const markFooterSocial = (root, depth = 6) => {
     links.forEach(([link, network]) => {
       link.classList.add(`icon-${network}`);
       // The mask needs background-color: currentcolor, so the anchor's colour is the mark's colour
-      // and text in it is the colour of the box it sits on. Moving the name into aria-label keeps it
+      // and text in it is the colour of the box it sits on. Moving the name into aria-label keeps
+      // it
       // for a screen reader, leaves nothing for a contrast check to fail on, and lets the anchor
       // degrade to a readable text link if this never runs.
       const name = (link.textContent || '').trim();
