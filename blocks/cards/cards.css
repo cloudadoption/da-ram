@@ -24,8 +24,16 @@
 }
 
 .cards > ul > li {
-  /* Live cards read `border: 0px none`. */
+  /* Live cards read `border: 0px none`. Its own rule declares `border: 1.25rem 1.25rem`, which the
+     shorthand rejects for want of a style, so no card draws an edge on either side.
+
+     The corners are two of the four, from the same rule:
+     .small-card{...border-start-end-radius:1.25rem;border-end-start-radius:1.25rem...}
+     Read on /en-gb/checked-baggage at 1440, 6 of 6 cards give 0 / 20 / 0 / 20 clockwise from the top
+     left. Logical, so an Arabic page rounds the opposite pair. */
   background-color: var(--background-color);
+  border-start-end-radius: 20px;
+  border-end-start-radius: 20px;
 }
 
 .cards .cards-card-body {
