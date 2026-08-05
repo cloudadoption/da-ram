@@ -118,7 +118,17 @@ export const markFooterSocial = (root, depth = 6) => {
     .filter(([, links]) => links);
   here.forEach(([list, links]) => {
     list.classList.add('footer-social-list');
-    links.forEach(([link, network]) => link.classList.add(`icon-${network}`));
+    links.forEach(([link, network]) => {
+      link.classList.add(`icon-${network}`);
+      // The mask needs background-color: currentcolor, so the anchor's colour is the mark's colour
+      // and text in it is the colour of the box it sits on. Moving the name into aria-label keeps
+      // it
+      // for a screen reader, leaves nothing for a contrast check to fail on, and lets the anchor
+      // degrade to a readable text link if this never runs.
+      const name = (link.textContent || '').trim();
+      if (name) link.setAttribute('aria-label', name);
+      if (link.replaceChildren) link.replaceChildren();
+    });
   });
   return here.length + nested;
 };

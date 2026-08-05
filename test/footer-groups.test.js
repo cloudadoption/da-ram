@@ -470,10 +470,53 @@ describe('the social row-s CSS', () => {
     });
   });
 
-  it('keeps the network name in the document and out of the box', () => {
+  // The mask needs background-color: currentcolor, so the anchor's own colour is white and its text
+  // was white too, moved out of the box by text-indent. A reader never sees it. An automated
+  // contrast
+  // check does: a rendered audit over the published page reads #ffffff on #ffffff at 1:1 against
+  // the
+  // 4.5 body text needs, on en-GB and ar-SA alike, and it is the only pair either page fails.
+  //
+  // The name belongs in aria-label instead. Then a screen reader still reads Facebook, nothing is
+  // left
+  // to contrast-check, and the anchor degrades to a readable text link if the script does not run.
+  it('moves the network name into aria-label, so no text sits on the mask', () => {
+    const withText = () => {
+      const classes = [];
+      const attrs = {};
+      const text = { nodeType: 3, textContent: 'Facebook' };
+      const a = {
+        tagName: 'A',
+        href: 'https://www.facebook.com/RoyalAirMaroc/',
+        classes,
+        attrs,
+        textContent: 'Facebook',
+        childNodes: [text],
+        children: [],
+        classList: { add: (c) => classes.push(c) },
+        setAttribute: (k, v) => { attrs[k] = v; },
+        getAttribute: (k) => (k === 'href' ? 'https://www.facebook.com/RoyalAirMaroc/' : attrs[k]),
+        replaceChildren: (...nodes) => { a.childNodes = nodes; },
+      };
+      return a;
+    };
+    const a = withText();
+    const li = { tagName: 'LI', children: [a], classList: { add() {} } };
+    const added = [];
+    const list = {
+      tagName: 'UL',
+      children: [li, li],
+      classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+    };
+    markFooterSocial({ tagName: 'DIV', children: [list] });
+    assert.equal(a.attrs['aria-label'], 'Facebook');
+    assert.deepEqual(a.childNodes, [], 'the text node should be gone');
+  });
+
+  it('needs no text-hiding trick, because the name is in aria-label', () => {
     const link = /\.footer-social-list li a:any-link \{[\s\S]*?\n\}/.exec(declared)[0];
-    assert.match(link, /text-indent:\s*100%/);
-    assert.match(link, /overflow:\s*hidden/);
+    assert.doesNotMatch(link, /text-indent/);
+    assert.doesNotMatch(link, /overflow:\s*hidden/);
   });
 });
 
