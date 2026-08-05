@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import {
-  footerGroups, markFooterBar, markFooterGroups, markFooterSocial,
+  footerGroups, markFooterBar, markFooterGroups, markFooterPayment, markFooterSocial,
 } from '../blocks/footer/footer-groups.js';
 
 // Live's footer is 280px tall and shows 36 of its 114 links: the three link
@@ -542,6 +542,86 @@ describe('the two bare-list passes do not fight', () => {
       js.indexOf('markFooterSocial(') < js.lastIndexOf('markFooterBar('),
       'markFooterSocial has to run before markFooterBar',
     );
+  });
+});
+
+// Live's payment row is its market's accepted methods as logos: 25 on en-GB, 24 ar-SA, 11 each on
+// fr-FR, it-IT, nl-NL and pt-PT, 10 de-DE, 8 es-ES, 6 each on ru-RU and tr-TR. The set differs per
+// market because the methods do, and 123 instances resolve to 24 distinct images: live stores a
+// byte-identical copy of each logo once per market.
+//
+// Each is 40x24 from .footer__paymentImage{width:2.5rem;height:1.5rem}, and at 1440 the row wraps
+// after 17: 18 at 40px with 17 16px gaps needs 992px against the row's 959.5px.
+//
+// Its label is localised, unlike "Follow us on": Payment Methods, Modes de paiement,
+// Zahlungsmethoden and so for the other seven.
+describe('markFooterPayment', () => {
+  const imageList = (count) => {
+    const added = [];
+    const li = () => ({ tagName: 'LI', children: [{ tagName: 'IMG' }], classList: { add() {} } });
+    return {
+      added,
+      node: {
+        tagName: 'UL',
+        children: Array.from({ length: count }, li),
+        classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+      },
+    };
+  };
+
+  it('marks a list of images as the payment row', () => {
+    const built = imageList(25);
+    assert.equal(markFooterPayment({ tagName: 'DIV', children: [built.node] }), 1);
+    assert.ok(built.added.includes('footer-payment-list'));
+  });
+
+  it('leaves a list of links alone, because that is the bar or the social row', () => {
+    const added = [];
+    const li = { tagName: 'LI', children: [{ tagName: 'A' }], classList: { add() {} } };
+    const linkList = {
+      tagName: 'UL',
+      children: [li, li, li],
+      classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+    };
+    assert.equal(markFooterPayment({ tagName: 'DIV', children: [linkList] }), 0);
+    assert.deepEqual(added, []);
+  });
+
+  it('keeps a classified payment row out of the bar pass', () => {
+    const built = imageList(6);
+    const root = { tagName: 'DIV', children: [built.node] };
+    markFooterPayment(root);
+    markFooterBar(root);
+    assert.deepEqual(built.added, ['footer-payment-list']);
+  });
+
+  it('runs before the bar pass in the block', () => {
+    const js = readFileSync(new URL('../blocks/footer/footer.js', import.meta.url), 'utf8');
+    assert.ok(js.indexOf('markFooterPayment(') < js.lastIndexOf('markFooterBar('));
+  });
+});
+
+describe('the payment row-s CSS', () => {
+  const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('sizes each logo at live-s 40x24', () => {
+    const rule = /\.footer-payment-list li img \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for a payment logo');
+    assert.match(rule[0], /width:\s*40px/);
+    assert.match(rule[0], /height:\s*24px/);
+  });
+
+  it('wraps the row, because live wraps after 17 at 1440', () => {
+    const rule = /\.footer-payment-list \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(rule, /flex-wrap:\s*wrap/);
+    assert.match(rule, /gap:\s*16px/);
+  });
+
+  it('takes its localised label out of the legal band', () => {
+    const rule = /footer \.footer p:has\(\+ \.footer-payment-list\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for the payment label');
+    assert.match(rule[0], /background-color:\s*transparent/);
   });
 });
 
