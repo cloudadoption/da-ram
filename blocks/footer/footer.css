@@ -50,10 +50,15 @@ footer .footer a:hover {
   text-decoration: none;
 }
 
+/* Live's trigger box is the same at both widths, measured on /en-gb/our-fleet: padding 16px 0, no
+   border on any edge, 54px tall from 16 twice plus a 22.4px line. Ours read 47.4px from 12px of padding
+   plus a 1px rule at 20% white.
+
+   Live's own divider does nothing: .footer__border{border-start:1px solid ...} is not a property, so it
+   is dropped, and the measured border is 0 on each edge. The drawn chevron is the affordance. */
 .footer-group-title {
   margin: 0;
-  padding: 12px 0;
-  border-bottom: 1px solid rgb(255 255 255 / 20%);
+  padding: 16px 0;
   font-size: var(--body-font-size-m);
 
   /* Live's h3.footer__menu__title is 16px on 22.4px, its .f-body-l declaring line-height 140%. Ours
@@ -127,5 +132,24 @@ footer .footer a:hover {
 @media (width >= 900px) {
   footer .footer > div {
     padding: 40px 32px 24px;
+  }
+}
+
+/* What changes at 992px is the arrangement, not the box. Live rows the three triggers, measured at
+   x 100, 259 and 444 with all three at y 900 on a 1440 viewport, a flat 64px between one trigger's end
+   and the next's start. Below 992px it stacks them at x 9, flush, 54px apart. Ours stacked at both.
+
+   The bar takes its own row, and so does the empty section the pipeline leaves behind, which has no
+   height to contribute. Selecting by what the section holds rather than by position, because the
+   authored document decides how many groups there are. */
+@media (width >= 992px) {
+  footer .footer > div {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 64px;
+  }
+
+  footer .footer > div > .section:not(:has(> .footer-group-title)) {
+    flex-basis: 100%;
   }
 }

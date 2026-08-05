@@ -374,15 +374,16 @@ describe('the footer follows live-s own rules', () => {
   });
 
   // Live's group trigger, measured on /en-gb/our-fleet at 1440 and at 375. The box is the same at
-  // both: padding 16px 0, no border on any edge, 54px tall from 16 twice plus a 22.4px line. Ours read
-  // 47.4px from 12px padding plus a 1px bottom rule at 20% white, at both widths.
+  // both: padding 16px 0, no border on any edge, and 54px tall from 16 twice plus a 22.4px line.
+  // Ours read 47.4px, from 12px of padding plus a 1px bottom rule at 20% white, at both widths.
   //
-  // What changes at 992px is the arrangement, not the box. Live rows the three triggers, x 100, 259 and
-  // 444 with all three at y 900 on a 1440 viewport, a flat 64px between one trigger's end and the
-  // next's start. Below 992px it stacks them at x 9, flush, 54px apart. Ours stacked at both.
+  // What changes at 992px is the arrangement, not the box. Live rows the three triggers, at x 100,
+  // 259 and 444, all three at y 900 on a 1440 viewport, with a flat 64px between one trigger's end
+  // and the next's start. Below 992px it stacks them at x 9, flush, 54px apart. Ours stacked at
+  // both widths.
   //
-  // Live's own divider declaration does nothing: .footer__border{border-start:1px solid ...} is not a
-  // property, so it is dropped, which is why the measured border is 0 on every edge.
+  // Live's own divider declaration does nothing: .footer__border{border-start:1px solid ...} is not
+  // a property, so it is dropped, which is why the measured border is 0 on each edge.
   it('gives the group trigger live-s box, 16px of padding and no rule', () => {
     const title = rule('.footer-group-title {');
     assert.match(title, /padding(?:-block)?:\s*16px/);
@@ -397,9 +398,10 @@ describe('the footer follows live-s own rules', () => {
   });
 
   it('drops the bar onto its own row rather than beside a trigger', () => {
-    const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\}\n\}/.exec(declared);
-    assert.ok(wide, 'expected the 992px block');
-    assert.match(wide[0], /flex-basis:\s*100%/);
+    assert.match(
+      declared,
+      /\.section:not\(:has\(> \.footer-group-title\)\) \{[^}]*flex-basis:\s*100%/,
+    );
   });
 
   it('draws the market notice as live-s band', () => {
