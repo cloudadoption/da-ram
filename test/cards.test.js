@@ -219,3 +219,43 @@ describe('the card chevron', () => {
     assert.match(rtl[0], /transform:\s*rotate\(-45deg\)/);
   });
 });
+
+// Live rounds a card on two opposite corners, not four. Verbatim from
+// /o/ram-airways-theme/2025/css/styles.css:
+//
+//   .small-card{width:100%;padding:1rem;border:1.25rem 1.25rem;
+//     border-start-end-radius:1.25rem;border-end-start-radius:1.25rem;
+//     background-color:var(--ram-background-default-color)}
+//
+// So 20px on the block-start inline-end corner and the block-end inline-start one, and 0 on the
+// other two. Read on /en-gb/checked-baggage at 1440: 6 of 6 cards give 0 / 20 / 0 / 20 clockwise from
+// the top left, against 0 on all four of ours. The background and the 16px padding already agree.
+//
+// The `border: 1.25rem 1.25rem` in live's rule is not a border at all: the shorthand wants a style,
+// so the declaration is dropped and no card draws an edge. That agrees with the `border: 0px none`
+// read earlier, and is why this adds no border.
+//
+// Logical corners, so an Arabic page rounds the top left and the bottom right instead.
+describe('the card corners', () => {
+  const styles = readFileSync(new URL('../blocks/cards/cards.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = () => {
+    const found = /\.cards > ul > li \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(found, 'expected a rule for a card');
+    return found[0];
+  };
+
+  it('rounds the block-start inline-end corner by the measured 20px', () => {
+    assert.match(rule(), /border-start-end-radius:\s*20px/);
+  });
+
+  it('rounds the block-end inline-start corner too', () => {
+    assert.match(rule(), /border-end-start-radius:\s*20px/);
+  });
+
+  it('leaves the other two square, as live does', () => {
+    assert.doesNotMatch(rule(), /border-radius:\s*20px/);
+    assert.doesNotMatch(rule(), /border-start-start-radius/);
+    assert.doesNotMatch(rule(), /border-end-end-radius/);
+  });
+});
