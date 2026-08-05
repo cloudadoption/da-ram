@@ -280,8 +280,7 @@ footer .footer p:has(+ .footer-social-list) {
     /* 64px between two triggers on the same row, measured on live. 16px between one wrapped row and
        the next, from the flex-g-16 live puts on its footer column, which is what keeps the payment
        row off the social label. */
-    column-gap: 64px;
-    row-gap: 16px;
+    gap: 16px 64px;
   }
 
   footer .footer > div > .section:not(:has(.footer-group-title)) {

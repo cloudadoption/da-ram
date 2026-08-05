@@ -697,7 +697,7 @@ describe('the footer follows live-s own rules', () => {
     const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\}/.exec(declared);
     assert.ok(wide, 'expected a 992px block in the footer');
     assert.match(wide[0], /display:\s*flex/);
-    assert.match(wide[0], /column-gap:\s*64px/);
+    assert.match(wide[0], /gap:\s*16px 64px/);
   });
 
   // 64px between two triggers on a row, 16px between one wrapped row and the next, from the
@@ -705,7 +705,7 @@ describe('the footer follows live-s own rules', () => {
   // into the social label.
   it('leaves live-s 16px between one footer row and the next', () => {
     const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\}/.exec(declared)[0];
-    assert.match(wide, /row-gap:\s*16px/);
+    assert.match(wide, /gap:\s*16px 64px/);
   });
 
   it('drops the bar onto its own row rather than beside a trigger', () => {
