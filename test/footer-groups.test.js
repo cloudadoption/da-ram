@@ -404,6 +404,45 @@ describe('the footer follows live-s own rules', () => {
     );
   });
 
+  // Live's footer box, measured on /en-gb/our-fleet at 1100 and 375. The element pads 24px 0,
+  // and its column is .footer__container{width:100%;max-width:95%;margin:0 auto}, with max-width
+  // 1240px from 1280px up. So the column is 95% below the cap and 1240 centred above it, and it
+  // takes no inline padding of its own.
+  //
+  // Ours padded 0 on the element and 40px 24px 24px on the wrapper. That put the top at 40 against
+  // live's 24, and the mobile column at 327px inset 24 against live's 356 inset 9. The measured
+  // trigger x agrees: live 9, ours 24, at 375.
+  it('pads the footer element by live-s 24px, not the wrapper by 40', () => {
+    const box = rule('footer {');
+    assert.match(box, /padding-block:\s*24px/);
+    const column = rule('footer .footer > div {');
+    assert.doesNotMatch(column, /padding:\s*40px/);
+  });
+
+  it('gives the column live-s 95% below the cap and no inline padding', () => {
+    const column = rule('footer .footer > div {');
+    assert.match(column, /width:\s*95%/);
+    assert.match(column, /max-width:\s*var\(--content-max-width\)/);
+    assert.doesNotMatch(column, /padding-inline:\s*24px/);
+  });
+
+  // Live's trigger is a flex row with an 8px gap and three items: a brand-chevron img that
+  // .footer__menu__ramChevron hides at 0 width, the h3 label, and the chevron glyph. So 8px sits
+  // before the label and 8px plus the glyph after it. Measured on /en-gb/our-fleet at 1440, the
+  // trigger is 94.59 against a 65.75 label, so the glyph advance is 12.84px, and the same
+  // arithmetic holds on Destinations, 120.95 against 92.11.
+  //
+  // Ours drew label + 18: an 8px margin plus a 10px box, the 8px square with its two 2px edges.
+  // That left each trigger 11px narrower than live's and drifted the row, x 248 against 259 and
+  // 422 against 444. The 8px of leading padding and the 3px after the square stand in for live's
+  // gap and its glyph advance.
+  it('gives the trigger live-s 8px before the label and its glyph advance after', () => {
+    const title = rule('.footer-group-title {');
+    assert.match(title, /padding-inline-start:\s*8px/);
+    const marker = rule('.footer-group-title::after {');
+    assert.match(marker, /margin-inline:\s*(?:8px|0\.5em) 3px/);
+  });
+
   it('draws the market notice as live-s band', () => {
     const notice = rule('footer .footer p');
     assert.match(notice, /background-color:\s*var\(--ram-brand-primary-color\)/);

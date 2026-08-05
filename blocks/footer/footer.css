@@ -3,15 +3,29 @@
    light bar showed all 71 and ran to 1,513px, which is 1,233px added to the
    bottom of every page in the estate. */
 footer {
+  /* Live's own rule is `.footer{padding-block:1.5rem;background-color:...inverse-color}`, so 24px of
+     block padding and none inline.
+
+     The 2025 bundle declares no bare `footer` selector, so live's element colour computes to #1a1717,
+     dark on dark. Live is legible because each text node carries .footer__link, .footer__list__item or
+     .footer__text. main62.css in the 2022 bundle does declare `footer{color:white}`. Our markup carries
+     none of those three classes, so the white belongs here. */
+  padding-block: 24px;
   background-color: var(--ram-text-dark-color);
   color: #fff;
   font-size: var(--body-font-size-m);
 }
 
+/* Live's column is its own, not the page's:
+   .footer__container{width:100%;max-width:95%;margin:0 auto} with max-width 1240px from 1280px up. So
+   95% below the cap, 1240 centred above it, and no inline padding of its own.
+
+   Ours padded 40px 24px 24px, which put the top at 40 against live's 24 and the mobile column at 327px
+   inset 24 against live's 356 inset 9. The measured trigger x agrees: live 9, ours 24, at 375. */
 footer .footer > div {
-  margin: auto;
+  width: 95%;
   max-width: var(--content-max-width);
-  padding: 40px 24px 24px;
+  margin: auto;
 }
 
 /* The only paragraph in the footer is the market legal notice, because the
@@ -51,14 +65,21 @@ footer .footer a:hover {
 }
 
 /* Live's trigger box is the same at both widths, measured on /en-gb/our-fleet: padding 16px 0, no
-   border on any edge, 54px tall from 16 twice plus a 22.4px line. Ours read 47.4px from 12px of padding
+   border on any edge, 54px tall from 16 twice plus a 22.4px line. Ours read 47.4px from 12px of
+   padding
    plus a 1px rule at 20% white.
 
-   Live's own divider does nothing: .footer__border{border-start:1px solid ...} is not a property, so it
+   Live's own divider does nothing: .footer__border{border-start:1px solid ...} is not a property,
+   so it
    is dropped, and the measured border is 0 on each edge. The drawn chevron is the affordance. */
 .footer-group-title {
   margin: 0;
+
+  /* Live's trigger is a flex row with an 8px gap and three items: a brand-chevron img its own rule
+     hides at 0 width, the label, and the chevron glyph. So 8px sits before the label. Measured at 1440,
+     the trigger is 94.59 against a 65.75 label, and the glyph advance is 12.84px. */
   padding: 16px 0;
+  padding-inline-start: 8px;
   font-size: var(--body-font-size-m);
 
   /* Live's h3.footer__menu__title is 16px on 22.4px, its .f-body-l declaring line-height 140%. Ours
@@ -73,7 +94,11 @@ footer .footer a:hover {
   display: inline-block;
   width: 0.5em;
   height: 0.5em;
-  margin-inline-start: 0.5em;
+
+  /* 8px before it is live's flex gap. After it, the drawn square is 10px wide with its two 2px edges
+     where live's glyph advance is 12.84px, so the 3px carries the difference and the row lands within
+     2px of live's x at each trigger. */
+  margin-inline: 0.5em 3px;
   border-right: 2px solid currentcolor;
   border-bottom: 2px solid currentcolor;
   transform: rotate(45deg) translateY(-0.15em);
@@ -101,7 +126,8 @@ footer .footer a:hover {
   font-size: var(--body-font-size-s);
 }
 
-/* Live shows three links below the columns and they do not collapse: the site map, the terms and the
+/* Live shows three links below the columns and they do not collapse: the site map, the terms and
+   the
    partner page. The row shrink-wraps at the reading edge with a rule between the items, not centred
    across the column:
    .footer__webmap li{border-inline-end:1px solid var(--ram-text-inverse-color);
@@ -136,15 +162,18 @@ footer .footer a:hover {
 }
 
 /* What changes at 992px is the arrangement, not the box. Live rows the three triggers, measured at
-   x 100, 259 and 444 with all three at y 900 on a 1440 viewport, a flat 64px between one trigger's end
+   x 100, 259 and 444 with all three at y 900 on a 1440 viewport, a flat 64px between one trigger's
+   end
    and the next's start. Below 992px it stacks them at x 9, flush, 54px apart. Ours stacked at both.
 
    The bar takes its own row, and so does the empty section the pipeline leaves behind, which has no
    height to contribute. Selecting by what the section holds rather than by position, because the
    authored document decides how many groups there are.
 
-   A descendant :has(), not a child one. The pipeline wraps default content in .default-content-wrapper,
-   so the heading is the section's grandchild, and :has(> .footer-group-title) matched no section at all
+   A descendant :has(), not a child one. The pipeline wraps default content in .default-content-
+   wrapper,
+   so the heading is the section's grandchild, and :has(> .footer-group-title) matched no section
+   at all
    and gave every one of them flex-basis: 100%. */
 @media (width >= 992px) {
   footer .footer > div {
