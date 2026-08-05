@@ -67,6 +67,33 @@
   src: url('https://www.royalairmaroc.com/o/ram-airways-theme/2025/assets/fonts/museosans_900-webfont.woff2') format('woff2');
 }
 
+/*
+ * Cairo draws the Arabic estate, which no brand font covers.
+ *
+ * The Museo Sans woff2 maps 229 codepoints and not one of them is Arabic, and live declares no
+ * Arabic face either: 18 @font-face rules across the eight stylesheets /ar-sa/baggage-information
+ * links and none in its own markup, under ram-primary-font, ram-secondary-font, secondary-font,
+ * ram-icons and swiper-icons, with no unicode-range on any of them. So across the 156 ar-sa paths the letters were left to
+ * whichever local Arial the reader has, and there is no face to inherit.
+ *
+ * This face is vendored rather than fetched from the client origin, because Cairo is OFL where
+ * Museo Sans is commercial. Decision 0026 defers the Museo licence to cutover and is untouched.
+ * OFL 1.1 asks that the licence travel with the font, so both are in fonts/cairo/. Cairo
+ * declares no Reserved Font Name, so the subset keeps the name.
+ *
+ * One variable file, the arabic subset Google Fonts serves, 30,712 bytes over weights 300 to 700,
+ * mapping 297 Arabic codepoints. The range matches the Arabic fallback faces in styles.css. The
+ * sampled estate reaches only U+0600-06FF, 41 distinct codepoints, each of them in this file.
+ */
+@font-face {
+  font-family: ram-arabic-font;
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../fonts/cairo/cairo-arabic.woff2') format('woff2');
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 @font-face {
   font-family: ram-secondary-font;
   font-style: normal;

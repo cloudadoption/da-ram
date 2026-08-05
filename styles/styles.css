@@ -46,9 +46,10 @@
   --link-hover-color: var(--link-color);
 
   /* fonts */
-  --body-font-family: ram-primary-font, ram-primary-font-fallback, sans-serif;
-  --heading-font-family: ram-primary-font, ram-primary-font-fallback, sans-serif;
-  --secondary-font-family: ram-secondary-font, ram-primary-font-fallback, sans-serif;
+  --body-font-family: ram-primary-font, ram-arabic-font, ram-primary-font-fallback, sans-serif;
+  --heading-font-family: ram-primary-font, ram-arabic-font, ram-primary-font-fallback, sans-serif;
+  --secondary-font-family: ram-secondary-font, ram-arabic-font, ram-primary-font-fallback,
+    sans-serif;
 
   /* body sizes, measured on live article pages and flat across viewports */
   --body-font-size-m: 16px;
@@ -151,19 +152,35 @@
 }
 
 
-/* The four faces above are size-adjusted from Latin strings, comparing Museo Sans against Arial.
-   Museo Sans carries no Arabic, so on an Arabic page there is no swap to compensate for and the
-   adjust only inflates the text. Measured at 32px weight 500 in headless Chrome: the Arabic string
-   "دليلكم الكامل للأمتعة" renders 213.75px through the adjusted family against 205.95px in plain
-   Arial, 3.79% wider, and CSS.getPlatformFontsForNode on a live Arabic paragraph reports
-   "Museo Sans 500 x2, Arial x18", so Arial is what draws the letters.
+/* The four faces above are size-adjusted from Latin strings, comparing Museo Sans against Arial,
+   and they are ranged away from Arabic because Museo Sans carries no Arabic glyph. Applied there
+   the adjust inflated text nothing was going to swap: at 32px weight 500 the string
+   "دليلكم الكامل للأمتعة" rendered 213.75px through the adjusted family against 205.95px in plain
+   Arial, 3.79% wider, and CSS.getPlatformFontsForNode reported "Museo Sans 500 x2, Arial x18".
 
-   So the adjusted faces are restricted to the Latin ranges and each weight gets an unadjusted
-   Arabic face. After the change the same string renders 206.64px, 0.33% off nominal, and the Latin
-   string is untouched at 461.59px against 444.77px. */
+   Arabic now has a face of its own, Cairo, in fonts.css. So the four faces below stop being
+   unadjusted holes and take their own value, measured against Cairo rather than against Museo Sans.
+
+   Cairo is much wider than the Arial it replaces, far more than the 2 to 5% between Museo Sans and
+   Arial: over 323 strings taken from six served ar-sa pages at the size and weight each one renders
+   at, with Cairo force-loaded and CSS.getPlatformFontsForNode confirming Cairo drew the glyphs on
+   one side and Arial on the other, the median ratio is 1.209 at weight 300, 1.216 at 400, 1.327 at
+   500 and 1.390 at 700. harfbuzz agrees off the font files: Arial Bold barely widens its Arabic
+   over Arial regular, 1.005 to 1.042 on prose, where Cairo at wght 700 is 1.161 times Cairo at 300.
+
+   The value shipped is the one closest to that median which sits on the re-wrap floor, found by
+   sweeping each weight from 113 to 150% against the count of elements whose line count changes when
+   Cairo swaps in. That count goes from 71 of 347 elements to 18 at 412px and 12 to 4 at 1440px, and
+   /ar-sa/baggage-information goes from 14 re-wraps and 346px of document movement to 0 and 0.
+
+   18 is the floor, not a plateau to keep tuning: what is left is short text in the narrow table
+   cells of /ar-sa/access-to-lounge-areas, 11 of the 18, where a lounge name of two words flips
+   between two and three lines on any width change. size-adjust is a uniform scale and the two fonts
+   differ per glyph, so within weight 300 the ratio runs 1.064 to 1.375. */
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 300;
+  size-adjust: 123%;
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
   src: local('Arial');
 }
@@ -171,6 +188,7 @@
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 400;
+  size-adjust: 118%;
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
   src: local('Arial');
 }
@@ -178,6 +196,7 @@
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 500;
+  size-adjust: 131%;
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
   src: local('Arial');
 }
@@ -185,6 +204,7 @@
 @font-face {
   font-family: ram-primary-font-fallback;
   font-weight: 700;
+  size-adjust: 144%;
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
   src: local('Arial');
 }
