@@ -74,7 +74,12 @@ footer .footer a:hover {
    is dropped, and the measured border is 0 on each edge. The drawn chevron is the affordance. */
 .footer-group-title {
   margin: 0;
+
+  /* Live's trigger is a flex row with an 8px gap and three items: a brand-chevron img its own rule
+     hides at 0 width, the label, and the chevron glyph. So 8px sits before the label. Measured at 1440,
+     the trigger is 94.59 against a 65.75 label, and the glyph advance is 12.84px. */
   padding: 16px 0;
+  padding-inline-start: 8px;
   font-size: var(--body-font-size-m);
 
   /* Live's h3.footer__menu__title is 16px on 22.4px, its .f-body-l declaring line-height 140%. Ours
@@ -89,7 +94,10 @@ footer .footer a:hover {
   display: inline-block;
   width: 0.5em;
   height: 0.5em;
-  margin-inline-start: 0.5em;
+  /* 8px before it is live's flex gap. After it, the drawn square is 10px wide with its two 2px edges
+     where live's glyph advance is 12.84px, so the 3px carries the difference and the row lands within
+     2px of live's x at each trigger. */
+  margin-inline: 0.5em 3px;
   border-right: 2px solid currentcolor;
   border-bottom: 2px solid currentcolor;
   transform: rotate(45deg) translateY(-0.15em);

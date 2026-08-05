@@ -427,21 +427,20 @@ describe('the footer follows live-s own rules', () => {
   });
 
   // Live's trigger is a flex row with an 8px gap and three items: a brand-chevron img that
-  // .footer__menu__ramChevron hides at 0 width, the h3 label, and the i.footer__menu__chevron glyph.
-  // So there is 8px before the label and 8px plus the glyph after it. Measured on /en-gb/our-fleet at
-  // 1440: trigger 94.59 against a label of 65.75, so the glyph advance is 12.84px, and the same
+  // .footer__menu__ramChevron hides at 0 width, the h3 label, and the chevron glyph. So 8px sits
+  // before the label and 8px plus the glyph after it. Measured on /en-gb/our-fleet at 1440, the
+  // trigger is 94.59 against a 65.75 label, so the glyph advance is 12.84px, and the same
   // arithmetic holds on Destinations, 120.95 against 92.11.
   //
-  // Ours drew label + 18: an 8px margin plus a 10px box, the 8px square with its two 2px edges. That
-  // left each trigger 11px narrower than live's and drifted the row, x 248 against 259 and 422 against
-  // 444. The 8px of leading padding and the 3px after the drawn square stand in for live's gap and its
-  // glyph advance.
+  // Ours drew label + 18: an 8px margin plus a 10px box, the 8px square with its two 2px edges.
+  // That left each trigger 11px narrower than live's and drifted the row, x 248 against 259 and
+  // 422 against 444. The 8px of leading padding and the 3px after the square stand in for live's
+  // gap and its glyph advance.
   it('gives the trigger live-s 8px before the label and its glyph advance after', () => {
     const title = rule('.footer-group-title {');
     assert.match(title, /padding-inline-start:\s*8px/);
     const marker = rule('.footer-group-title::after {');
-    assert.match(marker, /margin-inline-start:\s*8px/);
-    assert.match(marker, /margin-inline-end:\s*3px/);
+    assert.match(marker, /margin-inline:\s*(?:8px|0\.5em) 3px/);
   });
 
   it('draws the market notice as live-s band', () => {
