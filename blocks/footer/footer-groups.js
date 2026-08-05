@@ -140,6 +140,7 @@ export const markFooterBar = (root, depth = 6) => {
   const claimed = new Set(footerGroups(children).map(([, listAt]) => children[listAt]));
   const here = children.filter((child) => LIST.test(child.tagName)
     && !claimed.has(child)
+    && !child.classList.contains('footer-social-list')
     && !child.classList.contains('footer-bar-list'));
   here.forEach((list) => list.classList.add('footer-bar-list'));
   return here.length + nested;

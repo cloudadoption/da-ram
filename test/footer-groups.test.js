@@ -441,6 +441,54 @@ describe('markFooterSocial', () => {
   });
 });
 
+// markFooterBar claims every bare list, so the social row has to be classified first or it lands on
+// the legal bar's class with its item dividers.
+describe('the two bare-list passes do not fight', () => {
+  const socialList = () => {
+    const added = [];
+    const mk = (href) => {
+      const classes = [];
+      const a = {
+        tagName: 'A',
+        href,
+        classes,
+        getAttribute: () => href,
+        classList: { add: (c) => classes.push(c) },
+        children: [],
+        childNodes: [],
+      };
+      return { tagName: 'LI', children: [a], classList: { add() {} } };
+    };
+    return {
+      added,
+      node: {
+        tagName: 'UL',
+        children: [
+          mk('https://www.facebook.com/RoyalAirMaroc/'),
+          mk('https://twitter.com/RAM_Maroc'),
+        ],
+        classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+      },
+    };
+  };
+
+  it('leaves a classified social row out of the bar pass', () => {
+    const built = socialList();
+    const root = { tagName: 'DIV', children: [built.node] };
+    markFooterSocial(root);
+    markFooterBar(root);
+    assert.deepEqual(built.added, ['footer-social-list']);
+  });
+
+  it('runs the social pass before the bar pass in the block', () => {
+    const js = readFileSync(new URL('../blocks/footer/footer.js', import.meta.url), 'utf8');
+    assert.ok(
+      js.indexOf('markFooterSocial(') < js.lastIndexOf('markFooterBar('),
+      'markFooterSocial has to run before markFooterBar',
+    );
+  });
+});
+
 describe('the footer follows live-s own rules', () => {
   const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
   const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
