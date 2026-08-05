@@ -126,6 +126,63 @@ footer .footer a:hover {
   font-size: var(--body-font-size-s);
 }
 
+/* Live labels the row "Follow us on" at 14px weight 400 in white with no transform. A real heading
+   would be swept into an accordion by markFooterGroups, the way a column title is, so the label is a
+   paragraph. `footer .footer p` claims every other footer paragraph for the red legal band, so this
+   one is picked out by the row it sits before. */
+footer .footer p:has(+ .footer-social-list) {
+  padding: 0;
+  margin-block-end: 8px;
+  background-color: transparent;
+  color: var(--ram-text-inverse-color);
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  text-align: start;
+}
+
+/* Live's social row: five glyphs from the ram-icons font at 36px in a 37x36 box, 16px apart, #fff at
+   rest and #c20831 on hover, colour only. No ring, because .footer__link sets border 0 and a
+   transparent background in each state, and the only nonzero radius rides a 0-width border.
+
+   This repository does not load ram-icons, so each mark is a CC0 SVG under icons/ drawn as a mask.
+   A mask rather than an img, because the colour has to come from the CSS to hover the way live does.
+   The link keeps its network name as text for a screen reader and the text is taken out of the box. */
+.footer-social-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-social-list li {
+  margin: 0;
+}
+
+.footer-social-list li a:any-link {
+  display: block;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  background-color: currentcolor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: 24px 24px;
+  text-indent: 100%;
+  white-space: nowrap;
+}
+
+.footer-social-list li a:hover {
+  color: var(--ram-text-primary-color);
+}
+
+.footer-social-list li a.icon-facebook { mask-image: url("/icons/facebook.svg"); }
+.footer-social-list li a.icon-x { mask-image: url("/icons/x.svg"); }
+.footer-social-list li a.icon-instagram { mask-image: url("/icons/instagram.svg"); }
+.footer-social-list li a.icon-youtube { mask-image: url("/icons/youtube.svg"); }
+.footer-social-list li a.icon-messenger { mask-image: url("/icons/messenger.svg"); }
+
 /* Live shows three links below the columns and they do not collapse: the site map, the terms and
    the
    partner page. The row shrink-wraps at the reading edge with a rule between the items, not centred

@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
-import { footerGroups, markFooterBar, markFooterGroups } from '../blocks/footer/footer-groups.js';
+import {
+  footerGroups, markFooterBar, markFooterGroups, markFooterSocial,
+} from '../blocks/footer/footer-groups.js';
 
 // Live's footer is 280px tall and shows 36 of its 114 links: the three link
 // lists sit behind their headings and open on a click. The migrated footer
@@ -342,6 +344,207 @@ describe('the footer documents in DA', () => {
 //
 // The hover colour took a real mouse event to read. A JS-synthesised event does not fire CSS
 // :hover, so the first reading came back white and looked like a match.
+
+// Live's social row holds five links, measured on /en-gb/our-fleet at both widths: Facebook
+// facebook.com/RoyalAirMaroc/, X twitter.com/RAM_Maroc, Instagram instagram.com/royalairmaroc/,
+// YouTube youtube.com/channel/UCr9qgja2KRCJ2o1ofBa2irw and Messenger m.me/RoyalAirMaroc. The same
+// five, in the same order, at both widths.
+//
+// Each glyph comes from the ram-icons font at 36px in a 37x36 box, 16px apart, #fff at rest and
+// #c20831 on hover, colour only, with no ring: .footer__link sets border 0 and a transparent
+// background in each state. This repository does not load ram-icons, so the marks are five CC0 SVGs
+// under icons/ drawn as a mask, which lets the CSS colour them the way live colours a glyph.
+//
+// The row reaches the document as a bare list with no heading, so markFooterBar would give it the
+// legal bar's class and its item dividers. A list whose every item is one link to a known social
+// host is the social row instead. Classifying by content rather than by position, because the
+// authored document decides the order of its rows.
+describe('markFooterSocial', () => {
+  const anchor = (href) => {
+    const classes = [];
+    return {
+      tagName: 'A',
+      href,
+      classes,
+      getAttribute: () => href,
+      classList: { add: (c) => classes.push(c) },
+      children: [],
+      childNodes: [],
+    };
+  };
+  const item = (href) => {
+    const a = anchor(href);
+    const li = { tagName: 'LI', children: [a], classList: { add() {} } };
+    return { li, a };
+  };
+  const list = (hrefs) => {
+    const items = hrefs.map(item);
+    const added = [];
+    return {
+      node: {
+        tagName: 'UL',
+        children: items.map((i) => i.li),
+        classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+      },
+      added,
+      items,
+    };
+  };
+
+  it('marks a list of five social links as the social row', () => {
+    const built = list([
+      'https://www.facebook.com/RoyalAirMaroc/',
+      'https://twitter.com/RAM_Maroc',
+      'https://www.instagram.com/royalairmaroc/',
+      'https://www.youtube.com/channel/UCr9qgja2KRCJ2o1ofBa2irw',
+      'https://m.me/RoyalAirMaroc',
+    ]);
+    const root = { tagName: 'DIV', children: [built.node] };
+    assert.equal(markFooterSocial(root), 1);
+    assert.ok(built.added.includes('footer-social-list'));
+  });
+
+  it('leaves the legal bar alone, because its links are our own pages', () => {
+    const built = list(['/en-gb/site-map', '/en-gb/general-terms', '/en-gb/our-partners']);
+    const root = { tagName: 'DIV', children: [built.node] };
+    assert.equal(markFooterSocial(root), 0);
+    assert.equal(built.added.includes('footer-social-list'), false);
+  });
+
+  it('names the network on each link, so the CSS can pick its mark', () => {
+    const built = list([
+      'https://www.facebook.com/RoyalAirMaroc/',
+      'https://twitter.com/RAM_Maroc',
+      'https://www.instagram.com/royalairmaroc/',
+      'https://www.youtube.com/channel/UCr9qgja2KRCJ2o1ofBa2irw',
+      'https://m.me/RoyalAirMaroc',
+    ]);
+    markFooterSocial({ tagName: 'DIV', children: [built.node] });
+    assert.deepEqual(
+      built.items.map((i) => i.a.classes),
+      [['icon-facebook'], ['icon-x'], ['icon-instagram'], ['icon-youtube'], ['icon-messenger']],
+    );
+  });
+
+  // A mixed list is the legal bar with one social link in it, not a social row.
+  it('leaves a list alone unless every item is a social link', () => {
+    const built = list(['https://www.facebook.com/RoyalAirMaroc/', '/en-gb/site-map']);
+    assert.equal(markFooterSocial({ tagName: 'DIV', children: [built.node] }), 0);
+  });
+
+  it('ships a mark for each of the five networks', () => {
+    ['facebook', 'x', 'instagram', 'youtube', 'messenger'].forEach((name) => {
+      const svg = readFileSync(new URL(`../icons/${name}.svg`, import.meta.url), 'utf8');
+      assert.match(svg, /^<svg/, `icons/${name}.svg should be an svg`);
+      assert.match(svg, /fill="currentColor"/, `${name}.svg takes its colour from the CSS`);
+    });
+  });
+});
+
+// markFooterBar claims every bare list, so the social row has to be classified first or it lands on
+// the legal bar's class with its item dividers.
+describe('the social row-s CSS', () => {
+  const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  it('sizes each mark at live-s 36px, 16px apart', () => {
+    assert.match(declared, /\.footer-social-list \{[^}]*gap:\s*16px/);
+    assert.match(declared, /\.footer-social-list li a:any-link \{[^}]*width:\s*36px/);
+  });
+
+  it('draws the mark as a mask, so the CSS owns its colour', () => {
+    const link = /\.footer-social-list li a:any-link \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(link, /background-color:\s*currentcolor/);
+    assert.match(link, /mask-repeat:\s*no-repeat/);
+  });
+
+  it('turns the mark live-s brand red on hover and changes nothing else', () => {
+    const hover = /\.footer-social-list li a:hover \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(hover, /color:\s*var\(--ram-text-primary-color\)/);
+    assert.doesNotMatch(hover, /background-image|border|outline/);
+  });
+
+  it('names a mask for each of the five networks', () => {
+    ['facebook', 'x', 'instagram', 'youtube', 'messenger'].forEach((name) => {
+      assert.match(declared, new RegExp(`icon-${name} \\{[^}]*mask-image:\\s*url\\("/icons/${name}.svg"\\)`));
+    });
+  });
+
+  it('keeps the network name in the document and out of the box', () => {
+    const link = /\.footer-social-list li a:any-link \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(link, /text-indent:\s*100%/);
+    assert.match(link, /overflow:\s*hidden/);
+  });
+});
+
+describe('the social row-s label', () => {
+  const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
+  const declared = styles.replace(/\/\*[\s\S]*?\*\//g, '');
+
+  // Live's label reads "Follow us on" at 14px weight 400 in white with no transform. A real heading
+  // would be swept into an accordion by markFooterGroups, so the label is a paragraph, and
+  // `footer .footer p` claims every other footer paragraph for the red legal band.
+  it('takes the label out of the legal band and gives it live-s type', () => {
+    const rule = /footer \.footer p:has\(\+ \.footer-social-list\) \{[\s\S]*?\n\}/.exec(declared);
+    assert.ok(rule, 'expected a rule for the label before the social row');
+    assert.match(rule[0], /background-color:\s*transparent/);
+    assert.match(rule[0], /font-size:\s*var\(--body-font-size-s\)/);
+    assert.match(rule[0], /font-weight:\s*400/);
+  });
+
+  it('never nests :has() inside :has(), which the browser would drop', () => {
+    const selectors = [...declared.matchAll(/(^|\})\s*([^{}@]+?)\s*\{/gm)].map((m) => m[2]);
+    const nested = selectors.filter((sel) => /:has\([^)]*:has\(/.test(sel.replace(/\s+/g, '')));
+    assert.deepEqual(nested, []);
+  });
+});
+
+describe('the two bare-list passes do not fight', () => {
+  const socialList = () => {
+    const added = [];
+    const mk = (href) => {
+      const classes = [];
+      const a = {
+        tagName: 'A',
+        href,
+        classes,
+        getAttribute: () => href,
+        classList: { add: (c) => classes.push(c) },
+        children: [],
+        childNodes: [],
+      };
+      return { tagName: 'LI', children: [a], classList: { add() {} } };
+    };
+    return {
+      added,
+      node: {
+        tagName: 'UL',
+        children: [
+          mk('https://www.facebook.com/RoyalAirMaroc/'),
+          mk('https://twitter.com/RAM_Maroc'),
+        ],
+        classList: { add: (c) => added.push(c), contains: (c) => added.includes(c) },
+      },
+    };
+  };
+
+  it('leaves a classified social row out of the bar pass', () => {
+    const built = socialList();
+    const root = { tagName: 'DIV', children: [built.node] };
+    markFooterSocial(root);
+    markFooterBar(root);
+    assert.deepEqual(built.added, ['footer-social-list']);
+  });
+
+  it('runs the social pass before the bar pass in the block', () => {
+    const js = readFileSync(new URL('../blocks/footer/footer.js', import.meta.url), 'utf8');
+    assert.ok(
+      js.indexOf('markFooterSocial(') < js.lastIndexOf('markFooterBar('),
+      'markFooterSocial has to run before markFooterBar',
+    );
+  });
+});
+
 describe('the footer follows live-s own rules', () => {
   const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
   const rootStyles = readFileSync(new URL('../styles/styles.css', import.meta.url), 'utf8');
