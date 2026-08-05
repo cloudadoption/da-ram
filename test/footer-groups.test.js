@@ -470,13 +470,13 @@ describe('the social row-s CSS', () => {
     });
   });
 
-  // The mask needs background-color: currentcolor, so the anchor's own colour is white and its text was
-  // white too, moved out of the box by text-indent. A reader never sees it. An automated contrast check
-  // does: a rendered audit over the published page reads #ffffff on #ffffff at 1:1 against the 4.5 body
-  // text needs, on en-GB and ar-SA alike, and it is the only pair either page fails.
+  // The mask needs background-color: currentcolor, so the anchor's own colour is white and its text
+  // was white too, moved out of the box by text-indent. A reader never sees it. An automated contrast
+  // check does: a rendered audit over the published page reads #ffffff on #ffffff at 1:1 against the
+  // 4.5 body text needs, on en-GB and ar-SA alike, and it is the only pair either page fails.
   //
-  // The name belongs in aria-label instead. Then a screen reader still reads Facebook, there is no text
-  // node to contrast-check, and the anchor degrades to a readable text link if the script does not run.
+  // The name belongs in aria-label instead. Then a screen reader still reads Facebook, nothing is left
+  // to contrast-check, and the anchor degrades to a readable text link if the script does not run.
   it('moves the network name into aria-label, so no text sits on the mask', () => {
     const withText = () => {
       const classes = [];
@@ -510,10 +510,10 @@ describe('the social row-s CSS', () => {
     assert.deepEqual(a.childNodes, [], 'the text node should be gone');
   });
 
-  it('keeps the network name in the document and out of the box', () => {
+  it('needs no text-hiding trick, because the name is in aria-label', () => {
     const link = /\.footer-social-list li a:any-link \{[\s\S]*?\n\}/.exec(declared)[0];
-    assert.match(link, /text-indent:\s*100%/);
-    assert.match(link, /overflow:\s*hidden/);
+    assert.doesNotMatch(link, /text-indent/);
+    assert.doesNotMatch(link, /overflow:\s*hidden/);
   });
 });
 
