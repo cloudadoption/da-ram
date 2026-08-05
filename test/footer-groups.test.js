@@ -404,14 +404,14 @@ describe('the footer follows live-s own rules', () => {
     );
   });
 
-  // Live's footer box, measured on /en-gb/our-fleet at 1100 and 375: the footer element pads 24px 0,
-  // and its column is .footer__container{width:100%;max-width:95%;margin:0 auto} with max-width 1240px
-  // from 1280px up. So the column is 95% below the cap and 1240 centred above it, and it takes no
-  // inline padding of its own.
+  // Live's footer box, measured on /en-gb/our-fleet at 1100 and 375. The footer element pads 24px 0,
+  // and its column is .footer__container{width:100%;max-width:95%;margin:0 auto}, with max-width
+  // 1240px from 1280px up. So the column is 95% below the cap and 1240 centred above it, and it
+  // takes no inline padding of its own.
   //
-  // Ours padded 0 on the element and 40px 24px 24px on the wrapper, so the top was 40 against live's 24
-  // and the mobile column was 327px inset 24 against live's 356 inset 9. The measured trigger x agrees:
-  // live 9, ours 24, at 375.
+  // Ours padded 0 on the element and 40px 24px 24px on the wrapper. That put the top at 40 against
+  // live's 24, and the mobile column at 327px inset 24 against live's 356 inset 9. The measured
+  // trigger x agrees: live 9, ours 24, at 375.
   it('pads the footer element by live-s 24px, not the wrapper by 40', () => {
     const box = rule('footer {');
     assert.match(box, /padding-block:\s*24px/);
