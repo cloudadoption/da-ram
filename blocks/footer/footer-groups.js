@@ -63,6 +63,67 @@ export const markFooterGroups = (root, depth = 6) => {
 };
 
 /*
+ * Live's social row is five links to its own accounts, drawn as five glyphs from the ram-icons font
+ * at 36px, 16px apart, white at rest and brand red on hover. Measured on /en-gb/our-fleet:
+ * Facebook, X, Instagram, YouTube and Messenger, the same five in the same order at both widths.
+ *
+ * It reaches the document as a bare list with no heading, so markFooterBar would give it the legal
+ * bar's class and its item dividers. A list whose every item is one link to a known social host is
+ * the social row instead, and each link is named so the CSS can pick its mark. Classifying by
+ * content rather than by position, because the authored document decides the order of its rows.
+ */
+const SOCIAL_HOST = [
+  [/(^|\.)facebook\.com$/, 'facebook'],
+  [/(^|\.)(twitter|x)\.com$/, 'x'],
+  [/(^|\.)instagram\.com$/, 'instagram'],
+  [/(^|\.)youtube\.com$/, 'youtube'],
+  [/(^|\.)(m\.me|messenger\.com)$/, 'messenger'],
+];
+
+const socialNetwork = (href) => {
+  if (!href) return null;
+  let host;
+  try {
+    host = new URL(href, 'https://example.invalid').hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+  const hit = SOCIAL_HOST.find(([pattern]) => pattern.test(host));
+  return hit ? hit[1] : null;
+};
+
+// One link per item and nothing else, which is what live's row holds. A list mixing a social link
+// with one of our own pages is the legal bar, not this.
+const socialLinks = (list) => {
+  const items = [...(list.children || [])];
+  if (items.length < 2) return null;
+  const found = items.map((li) => {
+    const kids = [...(li.children || [])];
+    if (kids.length !== 1 || kids[0].tagName !== 'A') return null;
+    const href = kids[0].getAttribute ? kids[0].getAttribute('href') : kids[0].href;
+    const network = socialNetwork(href);
+    return network ? [kids[0], network] : null;
+  });
+  return found.every(Boolean) ? found : null;
+};
+
+export const markFooterSocial = (root, depth = 6) => {
+  if (!root || depth < 0) return 0;
+  if (LIST.test(root.tagName) || root.tagName === 'LI') return 0;
+  const children = [...(root.children || [])];
+  const nested = children.reduce((total, child) => total + markFooterSocial(child, depth - 1), 0);
+  const here = children
+    .filter((child) => LIST.test(child.tagName) && !child.classList.contains('footer-social-list'))
+    .map((child) => [child, socialLinks(child)])
+    .filter(([, links]) => links);
+  here.forEach(([list, links]) => {
+    list.classList.add('footer-social-list');
+    links.forEach(([link, network]) => link.classList.add(`icon-${network}`));
+  });
+  return here.length + nested;
+};
+
+/*
  * Below the three columns live shows a bar of three links: the site map, the
  * terms and the partner page. It is always visible, so it reaches the document
  * as a list with no heading and markFooterGroups passes over it. Run this after

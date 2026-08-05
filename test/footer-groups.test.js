@@ -348,23 +348,30 @@ describe('the footer documents in DA', () => {
 // Live's social row holds five links, measured on /en-gb/our-fleet at both widths: Facebook
 // facebook.com/RoyalAirMaroc/, X twitter.com/RAM_Maroc, Instagram instagram.com/royalairmaroc/,
 // YouTube youtube.com/channel/UCr9qgja2KRCJ2o1ofBa2irw and Messenger m.me/RoyalAirMaroc. The same
-// five, the same order, at both widths. Each glyph comes from the ram-icons font at 36px in a 37x36
-// box, 16px apart, #fff at rest and #c20831 on hover, colour only, with no ring: .footer__link sets
-// border 0 and a transparent background in each state.
+// five, in the same order, at both widths.
 //
-// This repository does not load ram-icons, so the marks are five CC0 SVGs under icons/ drawn as a
-// mask, which is what lets the CSS colour them the way live colours a font glyph.
+// Each glyph comes from the ram-icons font at 36px in a 37x36 box, 16px apart, #fff at rest and
+// #c20831 on hover, colour only, with no ring: .footer__link sets border 0 and a transparent
+// background in each state. This repository does not load ram-icons, so the marks are five CC0 SVGs
+// under icons/ drawn as a mask, which lets the CSS colour them the way live colours a glyph.
 //
 // The row reaches the document as a bare list with no heading, so markFooterBar would give it the
-// same .footer-bar-list class as the legal bar and its item dividers. A list whose every item is one
-// link to a known social host is the social row instead. Classifying by content rather than by
-// position, because the authored document decides the order of its rows.
+// legal bar's class and its item dividers. A list whose every item is one link to a known social
+// host is the social row instead. Classifying by content rather than by position, because the
+// authored document decides the order of its rows.
 describe('markFooterSocial', () => {
-  const anchor = (href) => ({
-    tagName: 'A', href, getAttribute: () => href, classes: [],
-    classList: { add(c) { this.classes ? this.classes.push(c) : null; } },
-    children: [], childNodes: [],
-  });
+  const anchor = (href) => {
+    const classes = [];
+    return {
+      tagName: 'A',
+      href,
+      classes,
+      getAttribute: () => href,
+      classList: { add: (c) => classes.push(c) },
+      children: [],
+      childNodes: [],
+    };
+  };
   const item = (href) => {
     const a = anchor(href);
     const li = { tagName: 'LI', children: [a], classList: { add() {} } };
@@ -426,11 +433,11 @@ describe('markFooterSocial', () => {
   });
 
   it('ships a mark for each of the five networks', () => {
-    for (const name of ['facebook', 'x', 'instagram', 'youtube', 'messenger']) {
+    ['facebook', 'x', 'instagram', 'youtube', 'messenger'].forEach((name) => {
       const svg = readFileSync(new URL(`../icons/${name}.svg`, import.meta.url), 'utf8');
       assert.match(svg, /^<svg/, `icons/${name}.svg should be an svg`);
-      assert.match(svg, /fill="currentColor"/, `icons/${name}.svg should take its colour from the CSS`);
-    }
+      assert.match(svg, /fill="currentColor"/, `${name}.svg takes its colour from the CSS`);
+    });
   });
 });
 
