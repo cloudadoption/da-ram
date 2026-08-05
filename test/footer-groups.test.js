@@ -700,6 +700,14 @@ describe('the footer follows live-s own rules', () => {
     assert.match(wide[0], /column-gap:\s*64px/);
   });
 
+  // 64px between two triggers on a row, 16px between one wrapped row and the next, from the
+  // flex-g-16 live puts on its footer column. Without the row gap the payment row's second line ran
+  // into the social label.
+  it('leaves live-s 16px between one footer row and the next', () => {
+    const wide = /@media \(width >= 992px\) \{[\s\S]*?\n\}/.exec(declared)[0];
+    assert.match(wide, /row-gap:\s*16px/);
+  });
+
   it('drops the bar onto its own row rather than beside a trigger', () => {
     assert.match(
       declared,
