@@ -318,9 +318,9 @@ describe('a paragraph inside a cell takes the cell’s type', () => {
 // 2026-08-06 and on the checked-baggage page of four more markets.
 //
 // The 15px matters because the first cell already carries padding-inline-start: 15px, live's Clay
-// rule. With the box flush to the column, as ours was, the first column's text starts 15px inside the
-// body text rather than level with it.
-describe('the table bleeds past its column the way live does', () => {
+// rule. With the box flush to the column, as ours was, the first column's text starts 15px inside
+// the body text rather than level with it.
+describe('the table bleeds past its column like live', () => {
   const styles = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
   const rule = /\.table\s*\{[^}]*\}/.exec(styles)[0];
 
