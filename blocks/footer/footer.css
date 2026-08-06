@@ -16,15 +16,19 @@ footer {
   font-size: var(--body-font-size-m);
 }
 
-/* Live's column is its own, not the page's:
-   .footer__container{width:100%;max-width:95%;margin:0 auto} with max-width 1240px from 1280px up. So
-   95% below the cap, 1240 centred above it, and no inline padding of its own.
+/* Live's column is its own, not the page's, and it is three tiers rather than two. Measured by the x
+   of its first column heading, "About us", at eight widths on /en-gb/checked-baggage on 2026-08-06:
+   x 9 at 375, 14 at 576, 19 at 768 and 23 at 900, which is 95% centred; x 50 at 992 and 60 at 1200,
+   which is 90%; x 20 at 1280 and 100 at 1440, which is a fixed 1240.
 
-   Ours padded 40px 24px 24px, which put the top at 40 against live's 24 and the mobile column at 327px
-   inset 24 against live's 356 inset 9. The measured trigger x agrees: live 9, ours 24, at 375. */
+   The CSS quotes .footer__container at max-width 95% and that is one wrapper of three. A reading of
+   the Bootstrap .container nested inside it gave 338 at 375, which is 90%, and that is not the box the
+   content sits in below 992. The heading x is, and it reads 95% there.
+
+   Nothing paints on the column box on either side, only the footer's own full-bleed ground, so the
+   content x is the whole of what a reader sees. */
 footer .footer > div {
   width: 95%;
-  max-width: var(--content-max-width);
   margin: auto;
 }
 
@@ -249,9 +253,11 @@ footer .footer p:has(+ .footer-social-list) {
 }
 
 
+/* Block only. The 32px inline padding this used to carry pinned the content at x 32 from 900 up
+   whatever the column did, so four of the eight widths missed live's x. */
 @media (width >= 900px) {
   footer .footer > div {
-    padding: 40px 32px 24px;
+    padding: 40px 0 24px;
   }
 }
 
@@ -271,6 +277,9 @@ footer .footer p:has(+ .footer-social-list) {
    and gave every one of them flex-basis: 100%. */
 @media (width >= 992px) {
   footer .footer > div {
+    /* Live steps the column from 95% to 90% here: the first column heading reads x 50 at 992 and
+       x 60 at 1200, against x 9 at 375 and x 23 at 900. */
+    width: 90%;
     display: flex;
     flex-wrap: wrap;
 
@@ -282,5 +291,14 @@ footer .footer p:has(+ .footer-social-list) {
 
   footer .footer > div > .section:not(:has(.footer-group-title)) {
     flex-basis: 100%;
+  }
+}
+
+/* After the 992 rule, or that one wins at equal specificity and the column reads 90% above the cap.
+   Verified on the branch preview: with this block first, the heading read x 64 at 1280 and x 72 at
+   1440, which is 90%, against live's x 20 and x 100. */
+@media (width >= 1280px) {
+  footer .footer > div {
+    width: var(--content-max-width);
   }
 }
