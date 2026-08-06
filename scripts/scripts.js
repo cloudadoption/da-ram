@@ -18,7 +18,7 @@ import { decorateVideoLinks } from './video-embed.js';
 import { applyLocale } from './locale.js';
 import { structuredDataFor } from './structured-data.js';
 import { markExternalLinks } from './external-links.js';
-import { markOpeningHeading } from './opening-heading.js';
+import { markArticleHeading, markOpeningHeading } from './opening-heading.js';
 
 /**
  * Emits the two JSON-LD blocks live carries on a market home page.
@@ -195,8 +195,10 @@ export function decorateMain(main) {
   // After decorateButtons, which rewraps an anchor it turns into a button, so the mark lands on the
   // anchor the reader clicks rather than on one that has been replaced.
   markExternalLinks(main);
-  // After buildAutoBlocks, so a heading a block has taken over is not read as the opening one.
+  // After buildAutoBlocks, so a heading a block has taken over is not read as the top one. One of
+  // the two fires per page: a page has an h1 or it does not.
   markOpeningHeading(main);
+  markArticleHeading(main);
 }
 
 /**

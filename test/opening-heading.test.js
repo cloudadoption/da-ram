@@ -62,23 +62,11 @@ describe('markOpeningHeading', () => {
   });
 });
 
-// withTitle prepends live's page title as the h1 and demotes the article's own top heading to an h2.
-// That happened on 32 documents on 2026-08-06, and on 13 of them live renders the article heading in
-// the secondary family at 32px on 40px, weight 300, where ours reads the primary at 32/38.4/300. Only
+// withTitle prepends live's page title as the h1 and demotes the article's own top heading to an
+// h2. That happened on 32 documents on 2026-08-06, and live renders 13 of those headings in the
+// secondary family at 32px on 40px, weight 300, where ours read the primary at 32/38.4/300. Only
 // the family differs, so the rule keyed on this class sets a family and no weight.
 describe('markArticleHeading', () => {
-  const heading = (textContent) => {
-    const classes = new Set();
-    return {
-      textContent,
-      classList: { add: (name) => classes.add(name), contains: (name) => classes.has(name) },
-    };
-  };
-  const main = ({ h1 = null, h2 = [] }) => ({
-    querySelector: (selector) => (selector === 'h1' ? h1 : null),
-    querySelectorAll: (selector) => (selector === 'h2' ? h2 : []),
-  });
-
   it('marks the first h2 on a page that has an h1', () => {
     const first = heading('At the airport');
     const later = heading('Baggage');
@@ -88,7 +76,7 @@ describe('markArticleHeading', () => {
     assert.equal(later.classList.contains('article-heading'), false);
   });
 
-  // A page with no h1 has its opening heading marked instead, and the two rules set different things:
+  // A page with no h1 has its opening heading marked instead, and the two rules differ:
   // opening-heading takes a weight, article-heading takes a family.
   it('marks nothing when the page has no h1, which is the other rule', () => {
     const h2 = heading('An opening heading');
@@ -98,7 +86,8 @@ describe('markArticleHeading', () => {
 
   it('skips a heading with no readable text and takes the next', () => {
     const real = heading('On board');
-    assert.equal(markArticleHeading(main({ h1: heading('3. On board'), h2: [heading(' '), real] })), real);
+    const m = main({ h1: heading('3. On board'), h2: [heading(' '), real] });
+    assert.equal(markArticleHeading(m), real);
   });
 
   it('marks nothing when the page has no h2, and takes a missing container at its word', () => {

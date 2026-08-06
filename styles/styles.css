@@ -375,6 +375,19 @@ body.display-heading main h1 {
   font-weight: 300;
 }
 
+/* The article's own top heading on a titled page, which withTitle demoted to an h2 when it put live's
+   page title in as the h1. Live renders it in the secondary family at 32px on 40px, weight 300, and
+   ours read the primary at 32/38.4/300, so only the family is set here. The 4% leading difference is
+   inside the parity reader's height tolerance.
+
+   Measured at 1440 on 2026-08-06 over the 13 of 32 demoted headings that read this shape: the
+   numbered-journey family, 2-at-the-airport, 3-on-board, a-bord and a-l-aeroport, in six markets.
+   `theme: article-heading-display` metadata on 13 documents becomes the body class, and
+   markArticleHeading adds the element class. */
+body.article-heading-display main h2.article-heading {
+  font-family: var(--secondary-font-family);
+}
+
 /* Live steps the header at 768: .header__logo__img{height:5rem} and
    .header__container{max-height:fit-content} are both gated there. */
 @media (width >= 768px) {
