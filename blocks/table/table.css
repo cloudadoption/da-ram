@@ -1,7 +1,21 @@
 /* A table wider than its column can be scrolled rather than squeezed, and the
    scroll starts at the reading edge in either direction. Live rounds the box:
-   .table-responsive{...border-radius:.5rem}. */
+   .table-responsive{...border-radius:.5rem}.
+
+   The box is the prose column plus 30px, which is what live's Bootstrap `.row`
+   gives it: margin -15px on both sides inside a `.container`. At 1440 the
+   container reads 1240 and the table 1270, at 900 783 and 813, at 375 311 and
+   341. Measured on /en-gb/checked-baggage and on the checked-baggage page of four
+   more markets on 2026-08-06.
+
+   The 15px is the padding the first cell already carries below, live's Clay rule.
+   With the box flush to the column the first column's text started 15px inside the
+   body text instead of level with it. The pull is safe because this scrolls: a box
+   wider than its wrapper is not clipped, and the section has 84px of room each side
+   at 1440, 43 at 900 and 17 at 375. */
 .table {
+  width: calc(100% + 30px);
+  margin-inline: -15px;
   overflow-x: auto;
   border-radius: 8px;
 }
