@@ -27,7 +27,7 @@ describe('markOpeningHeading', () => {
     assert.equal(later.classList.contains('opening-heading'), false);
   });
 
-  // 1,623 of the 1,752 documents carry an h1 and it already renders at 500, which is the weight live
+  // 1,623 of the 1,752 documents carry an h1 and it renders at 500, which is the weight live
   // uses for a first heading. Marking an h2 on those pages would weight a later heading.
   it('marks nothing when the page has an h1', () => {
     const h2 = heading('A later heading');

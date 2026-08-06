@@ -337,6 +337,23 @@ body.titled main h1 {
   line-height: 32px;
 }
 
+/* The opening heading of a page with no h1. h2 is 300 above, which is the weight live gives a later
+   heading, and 107 pages carry no h1 for the 500 to land on. Read from live on 2026-08-06, one
+   request per path over all 107: of the 69 that carry a heading live weights, 50 render at 500 and 19
+   at 300, and live's own class says which. So 500 is the default here and the 19 opt out.
+
+   `markOpeningHeading` adds the class, because no selector reaches the element:
+   `main h2:first-of-type` matches four headings on `/ar-sa/consignes-de-securite`, and on
+   `/de-de/holidays` the only h2 is in a later section. `theme: opening-heading-light` metadata on 19
+   documents becomes the body class. */
+main h2.opening-heading {
+  font-weight: 500;
+}
+
+body.opening-heading-light main h2.opening-heading {
+  font-weight: 300;
+}
+
 /* A few pages carry no page-heading component and live titles them with the article's own display
    heading, class `f-heading-l f-fw-l`, which renders in the secondary family at weight 300 where an
    unclassed first heading is the primary at 500. Measured at 1440 on 2026-08-06 over 17 pages in
