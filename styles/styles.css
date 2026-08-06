@@ -309,20 +309,25 @@ h6 { font-size: var(--heading-font-size-xs); }
 
    White is missing on purpose. 54 pages read white on a dark banner the
    migration has not reproduced, and a white rule would put white text on a
-   white page. Those pages need the banner before they need the colour. */
-body.heading-brand main h1 {
+   white page. Those pages need the banner before they need the colour.
+
+   The h2 is for a page with no h1, where markOpeningHeading marks the opening
+   heading. 19 of those 39 documents already carry a theme row and the colour
+   could not land: the ten consignes-de-securite pages hold heading-black
+   against live's #000000. */
+body.heading-brand main :is(h1, h2.opening-heading) {
   color: #b02736;
 }
 
-body.heading-slate main h1 {
+body.heading-slate main :is(h1, h2.opening-heading) {
   color: #212529;
 }
 
-body.heading-black main h1 {
+body.heading-black main :is(h1, h2.opening-heading) {
   color: #000;
 }
 
-body.heading-crimson main h1 {
+body.heading-crimson main :is(h1, h2.opening-heading) {
   color: #c2002f;
 }
 
