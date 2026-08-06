@@ -693,6 +693,18 @@ main {
    reader sees. */
 main > .section {
   margin-block: 24px 0;
+
+  /* The boilerplate gives `main > div` a margin of 40px 16px, so every section carries a 16px
+     inline margin, and this rule used to override the block margins alone. The 90% column below
+     the cap was then taken of the viewport minus 32 rather than of the viewport, and it read 29px
+     narrower than live's at each width measured.
+
+     Live at thirteen widths on /en-gb/checked-baggage, 2026-08-06: 297 at 360, 311 at 375, 346 at
+     414, 491 at 576, 664 at 768, 783 at 900, 866 at 992, 895 at 1024, 1053 at 1200, then 1240 from
+     1280. Each fits 90% less the 27px inset below. Ours fitted 90% less 56 at the same thirteen.
+
+     Above the cap nothing moves: the column is a fixed 1240 either way, so 1440 agreed already. */
+  margin-inline: 0;
 }
 
 /* And the empty one goes out of flow, or its own top margin adds the 24 back.
