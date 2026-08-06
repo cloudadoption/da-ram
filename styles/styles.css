@@ -337,6 +337,22 @@ body.titled main h1 {
   line-height: 32px;
 }
 
+/* A few pages carry no page-heading component and live titles them with the article's own display
+   heading, class `f-heading-l f-fw-l`, which renders in the secondary family at weight 300 where an
+   unclassed first heading is the primary at 500. Measured at 1440 on 2026-08-06 over 17 pages in
+   three families: dreamafrica-meetmorocco, popular-destinations and loft-lounge-fast-track. Live's
+   line height is 40px against our 38.4px, inside the parity reader's height tolerance, so the size
+   and the leading are left alone.
+
+   The three Arabic pages of those families are not in the set. Live titles them in
+   `primary-font-rtl`, and the secondary family would put Cairo on them, which is the Arabic-face
+   question rather than this one. `template: display-heading` metadata on 17 documents becomes the
+   body class. */
+body.display-heading main h1 {
+  font-family: var(--secondary-font-family);
+  font-weight: 300;
+}
+
 /* Live steps the header at 768: .header__logo__img{height:5rem} and
    .header__container{max-height:fit-content} are both gated there. */
 @media (width >= 768px) {
