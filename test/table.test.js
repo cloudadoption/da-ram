@@ -311,3 +311,29 @@ describe('a paragraph inside a cell takes the cell’s type', () => {
     assert.match(rule[0], /font-weight:\s*inherit/);
   });
 });
+
+// Live's table box is the prose column plus 30px at every width: a Bootstrap `.row` carries
+// margin -15px on both sides inside a `.container`, so at 1440 the container is 1240 and the table
+// 1270, at 900 it is 783 and 813, at 375 it is 311 and 341. Measured on /en-gb/checked-baggage on
+// 2026-08-06 and on the checked-baggage page of four more markets.
+//
+// The 15px matters because the first cell already carries padding-inline-start: 15px, live's Clay
+// rule. With the box flush to the column, as ours was, the first column's text starts 15px inside the
+// body text rather than level with it.
+describe('the table bleeds past its column the way live does', () => {
+  const styles = readFileSync(new URL('../blocks/table/table.css', import.meta.url), 'utf8');
+  const rule = /\.table\s*\{[^}]*\}/.exec(styles)[0];
+
+  it('pulls the box out by the 15px the first cell insets', () => {
+    assert.match(rule, /margin-inline:\s*-15px/);
+  });
+
+  it('takes the width back, or the pull would narrow the table', () => {
+    assert.match(rule, /width:\s*calc\(100% \+ 30px\)/);
+  });
+
+  // The block scrolls, so a box wider than its wrapper is not clipped and the reading edge holds.
+  it('still scrolls, which is what makes the pull safe', () => {
+    assert.match(rule, /overflow-x:\s*auto/);
+  });
+});
