@@ -288,10 +288,19 @@ describe('the page title component', () => {
 // #c2002f on 3, so a single rule cannot do it. 362 documents carry a `theme`
 // metadata value, which the boilerplate turns into a body class.
 describe('the authored heading colour', () => {
+  // The selector also names h2.opening-heading, because 107 pages carry no h1 and 19 of the 39
+  // whose opening heading live weights already hold a theme row the colour could not land on.
+  const TARGET = ':is\\(h1,\\s*h2\\.opening-heading\\)';
+  const ruleFor = (name) => new RegExp(`body\\.${name}\\s+main\\s+${TARGET}\\s*\\{[^}]*\\}`).exec(styles);
   const colourOf = (name) => {
-    const rule = new RegExp(`body\\.${name}\\s+main\\s+h1\\s*\\{[^}]*\\}`).exec(styles);
+    const rule = ruleFor(name);
     return rule && /color:\s*([^;]+);/.exec(rule[0])[1].trim();
   };
+
+  it('reaches the opening heading of a page with no h1', () => {
+    ['heading-brand', 'heading-slate', 'heading-black', 'heading-crimson']
+      .forEach((name) => assert.ok(ruleFor(name), `${name} does not name h2.opening-heading`));
+  });
 
   it('carries the brand red that 245 pages use', () => {
     assert.equal(colourOf('heading-brand'), '#b02736');
