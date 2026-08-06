@@ -500,14 +500,15 @@ describe('the stylesheet parses', () => {
   });
 });
 
-// The column is 90% of the viewport minus a 27px inset, which is live's rule below the cap. Ours was
-// 90% of the viewport minus 32 minus 27, because the boilerplate's `main > div { margin: 40px 16px }`
-// gives every section a 16px inline margin and `main > .section` overrode only the block margins.
+// The column is 90% of the viewport less a 27px inset, which is live's rule below the cap. Ours was
+// 90% of the viewport less 32 less 27, because the boilerplate gives `main > div` a margin of
+// 40px 16px, so every section carries a 16px inline margin, and `main > .section` overrode only
+// the block margins.
 //
-// Measured at thirteen widths on /en-gb/checked-baggage on 2026-08-06. Live: 297 at 360, 311 at 375,
-// 491 at 576, 664 at 768, 783 at 900, 1053 at 1200, then 1240 from 1280. Every point fits
-// 0.9w - 27. Ours fitted 0.9w - 56 at the same thirteen, a flat 29px narrower, and matched at 1240
-// above the cap because the cap is a fixed width either way.
+// Measured at thirteen widths on /en-gb/checked-baggage on 2026-08-06. Live: 297 at 360, 311 at
+// 375, 491 at 576, 664 at 768, 783 at 900, 1053 at 1200, then 1240 from 1280. Each point fits
+// 0.9w - 27. Ours fitted 0.9w - 56 at the same thirteen, a flat 29px narrower, and matched at
+// 1240 above the cap because the cap is a fixed width either way.
 describe('the section keeps no inline margin', () => {
   const rule = /main > \.section \{[^}]*\}/.exec(styles)[0];
 
