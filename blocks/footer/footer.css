@@ -32,12 +32,6 @@ footer .footer > div {
   margin: auto;
 }
 
-@media (width >= 1280px) {
-  footer .footer > div {
-    width: var(--content-max-width);
-  }
-}
-
 /* The only paragraph in the footer is the market legal notice, because the
    columns are headings and lists. France states its RCS registration and
    Portugal links the Livro de Reclamacoes; the other eight carry none.
@@ -297,5 +291,14 @@ footer .footer p:has(+ .footer-social-list) {
 
   footer .footer > div > .section:not(:has(.footer-group-title)) {
     flex-basis: 100%;
+  }
+}
+
+/* After the 992 rule, or that one wins at equal specificity and the column reads 90% above the cap.
+   Verified on the branch preview: with this block first, the heading read x 64 at 1280 and x 72 at
+   1440, which is 90%, against live's x 20 and x 100. */
+@media (width >= 1280px) {
+  footer .footer > div {
+    width: var(--content-max-width);
   }
 }
