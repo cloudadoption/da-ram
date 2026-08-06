@@ -499,3 +499,23 @@ describe('the stylesheet parses', () => {
     assert.deepEqual(nested, [], 'a nested :has() makes the browser drop the whole rule');
   });
 });
+
+// The column is 90% of the viewport minus a 27px inset, which is live's rule below the cap. Ours was
+// 90% of the viewport minus 32 minus 27, because the boilerplate's `main > div { margin: 40px 16px }`
+// gives every section a 16px inline margin and `main > .section` overrode only the block margins.
+//
+// Measured at thirteen widths on /en-gb/checked-baggage on 2026-08-06. Live: 297 at 360, 311 at 375,
+// 491 at 576, 664 at 768, 783 at 900, 1053 at 1200, then 1240 from 1280. Every point fits
+// 0.9w - 27. Ours fitted 0.9w - 56 at the same thirteen, a flat 29px narrower, and matched at 1240
+// above the cap because the cap is a fixed width either way.
+describe('the section keeps no inline margin', () => {
+  const rule = /main > \.section \{[^}]*\}/.exec(styles)[0];
+
+  it('zeroes the inline margin the boilerplate sets', () => {
+    assert.match(rule, /margin-inline:\s*0/);
+  });
+
+  it('keeps the block rhythm it already had', () => {
+    assert.match(rule, /margin-block:\s*24px 0/);
+  });
+});
