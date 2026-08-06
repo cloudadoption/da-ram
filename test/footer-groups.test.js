@@ -773,10 +773,12 @@ describe('the footer follows live-s own rules', () => {
     assert.doesNotMatch(column, /padding:\s*40px/);
   });
 
-  it('gives the column live-s 95% below the cap and no inline padding', () => {
+  // The 1240 moved from a max-width here to a width in the 1280 query, because live's column is
+  // three tiers and a max-width cannot express the middle one: 90% of 1280 is 1152, under the
+  // cap, so the cap would never bind at the width live pins 1240.
+  it('gives the column live-s 95% at the narrow end and no inline padding', () => {
     const column = rule('footer .footer > div {');
     assert.match(column, /width:\s*95%/);
-    assert.match(column, /max-width:\s*var\(--content-max-width\)/);
     assert.doesNotMatch(column, /padding-inline:\s*24px/);
   });
 
@@ -806,15 +808,15 @@ describe('the footer follows live-s own rules', () => {
   });
 });
 
-// Live's footer column is three tiers, measured by the x of its first column heading, "About us", at
-// eight widths on /en-gb/checked-baggage on 2026-08-06: x 9 at 375, 14 at 576, 19 at 768 and 23 at
-// 900, which is 95% centred; x 50 at 992 and 60 at 1200, which is 90%; x 20 at 1280 and 100 at 1440,
-// which is a fixed 1240.
+// Live's footer column is three tiers, measured by the x of its first column heading, "About us",
+// at eight widths on /en-gb/checked-baggage on 2026-08-06: x 9 at 375, 14 at 576, 19 at 768 and
+// 23 at 900, which is 95% centred; x 50 at 992 and 60 at 1200, which is 90%; x 20 at 1280 and
+// 100 at 1440, which is a fixed 1240.
 //
 // Ours matched at 375, 576, 768 and 1440 and missed the other four, because a 32px inline padding
-// from 900 up pinned the content at x 32 whatever the column did. Nothing paints on the column box on
-// either side, only the footer's own full-bleed ground, so the content x is the whole of what a reader
-// sees.
+// from 900 up pinned the content at x 32 whatever the column did. Nothing paints on the column box
+// on either side, only the footer's own full-bleed ground, so the content x is the whole of what a
+// reader sees.
 describe('the footer column follows live at every width', () => {
   const styles = readFileSync(new URL('../blocks/footer/footer.css', import.meta.url), 'utf8');
   const column = /footer \.footer > div \{[^}]*\}/.exec(styles)[0];
@@ -824,11 +826,13 @@ describe('the footer column follows live at every width', () => {
   });
 
   it('takes 90% from 992, where live steps it', () => {
-    assert.match(styles, /@media \(width >= 992px\)[\s\S]*?footer \.footer > div \{[^}]*width:\s*90%/);
+    const wide = /@media \(width >= 992px\)[\s\S]*?footer \.footer > div \{[^}]*\}/.exec(styles)[0];
+    assert.match(wide, /width:\s*90%/);
   });
 
   it('takes the 1240 column from 1280, where live pins it', () => {
-    assert.match(styles, /@media \(width >= 1280px\)[\s\S]*?footer \.footer > div \{[^}]*width:\s*1240px/);
+    const capped = /@media \(width >= 1280px\)[\s\S]*?footer \.footer > div \{[^}]*\}/.exec(styles)[0];
+    assert.match(capped, /width:\s*var\(--content-max-width\)/);
   });
 
   // The padding pinned the content at x 32 from 900 up, which is why four widths missed.
