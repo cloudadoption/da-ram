@@ -1,0 +1,55 @@
+/* The payment-methods widget. Tokens only, so it follows the 2025 theme decision 0040 confirmed. */
+
+.payment-methods-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 8px);
+  max-width: 24rem;
+}
+
+.payment-methods-label {
+  font-size: var(--body-font-size-s, 14px);
+  font-weight: 500;
+}
+
+.payment-methods-country {
+  padding: var(--spacing-xs, 8px);
+  font: inherit;
+  border: 1px solid var(--ram-border-color, #d4d4d4);
+  border-radius: 4px;
+  background-color: var(--background-color, #fff);
+  color: var(--text-color, #1a1717);
+}
+
+.payment-methods-results {
+  margin-top: var(--spacing-m, 24px);
+}
+
+/* A definition list, so a screen reader reads the group and then the methods under it. live's own control
+   gives each method a logo whose alt is the literal string "null", which is on the client register; the
+   method name is text here and there is no logo to mis-label. */
+.payment-methods-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-xs, 8px) var(--spacing-m, 24px);
+  margin: 0;
+}
+
+.payment-methods-groups dt {
+  font-weight: 700;
+}
+
+.payment-methods-groups dd {
+  margin: 0 0 var(--spacing-s, 16px);
+}
+
+@media (width >= 600px) {
+  .payment-methods-groups {
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: baseline;
+  }
+
+  .payment-methods-groups dd {
+    margin-bottom: 0;
+  }
+}

@@ -7,33 +7,37 @@ import { countryOptions, groupsFor, labelFor } from '../widgets/payment-methods.
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const data = JSON.parse(read('../widgets/payment-methods.json'));
 
-// live keeps this data inside a Liferay portlet and answers one country at a time. The sheet was read
-// from fr-FR, whose method set per country matches every market: only the group label differs, and only
-// fr-FR translates it. So the rows carry a group code and the labels are a separate map, which lets a
+// live keeps this data inside a Liferay portlet and answers one country at a time. The sheet was
+// read
+// from fr-FR, whose method set per country matches every market: only the group label differs,
+// and only
+// fr-FR translates it. So the rows carry a group code and the labels are a separate map, which
+// lets a
 // market's labels change without touching the rows.
 describe('the sheet', () => {
-  it('holds a row per country live offers', () => {
-    assert.equal(data.countries.length, 50);
+  // live offers 50 options for 48 countries: CH and TR appear twice with identical data, which is
+  // on
+  // the register. The sheet folds the pair, so it is a row per country rather than per option.
+  it('holds a row per country, 48 of live\'s 50 options', () => {
+    assert.equal(data.countries.length, 48);
   });
 
   it('gives each country a code, a name and its groups', () => {
-    for (const one of data.countries) {
+    data.countries.forEach((one) => {
       assert.match(one.code, /^[A-Z]{2}$/);
       assert.ok(one.name, `${one.code} has no name`);
       assert.ok(Array.isArray(one.groups), `${one.code} has no groups`);
-    }
+    });
   });
 
   it('gives each country at least one group, because live does', () => {
-    for (const one of data.countries) assert.ok(one.groups.length > 0, `${one.code} has no group`);
+    data.countries.forEach((one) => assert.ok(one.groups.length > 0, `${one.code} has no group`));
   });
 
   it('uses a group code the label map knows', () => {
-    for (const one of data.countries) {
-      for (const group of one.groups) {
-        assert.ok(data.labels[group.group], `${group.group} has no label`);
-      }
-    }
+    data.countries.forEach((one) => one.groups.forEach((group) => {
+      assert.ok(data.labels[group.group], `${group.group} has no label`);
+    }));
   });
 
   it('names Morocco and France, the two live serves most methods for', () => {
@@ -42,7 +46,8 @@ describe('the sheet', () => {
     assert.ok(codes.includes('FR'));
   });
 
-  // live lists Switzerland and Turkey twice with identical data, which is a defect on the register. The
+  // live lists Switzerland and Turkey twice with identical data, which is a defect on the
+  // register. The
   // sheet folds the pair, so a visitor sees each country once.
   it('lists each country once, where live lists CH and TR twice', () => {
     const codes = data.countries.map((one) => one.code);
@@ -85,7 +90,7 @@ describe('labelFor', () => {
 describe('countryOptions', () => {
   it('gives the countries sorted by name, for the picker', () => {
     const options = countryOptions(data);
-    assert.equal(options.length, 50);
+    assert.equal(options.length, 48);
     const names = options.map((one) => one.name);
     assert.deepEqual(names, [...names].sort((a, b) => a.localeCompare(b)));
   });

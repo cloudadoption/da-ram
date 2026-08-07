@@ -1,0 +1,698 @@
+{
+  "source": "live www.royalairmaroc.com/fr-fr/moyens-paiement, read 2026-08-07 one country at a time",
+  "note": "The method names are brands and do not translate, so one market is the whole sheet. The group labels are fr-FR's, the one market that translates them; the other seven leave them in English, which is on the client register. Swap labels without touching countries.",
+  "labels": {
+    "cards": "Cartes de paiement",
+    "cash": "Cash",
+    "mobile": "Paiement Mobile",
+    "instalments": "Paiement fractionné",
+    "wallet": "Portefeuille électronique",
+    "transfer": "Virement bancaire"
+  },
+  "countries": [
+    {
+      "code": "DZ",
+      "name": "Algérie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "DE",
+      "name": "Allemagne",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "IATA Pay"
+        }
+      ]
+    },
+    {
+      "code": "AO",
+      "name": "Angola",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "SA",
+      "name": "Arabie Saoudite",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "AT",
+      "name": "Autriche",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "BE",
+      "name": "Belgique",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club Bancontact"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay Apple pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "IATA Pay"
+        }
+      ]
+    },
+    {
+      "code": "BR",
+      "name": "Brésil",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "PIX"
+        }
+      ]
+    },
+    {
+      "code": "BF",
+      "name": "Burkina Faso",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "BJ",
+      "name": "Bénin",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "CM",
+      "name": "Cameroun",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "MTN"
+        }
+      ]
+    },
+    {
+      "code": "CA",
+      "name": "Canada",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "CN",
+      "name": "Chine",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "Mastercard UnionPay Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "AliPay Wechat Pay"
+        }
+      ]
+    },
+    {
+      "code": "CI",
+      "name": "Côte d'Ivoire",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "ES",
+      "name": "Espagne",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "mobile",
+          "methods": "Bizum Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "FR",
+      "name": "France",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club"
+        },
+        {
+          "group": "cash",
+          "methods": "Optionizr"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "instalments",
+          "methods": "Le paiement en 3X4X Oney par carte bancaire"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "GA",
+      "name": "Gabon",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "GH",
+      "name": "Ghana",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "Vodafone MTN Airtel UBA"
+        }
+      ]
+    },
+    {
+      "code": "GR",
+      "name": "Grèce",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "GW",
+      "name": "Guinée-Bissau",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "IL",
+      "name": "Israël",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "IT",
+      "name": "Italie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay Apple pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "IATA Pay"
+        }
+      ]
+    },
+    {
+      "code": "JO",
+      "name": "Jordanie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "GQ",
+      "name": "La Guinée équatoriale",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "LB",
+      "name": "Liban",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "LR",
+      "name": "Libéria",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "ML",
+      "name": "Mali",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "MA",
+      "name": "Maroc",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express CMI UATP Mastercard Visa"
+        },
+        {
+          "group": "cash",
+          "methods": "Wafacash"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "Fatourati IATA Pay"
+        }
+      ]
+    },
+    {
+      "code": "MR",
+      "name": "Mauritanie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "NE",
+      "name": "Niger",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "NG",
+      "name": "Nigéria",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Discover Visa Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "PAGA"
+        },
+        {
+          "group": "transfer",
+          "methods": "PAGA"
+        }
+      ]
+    },
+    {
+      "code": "NL",
+      "name": "Pays-Bas",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay Apple pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "iDeal"
+        }
+      ]
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay Apple pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "IATA Pay"
+        }
+      ]
+    },
+    {
+      "code": "QA",
+      "name": "Qatar",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "GB",
+      "name": "Royaume-Uni",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Maestro Diners Club"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        },
+        {
+          "group": "transfer",
+          "methods": "IATA Pay"
+        }
+      ]
+    },
+    {
+      "code": "RU",
+      "name": "Russie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "CF",
+      "name": "République centrafricaine",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "CV",
+      "name": "République du Cap-Vert",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "CG",
+      "name": "République du Congo",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "CH",
+      "name": "Suisse",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "SE",
+      "name": "Suède",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "SN",
+      "name": "Sénégal",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa"
+        },
+        {
+          "group": "cash",
+          "methods": "Wafacash"
+        },
+        {
+          "group": "mobile",
+          "methods": "orange"
+        }
+      ]
+    },
+    {
+      "code": "TD",
+      "name": "Tchad",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "TG",
+      "name": "Togo",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "TN",
+      "name": "Tunisie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "TR",
+      "name": "Turquie",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa Maestro"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "EG",
+      "name": "Égypte",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Visa"
+        }
+      ]
+    },
+    {
+      "code": "AE",
+      "name": "Émirats Arabes Unis",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "UATP Mastercard Visa"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay Apple pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    },
+    {
+      "code": "US",
+      "name": "États-Unis",
+      "groups": [
+        {
+          "group": "cards",
+          "methods": "American Express UATP Mastercard Discover Visa Diners Club"
+        },
+        {
+          "group": "mobile",
+          "methods": "Google Pay"
+        },
+        {
+          "group": "wallet",
+          "methods": "Paypal"
+        }
+      ]
+    }
+  ]
+}
