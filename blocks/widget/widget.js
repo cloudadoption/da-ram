@@ -58,8 +58,9 @@ function applyWidgetShell(widget, source, widgetName, searchParams) {
 export default async function decorate(widget) {
   // Named before the try so the catch can say which widget failed.
   let label = 'a widget';
-  // Reading the link is inside the try too. A block with no link threw on source.href and a
-  // relative one threw in new URL, both outside the catch, which takes the page's decoration down.
+  // Reading the link is inside the try too. A block with no link threw on source.href, and
+  // loadBlock in aem.js caught it and logged "failed to load module for widget", which names the
+  // module rather than the block an author has to fix.
   try {
     const source = widget.querySelector('a[href]');
     if (!source) throw new Error('no link to name a widget');
