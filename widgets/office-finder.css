@@ -1,0 +1,72 @@
+/* The office-finder widget, serving both the call-centre filter and the agency picker. Tokens only, so it
+   follows the 2025 theme decision 0040 confirmed. */
+
+.office-finder-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-s, 16px);
+  max-width: 40rem;
+}
+
+.office-finder-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 8px);
+  margin: 0;
+}
+
+.office-finder-label {
+  font-size: var(--body-font-size-s, 14px);
+  font-weight: 500;
+}
+
+.office-finder-country,
+.office-finder-city-select {
+  padding: var(--spacing-xs, 8px);
+  font: inherit;
+  border: 1px solid var(--ram-border-color, #d4d4d4);
+  border-radius: 4px;
+  background-color: var(--background-color, #fff);
+  color: var(--text-color, #1a1717);
+}
+
+.office-finder-city-select:disabled {
+  color: var(--ram-muted-color, #767676);
+  cursor: not-allowed;
+}
+
+.office-finder-results {
+  margin-top: var(--spacing-m, 24px);
+}
+
+.office-finder-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-m, 24px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.office-finder-city {
+  margin: 0 0 var(--spacing-xs, 8px);
+  font-size: var(--heading-font-size-s, 20px);
+}
+
+/* live authors a <br> between two phone numbers and above the opening hours, which the sheet keeps as a
+   newline, so the line breaks where live breaks it. */
+.office-finder-phone,
+.office-finder-address {
+  margin: 0 0 var(--spacing-xs, 8px);
+  white-space: pre-line;
+}
+
+@media (width >= 600px) {
+  .office-finder-control {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .office-finder-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

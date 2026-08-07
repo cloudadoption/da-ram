@@ -9,9 +9,12 @@ import {
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const data = JSON.parse(read('../widgets/office-finder.json'));
 
-// live holds this set in its contact-us page as a JavaScript array literal, and every market serves the
-// same bytes. So one read is the sheet for all ten. Two of live's controls filter it: the call-centre
-// number filter on contact-us and the agency picker on worldwide-agencies. One widget serves both, and the
+// live holds this set in its contact-us page as a JavaScript array literal, and every market
+// serves the
+// same bytes. So one read is the sheet for all ten. Two of live's controls filter it: the call-
+// centre
+// number filter on contact-us and the agency picker on worldwide-agencies. One widget serves
+// both, and the
 // show parameter on the authored link decides which fields it renders.
 describe('the sheet', () => {
   it('holds live\'s 68 offices', () => {
@@ -65,9 +68,18 @@ describe('citiesIn', () => {
 });
 
 describe('officesIn', () => {
+  // A city can hold more than one office: Morocco has 19 in 14 cities, with 5 in Casablanca and 2
+  // in
+  // Rabat. So the office count is at least the city count and the widget lists each one.
   it('gives every office of a country when no city is named', () => {
     const found = officesIn(data, 'Morocco', '');
-    assert.equal(found.length, citiesIn(data, 'Morocco').length);
+    assert.equal(found.length, 19);
+    assert.ok(found.length > citiesIn(data, 'Morocco').length);
+  });
+
+  it('gives each office of a city where the city holds several', () => {
+    const found = officesIn(data, 'Morocco', 'Casablanca');
+    assert.equal(found.length, 5);
   });
 
   it('narrows to one city', () => {
