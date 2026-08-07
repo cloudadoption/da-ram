@@ -37,15 +37,16 @@ describe('labelsFor', () => {
   });
 
   it('gives a country and a city word for each', () => {
-    for (const [lang, words] of Object.entries(LABELS)) {
+    Object.entries(LABELS).forEach(([lang, words]) => {
       assert.ok(words.country, `${lang} has no country word`);
       assert.ok(words.city, `${lang} has no city word`);
-    }
+    });
   });
 
-  it('uses a distinct country word per language, apart from de and nl which both read Land', () => {
+  it('shares a country word across two pairs of languages', () => {
+    // de and nl both read Land, es and pt both read País, so ten languages give eight words.
     const countries = Object.values(LABELS).map((one) => one.country);
     assert.equal(countries.length, 10);
-    assert.equal(new Set(countries).size, 9);
+    assert.equal(new Set(countries).size, 8);
   });
 });

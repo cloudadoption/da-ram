@@ -17,6 +17,8 @@
  * method name is the text.
  */
 
+import { labelsFor } from './field-labels.js';
+
 /**
  * The groups a country offers.
  *
@@ -81,6 +83,14 @@ export default async function decorate(widget) {
   const label = widget.querySelector('.payment-methods-label');
   const select = widget.querySelector('.payment-methods-country');
   if (!select) return;
+
+  // The shell is authored in English and the estate serves ten languages, so the country field
+  // takes live's own word for it. The placeholder option takes the same word, because live has no
+  // prompt copy in the other nine languages.
+  const words = labelsFor(document.documentElement.lang);
+  if (label) label.textContent = words.country;
+  const prompt = select.querySelector('option[value=""]');
+  if (prompt) prompt.textContent = words.country;
 
   // The label is authored in the html shell, so the select is named by it rather than by an aria-
   // label.
