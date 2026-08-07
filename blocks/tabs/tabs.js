@@ -36,6 +36,11 @@ const show = (panels, tabs, select, index) => {
 // 770, 664 and 558. So the arrows are swapped there, or the right arrow moves the selection left.
 // Home and End are not swapped: they mean first and last in reading order, and in RTL the last one
 // is the leftmost.
+// A page can hold two tabs blocks, and both would otherwise call their first panel tabs-panel-0, so
+// an aria-controls would resolve to the wrong one. general-terms-and-conditions holds one with five
+// rows; the counter is for the page that holds a second.
+let blocks = 0;
+
 const NEXT = (at, count) => (at + 1) % count;
 const PREVIOUS = (at, count) => (at - 1 + count) % count;
 const KEYS = (rtl) => ({
@@ -49,12 +54,18 @@ export default function decorate(block) {
   const rows = [...block.children];
   const labels = [];
   const panels = [];
+  blocks += 1;
+  const prefix = `tabs-${blocks}`;
   rows.forEach((row) => {
     const [label, panel] = [...row.children];
     if (!label || !panel) return;
     labels.push((label.textContent || '').trim());
     panel.className = 'tabs-panel';
     panel.setAttribute('role', 'tabpanel');
+    // The index is the one this panel takes in panels, which is what the tab of the same index
+    // points at. A row with no panel is skipped above, so rows and panels can differ in length.
+    panel.id = `${prefix}-panel-${panels.length}`;
+    panel.setAttribute('aria-labelledby', `${prefix}-tab-${panels.length}`);
     // The cookies panel of general-terms-and-conditions holds a table, and the pipeline
     // cannot deliver a block inside a block, so it arrives as a real table.
     styleBareTables(panel);
@@ -82,6 +93,8 @@ export default function decorate(block) {
     tab.type = 'button';
     tab.className = 'tabs-tab';
     tab.setAttribute('role', 'tab');
+    tab.id = `${prefix}-tab-${index}`;
+    tab.setAttribute('aria-controls', `${prefix}-panel-${index}`);
     tab.textContent = text;
     tab.addEventListener('click', () => show(panels, tabs, select, index));
     list.append(tab);
