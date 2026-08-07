@@ -403,6 +403,23 @@ body.article-heading-display main h2.article-heading {
   }
 }
 
+/* A second page-title shape, and the theme's own h1 is neither. `ram-holidays-faq` and
+   `children-and-pregnancy/children` read live's h1 in the primary family at a flat 40px on 48px,
+   weight 500, #1a1717, where ours reads 32px on 38.4px with the same family, weight and colour. So
+   only the size and the leading differ, and they do not step: measured at 375, 768, 992 and 1440 on
+   2026-08-07 over 20 pages, ten markets each. `theme: page-title-40` metadata on 20 documents
+   becomes the body class.
+
+   Declared after the titled step so it wins where a document carries both, which none does today.
+
+   The `holidays` family reads 24px on 32px stepping to 40px on 44px at 992, which is what
+   body.titled already draws, and its colour is rgb(230, 238, 250) on a dark banner. That is the
+   white-on-a-banner class the heading-colour tokens leave out on purpose, so it is not in this set. */
+body.page-title-40 main h1 {
+  font-size: 40px;
+  line-height: 48px;
+}
+
 p,
 dl,
 ol,
