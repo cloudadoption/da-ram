@@ -20,32 +20,38 @@ export const footerGroups = (children) => {
   return groups;
 };
 
-const markIn = (container) => {
+const markIn = (container, make) => {
   const children = [...(container.children || [])];
-  const groups = footerGroups(children).filter(([titleAt]) => !children[titleAt].getAttribute('aria-expanded'));
+  // Already marked means the heading holds the toggle. It used to mean the heading carried
+  // aria-expanded, and the state moved to a button inside it.
+  const marked = (title) => !!(title.querySelector && title.querySelector('.footer-group-toggle'));
+  const groups = footerGroups(children).filter(([titleAt]) => !marked(children[titleAt]));
   groups.forEach(([titleAt, listAt]) => {
     const title = children[titleAt];
     const list = children[listAt];
     title.classList.add('footer-group-title');
     list.classList.add('footer-group-list');
-    title.setAttribute('role', 'button');
-    title.setAttribute('tabindex', '0');
-    title.setAttribute('aria-expanded', 'false');
+
+    // The control is a button inside the heading rather than a role on it. ARIA does not allow
+    // role=button on a heading, so the earlier shape made aria-expanded valid and the role not:
+    // axe read aria-allowed-role on three of these on every page of the estate.
+    const button = make('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('aria-expanded', 'false');
+    button.classList.add('footer-group-toggle');
+    // The heading's own content becomes the button's, so the button names itself and the heading
+    // keeps its text. A button takes Enter and Space without a handler.
+    button.append(...(title.childNodes || []));
+    title.append(button);
+
     // The block's CSS arrives after the footer markup, so a group closed by a
     // class alone paints open and then shuts: CLS went from 0 to 0.232 on
     // mobile. An inline display needs no stylesheet to be in force.
     list.style.display = 'none';
-    const toggle = () => {
-      const open = title.getAttribute('aria-expanded') === 'true';
-      title.setAttribute('aria-expanded', open ? 'false' : 'true');
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', open ? 'false' : 'true');
       list.style.display = open ? 'none' : '';
-    };
-    title.addEventListener('click', toggle);
-    title.addEventListener('keydown', (event) => {
-      if (event && (event.key === 'Enter' || event.key === ' ')) {
-        if (event.preventDefault) event.preventDefault();
-        toggle();
-      }
     });
   });
   return groups.length;
@@ -55,11 +61,13 @@ const markIn = (container) => {
 // .default-content-wrapper > h2, so a fixed depth is the wrong thing to code
 // against: marking the wrapper's own children found nothing and the footer
 // shipped expanded. This walks the subtree instead.
-export const markFooterGroups = (root, depth = 6) => {
+const madeBy = (tag) => document.createElement(tag);
+
+export const markFooterGroups = (root, depth = 6, make = madeBy) => {
   if (!root || depth < 0) return 0;
   const nested = [...(root.children || [])]
-    .reduce((total, child) => total + markFooterGroups(child, depth - 1), 0);
-  return markIn(root) + nested;
+    .reduce((total, child) => total + markFooterGroups(child, depth - 1, make), 0);
+  return markIn(root, make) + nested;
 };
 
 /*

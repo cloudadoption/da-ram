@@ -93,7 +93,24 @@ footer .footer a:hover {
   cursor: pointer;
 }
 
-.footer-group-title::after {
+/* The control is a button inside the heading, because ARIA does not allow role=button on a heading.
+   A button brings its own font, background and border, so it takes the heading's instead and the row
+   reads as it did. The padding is the heading's, so the whole row is the hit area. */
+.footer-group-toggle {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.footer-group-toggle::after {
   content: "";
   display: inline-block;
   width: 0.5em;
@@ -108,7 +125,7 @@ footer .footer a:hover {
   transform: rotate(45deg) translateY(-0.15em);
 }
 
-.footer-group-title[aria-expanded="true"]::after {
+.footer-group-toggle[aria-expanded="true"]::after {
   transform: rotate(-135deg) translateY(-0.15em);
 }
 
@@ -120,7 +137,7 @@ footer .footer a:hover {
   list-style: none;
 }
 
-.footer-group-title[aria-expanded="true"] + .footer-group-list {
+.footer-group-title:has(.footer-group-toggle[aria-expanded="true"]) + .footer-group-list {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 24px;

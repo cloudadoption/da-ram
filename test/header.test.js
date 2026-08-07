@@ -188,49 +188,48 @@ describe('the hamburger announces its own state', () => {
   });
 });
 
-// A nav dropdown is a focusable li with tabindex 0, a click handler, Enter and Space, and
-// aria-expanded. Read from the accessibility tree at 1440 on /en-gb/checked-baggage: four of them,
-// each role listitem with an empty accessible name. ARIA allows aria-expanded on a limited set of
-// roles and listitem is not one, so the state rides on an element that does not take it, and the
-// control a keyboard lands on announces no name at all.
+// A nav dropdown is an li holding a label and a sublist, and the control is a button inside it.
+// #88 gave the li role="button" so its aria-expanded would be valid, and ARIA does not allow that
+// role on an li: axe read aria-allowed-role on the four drops and `list` on the ul holding them,
+// on every page. The accessibility tree that reading came from shows the computed role and not
+// whether the element permits it.
 //
-// role="button" makes the state valid and takes the name from content, which here is the whole
-// subtree: "Book Book a flight Activities ...". So the label comes from the li's own leading text,
-// which the nav authors as a bare text node before the sublist.
-describe('a nav dropdown names itself and takes a role its state is valid on', () => {
+// The label and the button live in drop-toggle.js with 15 tests of their own. What is checked here
+// is that header.js delegates to it and leaves no role behind.
+describe('a nav dropdown takes a real button rather than a role', () => {
   const js = readFileSync(new URL('../blocks/header/header.js', import.meta.url), 'utf8')
     .replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 
-  it('gives a drop role button', () => {
-    assert.match(js, /setAttribute\('role',\s*'button'\)/);
+  it('builds the drop a toggle', () => {
+    assert.match(js, /toggleFor\(navSection,/);
   });
 
-  it('gives it an aria-label, because a button takes its name from content', () => {
-    assert.match(js, /setAttribute\('aria-label'/);
+  it('sets no role on the drop', () => {
+    assert.doesNotMatch(js, /setAttribute\('role'/);
   });
 
-  it('takes the label from the leading text rather than from the whole subtree', () => {
-    assert.match(js, /childNodes|firstChild/);
-  });
-});
-
-// nl-NL authors its fifth top item as a link, <li><a>Safar Flyer-loyaliteit</a><ul>, where the
-// other nine author a bare text node. So the label had no text node to take, no aria-label was
-// set, and role="button" fell back to name-from-content. Closed it reads the link, because the
-// sublist is display:none and hidden content is left out. Open it reads 488 characters: the whole
-// submenu announced as the button's name. Measured on main at 1440 on /nl-nl/checked-baggage.
-describe('a nav dropdown label falls back to its link', () => {
-  const js = readFileSync(new URL('../blocks/header/header.js', import.meta.url), 'utf8')
-    .replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
-
-  it('reads the first element child when the li has no own text', () => {
-    assert.match(js, /firstElementChild/);
+  it('puts the click handler on the toggle, not on the li', () => {
+    assert.match(js, /toggle\.addEventListener\('click'/);
+    assert.doesNotMatch(js, /navSection\.addEventListener\('click'/);
   });
 
-  // Without this the name comes from content, and content includes the sublist once it opens.
-  it('sets aria-label whenever it has a role, so the name never comes from content', () => {
-    const drop = /classList\.add\('nav-drop'\)[\s\S]*?setAttribute\('aria-label'[^\n]*\n/.exec(js);
-    assert.ok(drop, 'expected the label to be set where the role is');
-    assert.doesNotMatch(drop[0], /if \(own\) navSection\.setAttribute\('aria-label'/);
+  it('reads and writes the state on the toggle', () => {
+    assert.match(js, /toggle\.getAttribute\('aria-expanded'\)/);
+    assert.match(js, /toggle\.setAttribute\('aria-expanded'/);
+  });
+
+  it('manages no tabindex, because a button is focusable at both widths', () => {
+    assert.doesNotMatch(js, /setAttribute\('tabindex'/);
+    assert.doesNotMatch(js, /removeAttribute\('tabindex'\)/);
+  });
+
+  it('needs no keydown shim, because a button takes Enter and Space itself', () => {
+    assert.doesNotMatch(js, /openOnKeydown/);
+  });
+
+  it('sets the state on the drop toggles rather than on every li', () => {
+    const all = /function toggleAllNavSections[\s\S]*?\n}/.exec(js);
+    assert.ok(all, 'expected toggleAllNavSections');
+    assert.match(all[0], /\.nav-drop > \.nav-drop-toggle/);
   });
 });

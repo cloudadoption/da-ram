@@ -1,5 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import markNavGroups from './nav-groups.js';
+import { toggleFor } from './drop-toggle.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates mobile/tablet width
@@ -41,30 +42,19 @@ function closeOnFocusLost(e) {
   }
 }
 
-function openOnKeydown(e) {
-  const focused = document.activeElement;
-  const isNavDrop = focused.className === 'nav-drop';
-  if (isNavDrop && (e.code === 'Enter' || e.code === 'Space')) {
-    const dropExpanded = focused.getAttribute('aria-expanded') === 'true';
-    // eslint-disable-next-line no-use-before-define
-    toggleAllNavSections(focused.closest('.nav-sections'));
-    focused.setAttribute('aria-expanded', dropExpanded ? 'false' : 'true');
-  }
-}
-
-function focusNavSection() {
-  document.activeElement.addEventListener('keydown', openOnKeydown);
-}
-
 /**
  * Toggles all nav sections
+ *
+ * The state is on each drop's own button. It used to be on every li, including the ones with no
+ * sublist, which put aria-expanded on an element that has nothing to expand.
+ *
  * @param {Element} sections The container element
  * @param {Boolean} expanded Whether the element should be expanded or collapsed
  */
 function toggleAllNavSections(sections, expanded = false) {
   if (!sections) return;
-  sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
-    section.setAttribute('aria-expanded', expanded);
+  sections.querySelectorAll('.nav-drop > .nav-drop-toggle').forEach((toggle) => {
+    toggle.setAttribute('aria-expanded', expanded);
   });
 }
 
@@ -82,23 +72,8 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   toggleAllNavSections(navSections, expanded || isDesktop.matches ? 'false' : 'true');
   button.setAttribute('aria-expanded', expanded ? 'false' : 'true');
   button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
-  // enable nav dropdown keyboard accessibility
-  if (navSections) {
-    const navDrops = navSections.querySelectorAll('.nav-drop');
-    if (isDesktop.matches) {
-      navDrops.forEach((drop) => {
-        if (!drop.hasAttribute('tabindex')) {
-          drop.setAttribute('tabindex', 0);
-          drop.addEventListener('focus', focusNavSection);
-        }
-      });
-    } else {
-      navDrops.forEach((drop) => {
-        drop.removeAttribute('tabindex');
-        drop.removeEventListener('focus', focusNavSection);
-      });
-    }
-  }
+  // No tabindex to manage: the drop's control is a button, so it is focusable at both widths and
+  // takes Enter and Space itself.
 
   // enable menu collapse on escape keypress
   if (!expanded || isDesktop.matches) {
@@ -145,34 +120,15 @@ export default async function decorate(block) {
   if (navSections) {
     markNavGroups(navSections.querySelector(':scope .default-content-wrapper > ul'));
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) {
-        navSection.classList.add('nav-drop');
-        // The drop is focusable, takes Enter and Space and carries aria-expanded. ARIA allows that
-        // state on a limited set of roles and listitem is not one, so without a role it rides on an
-        // element that does not take it. Read from the accessibility tree at 1440: four drops, each
-        // role listitem with an empty name.
-        navSection.setAttribute('role', 'button');
-        // A button takes its name from content, and content here takes in the sublist once it
-        // opens: the nl-NL fifth drop read 488 characters of submenu as its own name. So the
-        // label is always set. Nine markets author it as a bare text node before the sublist,
-        // and nl-NL authors it as a link, so the first element child is the fallback.
-        const own = [...navSection.childNodes]
-          .filter((node) => node.nodeType === Node.TEXT_NODE)
-          .map((node) => node.textContent.trim())
-          .join(' ')
-          .trim();
-        const linked = navSection.firstElementChild
-          && navSection.firstElementChild.tagName !== 'UL'
-          ? (navSection.firstElementChild.textContent || '').trim()
-          : '';
-        navSection.setAttribute('aria-label', own || linked || 'Menu');
-      }
-      navSection.addEventListener('click', () => {
-        if (isDesktop.matches) {
-          const expanded = navSection.getAttribute('aria-expanded') === 'true';
-          toggleAllNavSections(navSections);
-          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        }
+      if (!navSection.querySelector('ul')) return;
+      navSection.classList.add('nav-drop');
+      // The control is a button inside the li rather than a role on it: ARIA does not allow
+      // role=button on an li, so the earlier shape made aria-expanded valid and the role not.
+      const toggle = toggleFor(navSection, (tag) => document.createElement(tag));
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggleAllNavSections(navSections);
+        toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
       });
     });
   }

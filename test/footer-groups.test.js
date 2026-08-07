@@ -40,7 +40,26 @@ describe('footerGroups', () => {
   });
 });
 
-const element = (tag, text = '') => {
+// A heading takes the toggle as a child now, so the stand-in has to hold one and be searchable.
+const withAppend = (made) => {
+  const holder = made;
+  // append moves a node in the DOM, so the stand-in takes it off its old parent too. Without that
+  // the heading appeared to keep the text the button now holds.
+  holder.append = (...nodes) => nodes.forEach((one) => {
+    const moving = one;
+    if (moving.parent) {
+      const at = moving.parent.childNodes.indexOf(moving);
+      if (at >= 0) moving.parent.childNodes.splice(at, 1);
+    }
+    moving.parent = holder;
+    holder.childNodes.push(moving);
+  });
+  holder.querySelector = (selector) => holder.childNodes.find((one) => one.classes
+    && [...one.classes].some((c) => selector === `.${c}`)) || null;
+  return holder;
+};
+
+const rawElement = (tag, text = '') => {
   const classes = new Set();
   const attrs = {};
   return {
@@ -60,12 +79,10 @@ const element = (tag, text = '') => {
   };
 };
 
+const element = (tag, text = '') => withAppend(rawElement(tag, text));
+
 // A document stand-in, so the block can build a button without a browser.
-const maker = () => (tag) => {
-  const made = element(tag.toUpperCase());
-  made.append = (...nodes) => made.childNodes.push(...nodes);
-  return made;
-};
+const maker = () => (tag) => element(tag.toUpperCase());
 
 const toggleIn = (title) => title.childNodes.find((one) => one.tagName === 'BUTTON');
 
@@ -75,7 +92,7 @@ describe('markFooterGroups', () => {
   it('marks the heading and its list', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
-    markFooterGroups(footerWith([h, ul]));
+    markFooterGroups(footerWith([h, ul]), 6, maker());
     assert.ok(h.classList.contains('footer-group-title'));
     assert.ok(ul.classList.contains('footer-group-list'));
   });
@@ -104,7 +121,7 @@ describe('markFooterGroups', () => {
 
   it('moves the heading text into the button, so the button names itself', () => {
     const h = element('H2', 'About us');
-    const word = { tagName: '#text', textContent: 'About us' };
+    const word = { tagName: '#text', textContent: 'About us', parent: h };
     h.childNodes.push(word);
     markFooterGroups(footerWith([h, element('UL')]), 6, maker());
     const button = toggleIn(h);
@@ -132,12 +149,12 @@ describe('markFooterGroups', () => {
 
   it('returns how many groups it marked', () => {
     const kids = [element('H2', 'A'), element('UL'), element('H2', 'B'), element('UL')];
-    assert.equal(markFooterGroups(footerWith(kids)), 2);
+    assert.equal(markFooterGroups(footerWith(kids), 6, maker()), 2);
   });
 
   it('leaves a footer with no group alone', () => {
     const p = element('P', 'Copyright');
-    assert.equal(markFooterGroups(footerWith([p])), 0);
+    assert.equal(markFooterGroups(footerWith([p]), 6, maker()), 0);
     assert.ok(!p.classList.contains('footer-group-title'));
   });
 });
@@ -157,7 +174,7 @@ describe('markFooterGroups on the shape the block actually passes', () => {
     const ul = element('UL');
     const section = withChildren('DIV', [h, ul]);
     const wrapper = withChildren('DIV', [section]);
-    assert.equal(markFooterGroups(wrapper), 1);
+    assert.equal(markFooterGroups(wrapper, 6, maker()), 1);
     assert.ok(h.classList.contains('footer-group-title'));
   });
 
@@ -167,13 +184,13 @@ describe('markFooterGroups on the shape the block actually passes', () => {
       return { h, section: withChildren('DIV', [h, element('UL')]) };
     });
     const wrapper = withChildren('DIV', pairs.map((p) => p.section));
-    assert.equal(markFooterGroups(wrapper), 2);
+    assert.equal(markFooterGroups(wrapper, 6, maker()), 2);
   });
 
   it('still marks a group that is a direct child', () => {
     const h = element('H2', 'About us');
     const wrapper = withChildren('DIV', [h, element('UL')]);
-    assert.equal(markFooterGroups(wrapper), 1);
+    assert.equal(markFooterGroups(wrapper, 6, maker()), 1);
   });
 
   // The real tree is footer > .footer.block > wrapper > .section >
@@ -184,7 +201,7 @@ describe('markFooterGroups on the shape the block actually passes', () => {
     const inner = withChildren('DIV', [h, element('UL')]);
     const section = withChildren('DIV', [inner]);
     const wrapper = withChildren('DIV', [section]);
-    assert.equal(markFooterGroups(wrapper), 1);
+    assert.equal(markFooterGroups(wrapper, 6, maker()), 1);
     assert.ok(h.classList.contains('footer-group-title'));
   });
 
@@ -220,7 +237,7 @@ describe('markFooterBar', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
     const wrapper = withChildren('DIV', [h, ul]);
-    markFooterGroups(wrapper);
+    markFooterGroups(wrapper, 6, maker());
     assert.equal(markFooterBar(wrapper), 0);
     assert.ok(!ul.classList.contains('footer-bar-list'));
   });
@@ -229,7 +246,7 @@ describe('markFooterBar', () => {
     const groups = [0, 1, 2].map(() => withChildren('DIV', [element('H2', 'x'), element('UL')]));
     const bar = element('UL');
     const wrapper = withChildren('DIV', [...groups, withChildren('DIV', [bar])]);
-    markFooterGroups(wrapper);
+    markFooterGroups(wrapper, 6, maker());
     assert.equal(markFooterBar(wrapper), 1);
     assert.ok(bar.classList.contains('footer-bar-list'));
   });
@@ -243,7 +260,7 @@ describe('markFooterBar', () => {
 
   it('finds no bar in a footer that is groups only', () => {
     const wrapper = withChildren('DIV', [element('H2', 'A'), element('UL')]);
-    markFooterGroups(wrapper);
+    markFooterGroups(wrapper, 6, maker());
     assert.equal(markFooterBar(wrapper), 0);
   });
 
@@ -280,7 +297,7 @@ describe('the group is closed before anything is painted', () => {
   it('hides the list without waiting for a stylesheet', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
-    markFooterGroups(withChildren('DIV', [h, ul]));
+    markFooterGroups(withChildren('DIV', [h, ul]), 6, maker());
     assert.equal(ul.style.display, 'none');
   });
 
@@ -328,7 +345,7 @@ describe('the footer documents in DA', () => {
 
   it('marks all three columns, one section deep', () => {
     const { footer, columns } = authored();
-    assert.equal(markFooterGroups(footer), 3);
+    assert.equal(markFooterGroups(footer, 6, maker()), 3);
     columns.forEach(({ title, list }) => {
       assert.ok(title.classList.contains('footer-group-title'));
       assert.ok(list.classList.contains('footer-group-list'));
@@ -346,7 +363,7 @@ describe('the footer documents in DA', () => {
 
   it('claims the bar and none of the column lists', () => {
     const { footer, columns, bar } = authored();
-    markFooterGroups(footer);
+    markFooterGroups(footer, 6, maker());
     assert.equal(markFooterBar(footer), 1);
     assert.ok(bar.classList.contains('footer-bar-list'));
     columns.forEach(({ list }) => assert.ok(!list.classList.contains('footer-bar-list')));
@@ -832,7 +849,8 @@ describe('the footer follows live-s own rules', () => {
   it('gives the trigger live-s 8px before the label and its glyph advance after', () => {
     const title = rule('.footer-group-title {');
     assert.match(title, /padding-inline-start:\s*8px/);
-    const marker = rule('.footer-group-title::after {');
+    // The chevron is on the toggle button, because the control is the button not the heading.
+    const marker = rule('.footer-group-toggle::after {');
     assert.match(marker, /margin-inline:\s*(?:8px|0\.5em) 3px/);
   });
 
