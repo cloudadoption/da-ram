@@ -1,6 +1,6 @@
 {
   "source": "live www.royalairmaroc.com/en-gb/information/contact-us, read 2026-08-07. The ten markets serve byte-identical entries, so one read is the sheet for all of them.",
-  "note": "The addresses and titles are French on every market, which is on the client register: 62 of the 68 addresses hold \"Ouverte du lundi au vendredi\" and 67 of the 68 titles hold \"Agence\". Carried as authored under decision 0041, so the translation is the client's.",
+  "note": "The addresses and titles are French on every market, which is on the client register: 62 of the 68 addresses hold \"Ouverte du lundi au vendredi\" and 67 of the 68 titles hold \"Agence\". Carried as authored under decision 0041, so the translation is the client's. The country and city field labels are not in this sheet: they are per language in widgets/field-labels.js, read off live's ten worldwide-agencies pages before the widget link replaced their label paragraphs.",
   "offices": [
     {
       "country": "Algerie",
