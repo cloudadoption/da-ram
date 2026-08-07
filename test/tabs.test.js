@@ -137,3 +137,27 @@ describe('the tab strip follows the 2025 theme', () => {
     assert.match(step[0], /padding-inline:\s*42px/);
   });
 });
+
+// A role="tab" without aria-controls and a role="tabpanel" without aria-labelledby leave the two
+// unassociated. A screen reader announces "tab, 1 of 5, selected" and cannot say which panel it
+// opens, and a reader who lands in the panel is not told which tab brought them there. The rest of
+// the pattern is here already: tablist, tab, tabpanel, aria-selected and a roving tabindex.
+describe('the tab and its panel are associated', () => {
+  it('gives each tab an aria-controls', () => {
+    assert.match(tabs, /setAttribute\('aria-controls'/);
+  });
+
+  it('gives each panel an aria-labelledby', () => {
+    assert.match(tabs, /setAttribute\('aria-labelledby'/);
+  });
+
+  it('gives each tab and each panel an id, because the two attributes name one', () => {
+    assert.match(tabs, /\bid\s*=/);
+  });
+
+  // Two tabs blocks on one page would otherwise both call their first panel tabs-panel-0, and an
+  // aria-controls would resolve to the wrong one.
+  it('counts the blocks, so a second one on a page gets its own ids', () => {
+    assert.match(tabs, /let\s+\w*[Bb]lock\w*\s*=\s*0|blocks\s*\+=\s*1|\+\+\s*blocks/);
+  });
+});
