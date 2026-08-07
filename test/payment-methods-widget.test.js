@@ -76,6 +76,45 @@ describe('groupsFor', () => {
   });
 });
 
+// live serves the group labels in English on seven of the eight markets whose picker works, and in
+// French on fr-FR alone. The sheet held only the French set, so the widget read French on all ten.
+describe('labelFor by language', () => {
+  it('gives the French label on a French page', () => {
+    assert.equal(labelFor(data, 'cards', 'fr'), 'Cartes de paiement');
+    assert.equal(labelFor(data, 'wallet', 'fr'), 'Portefeuille électronique');
+  });
+
+  it('gives live\'s English label everywhere else', () => {
+    assert.equal(labelFor(data, 'cards', 'en'), 'Credit-cards');
+    assert.equal(labelFor(data, 'wallet', 'de'), 'Wallets');
+    assert.equal(labelFor(data, 'instalments', 'ar'), 'Buy Now, Pay Later');
+    assert.equal(labelFor(data, 'transfer', 'ru'), 'Bank-transfer');
+    assert.equal(labelFor(data, 'mobile', 'tr'), 'Mobile Payment');
+  });
+
+  it('reads Cash the same in both, because live does', () => {
+    assert.equal(labelFor(data, 'cash', 'fr'), 'Cash');
+    assert.equal(labelFor(data, 'cash', 'en'), 'Cash');
+  });
+
+  it('reads a region tag as its language', () => {
+    assert.equal(labelFor(data, 'cards', 'fr-FR'), 'Cartes de paiement');
+  });
+
+  it('defaults to English with no language', () => {
+    assert.equal(labelFor(data, 'cards'), 'Credit-cards');
+  });
+
+  it('names every group in both sets', () => {
+    const codes = [...new Set(data.countries.flatMap((one) => one.groups.map((g) => g.group)))];
+    assert.equal(codes.length, 6);
+    codes.forEach((code) => {
+      assert.notEqual(labelFor(data, code, 'fr'), code, `${code} has no French label`);
+      assert.notEqual(labelFor(data, code, 'en'), code, `${code} has no English label`);
+    });
+  });
+});
+
 describe('labelFor', () => {
   it('gives the label of a group code', () => {
     assert.equal(typeof labelFor(data, 'cards'), 'string');
