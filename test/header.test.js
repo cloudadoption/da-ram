@@ -187,3 +187,29 @@ describe('the hamburger announces its own state', () => {
     assert.match(toggle[0], /button\.setAttribute\('aria-expanded'/);
   });
 });
+
+// A nav dropdown is a focusable li with tabindex 0, a click handler, Enter and Space, and
+// aria-expanded. Read from the accessibility tree at 1440 on /en-gb/checked-baggage: four of them,
+// each role listitem with an empty accessible name. ARIA allows aria-expanded on a limited set of
+// roles and listitem is not one, so the state rides on an element that does not take it, and the
+// control a keyboard lands on announces no name at all.
+//
+// role="button" makes the state valid and takes the name from content, which here is the whole
+// subtree: "Book Book a flight Activities ...". So the label comes from the li's own leading text,
+// which the nav authors as a bare text node before the sublist.
+describe('a nav dropdown names itself and takes a role its state is valid on', () => {
+  const js = readFileSync(new URL('../blocks/header/header.js', import.meta.url), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+
+  it('gives a drop role button', () => {
+    assert.match(js, /setAttribute\('role',\s*'button'\)/);
+  });
+
+  it('gives it an aria-label, because a button takes its name from content', () => {
+    assert.match(js, /setAttribute\('aria-label'/);
+  });
+
+  it('takes the label from the leading text rather than from the whole subtree', () => {
+    assert.match(js, /childNodes|firstChild/);
+  });
+});

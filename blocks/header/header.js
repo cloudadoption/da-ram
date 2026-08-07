@@ -145,7 +145,23 @@ export default async function decorate(block) {
   if (navSections) {
     markNavGroups(navSections.querySelector(':scope .default-content-wrapper > ul'));
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
+      if (navSection.querySelector('ul')) {
+        navSection.classList.add('nav-drop');
+        // The drop is focusable, takes Enter and Space and carries aria-expanded. ARIA allows that
+        // state on a limited set of roles and listitem is not one, so without a role it rides on an
+        // element that does not take it. Read from the accessibility tree at 1440: four drops, each
+        // role listitem with an empty name.
+        navSection.setAttribute('role', 'button');
+        // A button takes its name from content, which here is the whole subtree: "Book Book a
+        // flight Activities ...". The label is the li's own leading text, which the nav authors
+        // as a bare text node before the sublist.
+        const own = [...navSection.childNodes]
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent.trim())
+          .join(' ')
+          .trim();
+        if (own) navSection.setAttribute('aria-label', own);
+      }
       navSection.addEventListener('click', () => {
         if (isDesktop.matches) {
           const expanded = navSection.getAttribute('aria-expanded') === 'true';
