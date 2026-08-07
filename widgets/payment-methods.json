@@ -1,5 +1,5 @@
 {
-  "source": "live www.royalairmaroc.com/fr-fr/moyens-paiement, read 2026-08-07 one country at a time",
+  "source": "live www.royalairmaroc.com/fr-fr/moyens-paiement, read 2026-08-07 one country at a time. The English group labels come from a reading of live's other markets the same day, held in the control plane at tools/render/payment-groups.mjs as EN_GROUPS.",
   "note": "The method names are brands and do not translate, so one market is the whole sheet. The group labels do translate and live serves two sets: French on fr-FR, English on the other seven markets whose picker works. Both are here and the widget picks on the page language, so the label state matches live. That the English set is English on an Arabic page is live's own, on the client register as thePaymentMethodGroupLabelsAreEnglishInSevenMarkets. Swap labels without touching countries.",
   "labels": {
     "fr": {
