@@ -152,15 +152,20 @@ export default async function decorate(block) {
         // element that does not take it. Read from the accessibility tree at 1440: four drops, each
         // role listitem with an empty name.
         navSection.setAttribute('role', 'button');
-        // A button takes its name from content, which here is the whole subtree: "Book Book a
-        // flight Activities ...". The label is the li's own leading text, which the nav authors
-        // as a bare text node before the sublist.
+        // A button takes its name from content, and content here takes in the sublist once it
+        // opens: the nl-NL fifth drop read 488 characters of submenu as its own name. So the
+        // label is always set. Nine markets author it as a bare text node before the sublist,
+        // and nl-NL authors it as a link, so the first element child is the fallback.
         const own = [...navSection.childNodes]
           .filter((node) => node.nodeType === Node.TEXT_NODE)
           .map((node) => node.textContent.trim())
           .join(' ')
           .trim();
-        if (own) navSection.setAttribute('aria-label', own);
+        const linked = navSection.firstElementChild
+          && navSection.firstElementChild.tagName !== 'UL'
+          ? (navSection.firstElementChild.textContent || '').trim()
+          : '';
+        navSection.setAttribute('aria-label', own || linked || 'Menu');
       }
       navSection.addEventListener('click', () => {
         if (isDesktop.matches) {
