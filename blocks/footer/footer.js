@@ -1,7 +1,7 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 import {
-  markFooterBar, markFooterGroups, markFooterPayment, markFooterSocial,
+  clearFooterTargets, markFooterBar, markFooterGroups, markFooterPayment, markFooterSocial,
 } from './footer-groups.js';
 
 /**
@@ -18,6 +18,10 @@ export default async function decorate(block) {
   block.textContent = '';
   const footer = document.createElement('div');
   while (fragment.firstElementChild) footer.append(fragment.firstElementChild);
+
+  // loadFragment calls decorateMain, which marks a link leaving this host. live's footer
+  // carries no target on any of its 113 anchors. Decision 0037: the footer works as on live.
+  clearFooterTargets(footer);
 
   markFooterGroups(footer);
   // Before markFooterBar, which claims every bare list it finds.

@@ -3,10 +3,10 @@ import { describe, it } from 'node:test';
 
 import { clearFooterTargets } from '../blocks/footer/footer-groups.js';
 
-// live's footer holds 113 anchors and not one carries a target: each of its 59 destination links
-// navigates in place. ours reached them through loadFragment, which calls decorateMain, which calls
-// markExternalLinks, and 50 came out with target="_blank". decision 0037 says the footer works as on
-// live, so the footer clears what markExternalLinks set.
+// live's footer holds 113 anchors and not one carries a target: each of its 59 destination
+// links navigates in place. ours reached them through loadFragment, which calls decorateMain,
+// which calls markExternalLinks, and 50 came out with target="_blank". decision 0037 says the
+// footer works as on live, so the footer clears what markExternalLinks set.
 const anchor = (href, target) => {
   const attrs = new Map();
   if (target) attrs.set('target', target);
