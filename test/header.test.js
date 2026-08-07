@@ -166,3 +166,24 @@ describe('the header follows the page, as live’s does', () => {
     assert.match(rule[0], /height:\s*var\(--nav-height\)/);
   });
 });
+
+// The hamburger is a disclosure button and aria-expanded belongs on the control a screen reader
+// reads, not on the region it controls. toggleMenu set it on the nav element and swapped the
+// button's aria-label, so the button announced "Open navigation, button" with no state. Read at 375
+// on main: the button's aria-expanded was null closed and null open while nav's went false to true.
+describe('the hamburger announces its own state', () => {
+  const js = readFileSync(new URL('../blocks/header/header.js', import.meta.url), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+
+  it('gives the button an aria-expanded when it builds it', () => {
+    const hamburger = /nav-hamburger[\s\S]{0,400}?`;/.exec(js);
+    assert.ok(hamburger, 'expected the hamburger markup');
+    assert.match(hamburger[0], /aria-expanded/);
+  });
+
+  it('sets aria-expanded on the button in toggleMenu, not only on the nav', () => {
+    const toggle = /function toggleMenu\([\s\S]*?\n\}/.exec(js);
+    assert.ok(toggle, 'expected toggleMenu');
+    assert.match(toggle[0], /button\.setAttribute\('aria-expanded'/);
+  });
+});
