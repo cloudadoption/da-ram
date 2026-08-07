@@ -34,9 +34,12 @@ describe('the sheet', () => {
     data.countries.forEach((one) => assert.ok(one.groups.length > 0, `${one.code} has no group`));
   });
 
-  it('uses a group code the label map knows', () => {
+  it('uses a group code both label sets know', () => {
+    // The map is keyed by language now: French on fr-FR and English on the other markets, which is
+    // what live serves.
     data.countries.forEach((one) => one.groups.forEach((group) => {
-      assert.ok(data.labels[group.group], `${group.group} has no label`);
+      assert.ok(data.labels.fr[group.group], `${group.group} has no French label`);
+      assert.ok(data.labels.en[group.group], `${group.group} has no English label`);
     }));
   });
 

@@ -1,13 +1,23 @@
 {
   "source": "live www.royalairmaroc.com/fr-fr/moyens-paiement, read 2026-08-07 one country at a time",
-  "note": "The method names are brands and do not translate, so one market is the whole sheet. The group labels are fr-FR's, the one market that translates them; the other seven leave them in English, which is on the client register. Swap labels without touching countries.",
+  "note": "The method names are brands and do not translate, so one market is the whole sheet. The group labels do translate and live serves two sets: French on fr-FR, English on the other seven markets whose picker works. Both are here and the widget picks on the page language, so the label state matches live. That the English set is English on an Arabic page is live's own, on the client register as thePaymentMethodGroupLabelsAreEnglishInSevenMarkets. Swap labels without touching countries.",
   "labels": {
-    "cards": "Cartes de paiement",
-    "cash": "Cash",
-    "mobile": "Paiement Mobile",
-    "instalments": "Paiement fractionné",
-    "wallet": "Portefeuille électronique",
-    "transfer": "Virement bancaire"
+    "fr": {
+      "cards": "Cartes de paiement",
+      "cash": "Cash",
+      "mobile": "Paiement Mobile",
+      "instalments": "Paiement fractionné",
+      "wallet": "Portefeuille électronique",
+      "transfer": "Virement bancaire"
+    },
+    "en": {
+      "cards": "Credit-cards",
+      "cash": "Cash",
+      "mobile": "Mobile Payment",
+      "instalments": "Buy Now, Pay Later",
+      "wallet": "Wallets",
+      "transfer": "Bank-transfer"
+    }
   },
   "countries": [
     {

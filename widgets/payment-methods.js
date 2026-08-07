@@ -35,11 +35,20 @@ export const groupsFor = (data, code) => {
 /**
  * The label for a group code, in the sheet's language.
  *
- * @param {{labels: Record<string, string>}} data the sheet
+ * live serves two label sets: French on fr-FR and English on the other seven markets whose picker
+ * works. So the label follows the page rather than the sheet having one answer.
+ *
+ * @param {{labels: Record<string, Record<string, string>>}} data the sheet
  * @param {string} group a group code
+ * @param {string} [lang] the page language, English where it is unknown
  * @returns {string} the code itself where the sheet names no label
  */
-export const labelFor = (data, group) => (data?.labels || {})[group] || group;
+export const labelFor = (data, group, lang) => {
+  const language = String(lang || 'en').toLowerCase().split('-')[0];
+  const sets = data?.labels || {};
+  const set = sets[language] || sets.en || {};
+  return set[group] || group;
+};
 
 /**
  * The countries for the picker, by name.
@@ -51,7 +60,7 @@ export const countryOptions = (data) => [...(data?.countries || [])]
   .map((one) => ({ code: one.code, name: one.name }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
-const render = (widget, data, code) => {
+const render = (widget, data, code, lang) => {
   const results = widget.querySelector('.payment-methods-results');
   if (!results) return;
   const groups = groupsFor(data, code);
@@ -61,7 +70,7 @@ const render = (widget, data, code) => {
   list.className = 'payment-methods-groups';
   groups.forEach((one) => {
     const term = document.createElement('dt');
-    term.textContent = labelFor(data, one.group);
+    term.textContent = labelFor(data, one.group, lang);
     const detail = document.createElement('dd');
     detail.textContent = one.methods;
     list.append(term, detail);
@@ -103,5 +112,5 @@ export default async function decorate(widget) {
     option.textContent = one.name;
     select.append(option);
   });
-  select.addEventListener('change', () => render(widget, data, select.value));
+  select.addEventListener('change', () => render(widget, data, select.value, document.documentElement.lang));
 }
