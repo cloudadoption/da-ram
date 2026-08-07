@@ -56,14 +56,23 @@ function applyWidgetShell(widget, source, widgetName, searchParams) {
  * @param {Element} widget The widget block element
  */
 export default async function decorate(widget) {
-  const source = widget.querySelector('a[href]');
-  const { pathname, searchParams } = new URL(source.href);
-  const { widgetPath, widgetName } = parseWidgetHref(pathname);
-
+  // Named before the try so the catch can say which widget failed.
+  let label = 'a widget';
+  // Reading the link is inside the try too. A block with no link threw on source.href, and
+  // loadBlock in aem.js caught it and logged "failed to load module for widget", which names the
+  // module rather than the block an author has to fix.
   try {
+    const source = widget.querySelector('a[href]');
+    if (!source) throw new Error('no link to name a widget');
+    const { pathname, searchParams } = new URL(source.href);
+    const { widgetPath, widgetName } = parseWidgetHref(pathname);
+    label = widgetPath ? `${widgetPath}/${widgetName}` : widgetName;
+
     applyWidgetShell(widget, source, widgetName, searchParams);
 
     const resp = await fetch(widgetUrl(widgetPath, widgetName, 'html'));
+    // A 404 answers with the site's own not-found page, and resp.text() hands it back as a widget.
+    if (!resp.ok) throw new Error(`${resp.status} for ${widgetName}.html`);
     widget.innerHTML = await resp.text();
 
     const cssLoaded = loadCSS(widgetUrl(widgetPath, widgetName, 'css'));
@@ -74,6 +83,6 @@ export default async function decorate(widget) {
     await Promise.all([cssLoaded, decorationComplete]);
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`failed to load widget ${widgetPath}/${widgetName}`, error);
+    console.error(`failed to load widget ${label}`, error);
   }
 }
