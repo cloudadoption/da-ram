@@ -191,3 +191,25 @@ export const markFooterBar = (root, depth = 6) => {
   here.forEach((list) => list.classList.add('footer-bar-list'));
   return here.length + nested;
 };
+
+/**
+ * Removes the target attribute markExternalLinks set on the footer's links.
+ *
+ * live's footer holds 113 anchors and not one carries a target, so each of its 59
+ * destination links navigates in place. The footer fragment reaches markExternalLinks
+ * through loadFragment, which calls decorateMain, and 50 came out with target="_blank"
+ * on es-ES. Decision 0037 says the footer works as on live, so this clears them.
+ *
+ * @param {Element} root the footer element
+ * @returns {number} how many targets were cleared
+ */
+export const clearFooterTargets = (root) => {
+  if (!root) return 0;
+  let cleared = 0;
+  root.querySelectorAll('a[href]').forEach((link) => {
+    if (!link.getAttribute('target')) return;
+    link.removeAttribute('target');
+    cleared += 1;
+  });
+  return cleared;
+};
