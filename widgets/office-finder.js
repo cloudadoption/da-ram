@@ -113,19 +113,16 @@ export default async function decorate(widget) {
   const fields = fieldsFor(widget.dataset.show);
 
   // live labelled these fields in each market's own language and the shell is authored in English,
-  // so a page that read Arabic before the rebuild would read Country after it. The placeholder
-  // option takes the label word: live has no prompt copy in the other nine languages and we do not
-  // write copy for the client.
+  // so a page that read Arabic before the rebuild would read Country after it. Only the label is
+  // named: live's own control is a label over an empty input with no prompt text, so a prompt would
+  // be copy we invented in nine languages.
   const words = labelsFor(document.documentElement.lang);
-  const nameField = (selector, word, select) => {
+  const nameField = (selector, word) => {
     const label = widget.querySelector(selector);
     if (label) label.textContent = word;
-    const prompt = select.querySelector('option[value=""]');
-    if (prompt) prompt.textContent = word;
   };
-  nameField('label[for="office-finder-country"]', words.country, country);
-  nameField('label[for="office-finder-city"]', words.city, city);
-  city.dataset.prompt = words.city;
+  nameField('label[for="office-finder-country"]', words.country);
+  nameField('label[for="office-finder-city"]', words.city);
 
   countriesIn(data).forEach((name) => {
     const option = document.createElement('option');
@@ -140,7 +137,7 @@ export default async function decorate(widget) {
     city.replaceChildren();
     const prompt = document.createElement('option');
     prompt.value = '';
-    prompt.textContent = city.dataset.prompt || 'All cities';
+    prompt.textContent = '';
     city.append(prompt);
     cities.forEach((name) => {
       const option = document.createElement('option');

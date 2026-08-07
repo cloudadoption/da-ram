@@ -5,8 +5,8 @@
  * market's own language. Its worldwide-agencies page carried three paragraphs, the country
  * label, the city label and a confirm button, and the migration replaced them with the widget.
  * So these are live's own words, read off the ten pages before they were replaced. Nothing here
- * is translated by us, which is why there is no prompt copy: the placeholder option shows the
- * field label rather than a "Select a country" we would have had to invent in nine languages.
+ * is translated by us, and there is no prompt copy at all: live's own control is a label over an
+ * empty input, so a "Select a country" would be copy we invented in nine languages.
  *
  * The key is the language rather than the market, because that is what the page carries:
  * applyLocale sets html lang from the served value and the estate has one language per market.
