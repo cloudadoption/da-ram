@@ -213,3 +213,24 @@ describe('a nav dropdown names itself and takes a role its state is valid on', (
     assert.match(js, /childNodes|firstChild/);
   });
 });
+
+// nl-NL authors its fifth top item as a link, <li><a>Safar Flyer-loyaliteit</a><ul>, where the
+// other nine author a bare text node. So the label had no text node to take, no aria-label was
+// set, and role="button" fell back to name-from-content. Closed it reads the link, because the
+// sublist is display:none and hidden content is left out. Open it reads 488 characters: the whole
+// submenu announced as the button's name. Measured on main at 1440 on /nl-nl/checked-baggage.
+describe('a nav dropdown label falls back to its link', () => {
+  const js = readFileSync(new URL('../blocks/header/header.js', import.meta.url), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+
+  it('reads the first element child when the li has no own text', () => {
+    assert.match(js, /firstElementChild/);
+  });
+
+  // Without this the name comes from content, and content includes the sublist once it opens.
+  it('sets aria-label whenever it has a role, so the name never comes from content', () => {
+    const drop = /classList\.add\('nav-drop'\)[\s\S]*?setAttribute\('aria-label'[^\n]*\n/.exec(js);
+    assert.ok(drop, 'expected the label to be set where the role is');
+    assert.doesNotMatch(drop[0], /if \(own\) navSection\.setAttribute\('aria-label'/);
+  });
+});
