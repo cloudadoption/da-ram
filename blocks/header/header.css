@@ -190,6 +190,22 @@ header nav .nav-sections ul > li > ul > li {
   font-weight: 400;
 }
 
+/* The control is a button inside the li, because ARIA does not allow role=button on an li. A button
+   brings its own font, background and border, so it takes the item's instead and the nav reads as it
+   did. */
+header nav .nav-sections .nav-drop-toggle {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+
 /* RAM's navigation is three levels: top item, group heading, link. 14 group headings
    organise 80 links under 5 top items, so the middle level is a heading rather than a
    link and the level below it is the link. */
@@ -201,6 +217,14 @@ header nav .nav-sections .nav-group {
 header nav .nav-sections .nav-group > ul {
   padding-inline-start: 12px;
   font-weight: 400;
+}
+
+/* Below the desktop width the drops used to be inert: every one carried aria-expanded="true" and no
+   rule read it, so the sublists were always open and the control was taken out of the tab order. The
+   button is focusable at both widths, so the state has to mean something at both. The nav opens
+   expanded as it did, and a collapse is new. */
+header nav .nav-sections .nav-drop:has(> .nav-drop-toggle[aria-expanded='false']) > ul {
+  display: none;
 }
 
 @media (width >= 1280px) {
@@ -234,7 +258,7 @@ header nav .nav-sections .nav-group > ul {
     border-width: 2px 2px 0 0;
   }
 
-  header nav .nav-sections .nav-drop[aria-expanded='true']::after {
+  header nav .nav-sections .nav-drop:has(> .nav-drop-toggle[aria-expanded='true'])::after {
     top: unset;
     bottom: 0.5em;
     transform: rotate(315deg);
@@ -256,7 +280,7 @@ header nav .nav-sections .nav-group > ul {
     position: relative;
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul {
+  header nav .nav-sections .default-content-wrapper > ul > li:has(> .nav-drop-toggle[aria-expanded='true']) > ul {
     display: block;
     position: absolute;
     inset-inline-start: -24px;
@@ -269,7 +293,7 @@ header nav .nav-sections .nav-group > ul {
 
   /* A panel holding group headings needs the room for them, and the groups sit
      side by side rather than in one tall column. */
-  header nav .nav-sections .default-content-wrapper > ul > li[aria-expanded='true'] > ul:has(.nav-group) {
+  header nav .nav-sections .default-content-wrapper > ul > li:has(> .nav-drop-toggle[aria-expanded='true']) > ul:has(.nav-group) {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 32px;
