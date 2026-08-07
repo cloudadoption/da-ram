@@ -48,15 +48,26 @@ const element = (tag, text = '') => {
     textContent: text,
     children: [],
     style: { display: '' },
+    childNodes: [],
     classList: { add: (c) => classes.add(c), contains: (c) => classes.has(c) },
     setAttribute: (k, v) => { attrs[k] = String(v); },
     getAttribute: (k) => attrs[k] ?? null,
+    removeAttribute: (k) => { delete attrs[k]; },
     addEventListener: (name, fn) => { attrs[`on:${name}`] = fn; },
     fire: (name) => attrs[`on:${name}`] && attrs[`on:${name}`](),
     attrs,
     classes,
   };
 };
+
+// A document stand-in, so the block can build a button without a browser.
+const maker = () => (tag) => {
+  const made = element(tag.toUpperCase());
+  made.append = (...nodes) => made.childNodes.push(...nodes);
+  return made;
+};
+
+const toggleIn = (title) => title.childNodes.find((one) => one.tagName === 'BUTTON');
 
 describe('markFooterGroups', () => {
   const footerWith = (kids) => ({ children: kids });
@@ -72,25 +83,51 @@ describe('markFooterGroups', () => {
   it('closes the group, because live opens on a click', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
-    markFooterGroups(footerWith([h, ul]));
-    assert.equal(h.getAttribute('aria-expanded'), 'false');
+    markFooterGroups(footerWith([h, ul]), 6, maker());
+    assert.equal(toggleIn(h).getAttribute('aria-expanded'), 'false');
   });
 
-  it('makes the heading operable from the keyboard', () => {
+  // ARIA does not allow role=button on a heading, so the heading keeps its own role and a real
+  // button goes inside it. axe read aria-allowed-role on three of these on every page.
+  it('puts a real button inside the heading rather than a role on it', () => {
     const h = element('H2', 'About us');
-    markFooterGroups(footerWith([h, element('UL')]));
-    assert.equal(h.getAttribute('role'), 'button');
-    assert.equal(h.getAttribute('tabindex'), '0');
+    markFooterGroups(footerWith([h, element('UL')]), 6, maker());
+    assert.equal(h.getAttribute('role'), null);
+    assert.equal(h.getAttribute('tabindex'), null);
+    assert.equal(h.getAttribute('aria-expanded'), null);
+    const button = toggleIn(h);
+    assert.ok(button, 'the heading holds no button');
+    assert.equal(button.getAttribute('type'), 'button');
+    assert.equal(button.getAttribute('aria-expanded'), 'false');
+    assert.ok(button.classList.contains('footer-group-toggle'));
+  });
+
+  it('moves the heading text into the button, so the button names itself', () => {
+    const h = element('H2', 'About us');
+    const word = { tagName: '#text', textContent: 'About us' };
+    h.childNodes.push(word);
+    markFooterGroups(footerWith([h, element('UL')]), 6, maker());
+    const button = toggleIn(h);
+    assert.ok(button.childNodes.includes(word));
+    assert.equal(h.childNodes.filter((one) => one === word).length, 0);
+  });
+
+  it('needs no keydown handler, because a button takes Enter and Space itself', () => {
+    const h = element('H2', 'About us');
+    markFooterGroups(footerWith([h, element('UL')]), 6, maker());
+    assert.equal(toggleIn(h).attrs['on:keydown'], undefined);
+    assert.equal(h.attrs['on:keydown'], undefined);
   });
 
   it('opens on a click and closes again', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
-    markFooterGroups(footerWith([h, ul]));
-    h.fire('click');
-    assert.equal(h.getAttribute('aria-expanded'), 'true');
-    h.fire('click');
-    assert.equal(h.getAttribute('aria-expanded'), 'false');
+    markFooterGroups(footerWith([h, ul]), 6, maker());
+    const button = toggleIn(h);
+    button.fire('click');
+    assert.equal(button.getAttribute('aria-expanded'), 'true');
+    button.fire('click');
+    assert.equal(button.getAttribute('aria-expanded'), 'false');
   });
 
   it('returns how many groups it marked', () => {
@@ -155,9 +192,9 @@ describe('markFooterGroups on the shape the block actually passes', () => {
     const h = element('H2', 'About us');
     const section = withChildren('DIV', [h, element('UL')]);
     const wrapper = withChildren('DIV', [section]);
-    markFooterGroups(wrapper);
-    assert.equal(h.attrs.role, 'button');
-    assert.equal(markFooterGroups(wrapper), 0);
+    markFooterGroups(wrapper, 6, maker());
+    assert.ok(toggleIn(h));
+    assert.equal(markFooterGroups(wrapper, 6, maker()), 0);
   });
 });
 
@@ -250,17 +287,17 @@ describe('the group is closed before anything is painted', () => {
   it('hands the display back to the stylesheet when the group opens', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
-    markFooterGroups(withChildren('DIV', [h, ul]));
-    h.fire('click');
+    markFooterGroups(withChildren('DIV', [h, ul]), 6, maker());
+    toggleIn(h).fire('click');
     assert.equal(ul.style.display, '');
   });
 
   it('hides it again on the second click', () => {
     const h = element('H2', 'About us');
     const ul = element('UL');
-    markFooterGroups(withChildren('DIV', [h, ul]));
-    h.fire('click');
-    h.fire('click');
+    markFooterGroups(withChildren('DIV', [h, ul]), 6, maker());
+    toggleIn(h).fire('click');
+    toggleIn(h).fire('click');
     assert.equal(ul.style.display, 'none');
   });
 });
@@ -300,9 +337,9 @@ describe('the footer documents in DA', () => {
 
   it('closes each column, because live opens on a click', () => {
     const { footer, columns } = authored();
-    markFooterGroups(footer);
+    markFooterGroups(footer, 6, maker());
     columns.forEach(({ title, list }) => {
-      assert.equal(title.getAttribute('aria-expanded'), 'false');
+      assert.equal(toggleIn(title).getAttribute('aria-expanded'), 'false');
       assert.equal(list.style.display, 'none');
     });
   });
