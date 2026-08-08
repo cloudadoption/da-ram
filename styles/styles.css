@@ -411,6 +411,14 @@ body.article-heading-display main h2.article-heading {
   }
 }
 
+/* Live steps this title at the same 992 as body.titled, to 50px on 56px. */
+@media (width >= 992px) {
+  body.page-title-50 main h1 {
+    font-size: 50px;
+    line-height: 56px;
+  }
+}
+
 /* A second page-title shape, and the theme's own h1 is neither. `ram-holidays-faq` and
    `children-and-pregnancy/children` read live's h1 in the primary family at a flat 40px on 48px,
    weight 500, #1a1717, where ours reads 32px on 38.4px with the same family, weight and colour. So
@@ -426,6 +434,27 @@ body.article-heading-display main h2.article-heading {
 body.page-title-40 main h1 {
   font-size: 40px;
   line-height: 48px;
+}
+
+/* A third page-title shape, and the only one that steps to a larger size than body.titled.
+   `accessibility-plan` and `nouvelle-ambiance-cabine` read live's title at 32px on 32px below 992 and
+   50px on 56px at 992 and above, weight 300, #212529, where ours reads body.titled's 24px on 32px
+   stepping to 40px on 44px at the same breakpoint, weight 400. So the step is at live's own breakpoint
+   and only the two sizes and the weight differ.
+
+   Measured on both sides at 375 and 1440 over 20 pages, ten markets each, with 768 and 992 added on
+   en-gb/accessibility-plan and fr-fr/nouvelle-ambiance-cabine to locate the step. One live shape and
+   one of ours at each width across all 20.
+
+   The colour is #212529, which body.heading-slate already draws, so these documents want
+   `theme: heading-slate` alongside. Two carry a colour token that fights it today:
+   es-es/accessibility-plan declares heading-crimson and es-es/nouvelle-ambiance-cabine heading-black.
+
+   Declared after the titled rule so it wins where a document carries both. */
+body.page-title-50 main h1 {
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 32px;
 }
 
 p,
