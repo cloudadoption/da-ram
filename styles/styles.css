@@ -361,15 +361,23 @@ body.opening-heading-light main h2.opening-heading {
 
 /* A few pages carry no page-heading component and live titles them with the article's own display
    heading, class `f-heading-l f-fw-l`, which renders in the secondary family at weight 300 where an
-   unclassed first heading is the primary at 500. Measured at 1440 on 2026-08-06 over 17 pages in
-   three families: dreamafrica-meetmorocco, popular-destinations and loft-lounge-fast-track. Live's
-   line height is 40px against our 38.4px, inside the parity reader's height tolerance, so the size
-   and the leading are left alone.
+   unclassed first heading is the primary at 500. That holds for dreamafrica-meetmorocco on ten
+   markets and popular-destinations on six: read on both sides at 1440 on 2026-08-08, all 16 titles
+   match live on colour and on weight 300. Live's line height is 40px against our 38.4px, inside the
+   parity reader's height tolerance, so the size and the leading are left alone.
 
-   The three Arabic pages of those families are not in the set. Live titles them in
-   `primary-font-rtl`, and the secondary family would put Cairo on them, which is the Arabic-face
-   question rather than this one. `template: display-heading` metadata on 17 documents becomes the
-   body class. */
+   It does not hold for loft-lounge-fast-track, which the 2026-08-06 pass put in the set and the
+   2026-08-08 reading takes out. Live titles that page in an h2 with no class at all, brand red
+   rgb(176, 39, 54) at weight 500 in the primary family on all ten markets, and its `f-heading-l` is
+   an empty shell. So this rule draws it in the wrong family at the wrong weight, and the four
+   documents declaring the row want it removed and a `theme: heading-brand` row instead.
+
+   `template: display-heading` metadata becomes the body class, on 20 documents as of 2026-08-08:
+   ten dreamafrica-meetmorocco, six popular-destinations and four loft-lounge-fast-track. The three
+   Arabic pages carry it although an earlier reading meant to leave them out, on the reasoning that
+   the secondary family would put Cairo on a title live sets in `primary-font-rtl`. Measured, it
+   costs nothing on what this rule controls: both Arabic pages outside loft-lounge match live on
+   colour and weight. The face is the Arabic-face question rather than this one. */
 body.display-heading main h1 {
   font-family: var(--secondary-font-family);
   font-weight: 300;
